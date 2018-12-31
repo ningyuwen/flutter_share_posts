@@ -10,6 +10,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:my_mini_app/been/been.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/services.dart';
 
 
 //发布
@@ -95,10 +96,14 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
   final TextEditingController _contentController =
       TextEditingController(text: "");
 
+  //声明一个调用对象，需要把kotlin中注册的ChannelName传入构造函数
+  static const _platform = const MethodChannel('aduning/tencent_location');
+
   @override
   void initState() {
     super.initState();
     getPosition();
+    _platform.invokeMethod('getCurrentLocation', { 'message': '你点击了按钮！'}); //调用相应方法，并传入相关参数。
   }
 
   @override

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 import 'package:image_picker/image_picker.dart';
 
-//import 'package:geolocator/geolocator.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
-import 'package:my_mini_app/util/api_util.dart';
+// import 'package:my_mini_app/util/api_util.dart';
 import 'package:dio/dio.dart';
 import 'dart:io';
 import 'dart:convert';
@@ -16,7 +16,9 @@ import 'package:flutter/services.dart';
 //发布
 Future<bool> publishPost(PublishBeen been) async {
   Dio dio = new Dio();
-  dio.options.baseUrl = "http://192.168.0.102:8080/";
+//  dio.options.baseUrl = "http://192.168.0.102:8080/";
+  // dio.options.baseUrl = "http://172.26.52.30:8080/";
+  dio.options.baseUrl = "http://172.25.160.41:8080/";
   dio.options.method = "post";
   dio.options.connectTimeout = 60000;
   //此行代码非常重要，设置传输文本格式
@@ -87,7 +89,7 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
   var currentLocation = <String, double>{};
   var location = new Location();
 
-//  Position _position;
+  Position _position;
   final TextEditingController _storeController =
       TextEditingController(text: "");
   final TextEditingController _costController = TextEditingController(text: "");
@@ -97,13 +99,13 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
       TextEditingController(text: "");
 
   //声明一个调用对象，需要把kotlin中注册的ChannelName传入构造函数
-  static const _platform = const MethodChannel('aduning/tencent_location');
+//  static const _platform = const MethodChannel('aduning/tencent_location');
 
   @override
   void initState() {
     super.initState();
     getPosition();
-    _platform.invokeMethod('getCurrentLocation', { 'message': '你点击了按钮！'}); //调用相应方法，并传入相关参数。
+//    _platform.invokeMethod('getCurrentLocation', { 'message': '你点击了按钮！'}); //调用相应方法，并传入相关参数。
   }
 
   @override
@@ -290,21 +292,21 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
   }
 
   void getPosition() async {
-//    _position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-//    print(_position.longitude);
-//    setState(() {
-//      _positionController.text = _position.toString();
-//    });
+    _position = await Geolocator().getLastKnownPosition(desiredAccuracy: LocationAccuracy.high);
+    print(_position.longitude);
+    setState(() {
+      _positionController.text = _position.toString();
+    });
     // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      currentLocation = await location.getLocation();
-      print(currentLocation["longitude"]);
-      setState(() {
-        _positionController.text = currentLocation["longitude"].toString();
-      });
-    } catch (e) {
-      currentLocation = null;
-    }
+//    try {
+//      currentLocation = await location.getLocation();
+//      print(currentLocation["longitude"]);
+//      setState(() {
+//        _positionController.text = currentLocation["longitude"].toString();
+//      });
+//    } catch (e) {
+//      currentLocation = null;
+//    }
   }
 
   Widget scrollView() {

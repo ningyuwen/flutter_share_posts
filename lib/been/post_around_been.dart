@@ -1,14 +1,14 @@
 import 'package:decimal/decimal.dart';
 
 class Post{
-  String username;
-  String head_url;
+  String username = "";
+  String head_url = "";
   int distance;
   int id;
   int userId;
-  String content;
-  String imgUrl;
-  String position;
+  String content = "";
+  String imgUrl = "";
+  String position = "";
   double longitude;
   double latitude;
   String store;

@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 import 'package:my_mini_app/been/post_around_been.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:my_mini_app/util/api_util.dart';
+import 'package:my_mini_app/util/snack_bar_util.dart';
+import 'package:my_mini_app/detail/detail_page.dart';
+import 'package:my_mini_app/been/post_detail_argument.dart';
+
 
 class PostItemView extends StatefulWidget {
   final Post data;
@@ -46,8 +49,20 @@ class TimelineTwoPageState extends State<PostItemView> {
 //      backgroundColor: Colors.grey.shade900,
 //      body: bodyData(),
 //    );
-    return Container(
-      child: bodyData(),
+    return GestureDetector(
+      child: Container(
+        child: bodyData(),
+      ),
+      behavior: HitTestBehavior.deferToChild,
+      onTap: () {
+        //进入详情页
+        PostDetailArgument postDetailArgument = new PostDetailArgument(
+            _post.id, 113.347868, 23.007985);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => new DetailPageStatelessWidget(postDetailArgument)));
+      },
     );
   }
 
@@ -60,11 +75,16 @@ class TimelineTwoPageState extends State<PostItemView> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              CircleAvatar(
-                  radius: 22.0,
-                  backgroundImage: NetworkImage(
-                    _post.head_url,
-                  )),
+              GestureDetector(
+                child: CircleAvatar(
+                    radius: 22.0,
+                    backgroundImage: NetworkImage(
+                      _post.head_url,
+                    )),
+                onTap: () {
+                  SnackBarUtil.show(context, "点击头像");
+                },
+              ),
               rightColumn(_post),
             ],
           ),
@@ -74,8 +94,7 @@ class TimelineTwoPageState extends State<PostItemView> {
     );
   }
 
-  Widget actionRow(Post post) =>
-      Padding(
+  Widget actionRow(Post post) => Padding(
         padding: const EdgeInsets.only(left: 8.0, bottom: 8.0, right: 50.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -89,7 +108,7 @@ class TimelineTwoPageState extends State<PostItemView> {
                       padding: const EdgeInsets.all(0.0),
                       icon: Icon(Icons.comment, size: 20.0, color: Colors.grey),
                       onPressed: () {
-                        ToastUtil.showToast("评论");
+//                        ToastUtil.showToast("评论");
                       },
                     )),
                 Text(_post.comments.toString()),
@@ -126,8 +145,7 @@ class TimelineTwoPageState extends State<PostItemView> {
         ),
       );
 
-  Widget rightColumn(Post post) =>
-      Expanded(
+  Widget rightColumn(Post post) => Expanded(
         child: Padding(
           padding: const EdgeInsets.only(right: 4.0),
           child: Column(
@@ -177,18 +195,14 @@ class TimelineTwoPageState extends State<PostItemView> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                new PhotoViewUtil(
+                                builder: (context) => new PhotoViewUtil(
                                     widget.key, _post.imgUrl)));
                       },
                       child: Image.network(
                         _post.imgUrl,
                         filterQuality: FilterQuality.high,
                         fit: BoxFit.cover,
-                        width: MediaQuery
-                            .of(context)
-                            .size
-                            .width,
+                        width: MediaQuery.of(context).size.width,
                         height: 200.0,
                       ),
                     )),
@@ -226,7 +240,8 @@ class TimelineTwoPageState extends State<PostItemView> {
 
   void postCancelVoteData() async {
     await ApiUtil.getInstance()
-        .netFetch("/vote/cancelVote", RequestMethod.POST, {"postId": _post.id}, null)
+        .netFetch(
+            "/vote/cancelVote", RequestMethod.POST, {"postId": _post.id}, null)
         .then((values) {
       print("postCancelVoteData() data is: " + values);
       if ("" == values) {
@@ -234,6 +249,8 @@ class TimelineTwoPageState extends State<PostItemView> {
         _post.isVote = false;
         _post.votes--;
         setState(() {});
+
+        SnackBarUtil.show(context, "取消点赞成功");
       }
     });
   }
@@ -248,6 +265,8 @@ class TimelineTwoPageState extends State<PostItemView> {
         _post.isVote = true;
         _post.votes++;
         setState(() {});
+
+        SnackBarUtil.show(context, "点赞成功");
       }
     });
   }

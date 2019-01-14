@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/toast_util.dart';
-import 'package:my_mini_app/home/timeline_two_page.dart';
+import 'package:my_mini_app/home/post_item_view.dart';
 
 //从后台获取数据
 Future<List<Post>> getData() async {
@@ -164,6 +164,6 @@ class PostInfoItem extends StatefulWidget {
 class PostInfoState extends State<PostInfoItem> {
   @override
   Widget build(BuildContext context) {
-    return TimelineTwoPage(key: widget.key, data: widget.data,);
+    return PostItemView(key: widget.key, data: widget.data,);
   }
 }

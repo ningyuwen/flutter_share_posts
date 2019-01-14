@@ -18,9 +18,13 @@ class Post{
   int votes;
   int comments;
   String district;
+  bool isVote;
 
   Post({
-    this.username,this.head_url,this.distance,this.id,this.userId,this.content,this.imgUrl,this.position,this.longitude,this.latitude,this.store,this.imgLabel,this.releaseTime,this.cost,this.votes,this.comments,this.district,
+    this.username,this.head_url,this.distance,this.id,this.userId,
+    this.content,this.imgUrl,this.position,this.longitude,this.latitude,
+    this.store,this.imgLabel,this.releaseTime,this.cost,this.votes,
+    this.comments,this.district,this.isVote
   });
 
   static Post fromJson(Map<String,dynamic> json){
@@ -42,6 +46,7 @@ class Post{
       votes: json['votes'],
       comments: json['comments'],
       district: json['district'],
+        isVote: json['isVote']
     );
   }
 
@@ -63,5 +68,6 @@ class Post{
     'votes': votes,
     'comments': comments,
     'district': district,
+    'isVote': isVote,
   };
 }

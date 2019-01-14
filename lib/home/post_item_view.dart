@@ -4,11 +4,12 @@ import 'package:my_mini_app/util/toast_util.dart';
 import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
+import 'package:my_mini_app/util/api_util.dart';
 
-class TimelineTwoPage extends StatefulWidget {
+class PostItemView extends StatefulWidget {
   final Post data;
 
-  TimelineTwoPage({Key key, this.data}) : super(key: key);
+  PostItemView({Key key, this.data}) : super(key: key);
 
   @override
   TimelineTwoPageState createState() {
@@ -16,7 +17,7 @@ class TimelineTwoPage extends StatefulWidget {
   }
 }
 
-class TimelineTwoPageState extends State<TimelineTwoPage> {
+class TimelineTwoPageState extends State<PostItemView> {
 //  ScrollController scrollController;
   Post _post;
 
@@ -73,7 +74,8 @@ class TimelineTwoPageState extends State<TimelineTwoPage> {
     );
   }
 
-  Widget actionRow(Post post) => Padding(
+  Widget actionRow(Post post) =>
+      Padding(
         padding: const EdgeInsets.only(left: 8.0, bottom: 8.0, right: 50.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -89,8 +91,7 @@ class TimelineTwoPageState extends State<TimelineTwoPage> {
                       onPressed: () {
                         ToastUtil.showToast("评论");
                       },
-                    )
-                ),
+                    )),
                 Text(_post.comments.toString()),
               ],
             ),
@@ -101,14 +102,13 @@ class TimelineTwoPageState extends State<TimelineTwoPage> {
                     width: 34.0,
                     child: new IconButton(
                       padding: const EdgeInsets.all(0.0),
-                      icon: Icon(Icons.favorite, size: 20.0, color: Colors.grey),
+                      icon: getVoteIcon(),
                       onPressed: () {
-                        ToastUtil.showToast("喜爱");
+//                        ToastUtil.showToast("喜爱");
                         //添加喜爱
-                        
+                        clickVoteIcon();
                       },
-                    )
-                ),
+                    )),
                 Text(_post.votes.toString()),
               ],
             ),
@@ -121,13 +121,13 @@ class TimelineTwoPageState extends State<TimelineTwoPage> {
                   onPressed: () {
                     ToastUtil.showToast("分享");
                   },
-                )
-            ),
+                )),
           ],
         ),
       );
 
-  Widget rightColumn(Post post) => Expanded(
+  Widget rightColumn(Post post) =>
+      Expanded(
         child: Padding(
           padding: const EdgeInsets.only(right: 4.0),
           child: Column(
@@ -171,24 +171,27 @@ class TimelineTwoPageState extends State<TimelineTwoPage> {
               Padding(
                 padding: const EdgeInsets.only(left: 16.0),
                 child: ClipRRect(
-                  borderRadius: new BorderRadius.circular(8.0),
-                  child: GestureDetector(
-                    onTap: (){
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) =>
-                          new PhotoViewUtil(widget.key, _post.imgUrl))
-                      );
-                    },
-                    child: Image.network(
-                      _post.imgUrl,
-                      filterQuality: FilterQuality.high,
-                      fit: BoxFit.cover,
-                      width: MediaQuery.of(context).size.width,
-                      height: 200.0,
-                    ),
-                  )
-                ),
+                    borderRadius: new BorderRadius.circular(8.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                new PhotoViewUtil(
+                                    widget.key, _post.imgUrl)));
+                      },
+                      child: Image.network(
+                        _post.imgUrl,
+                        filterQuality: FilterQuality.high,
+                        fit: BoxFit.cover,
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width,
+                        height: 200.0,
+                      ),
+                    )),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 8.0, 0.0, 8.0),
@@ -210,4 +213,51 @@ class TimelineTwoPageState extends State<TimelineTwoPage> {
           ),
         ),
       );
+
+  void clickVoteIcon() {
+    if (_post.isVote) {
+      //已点赞，取消赞
+      postCancelVoteData();
+    } else {
+      //未点赞，点赞
+      postVoteData();
+    }
+  }
+
+  void postCancelVoteData() async {
+    await ApiUtil.getInstance()
+        .netFetch("/vote/cancelVote", RequestMethod.POST, {"postId": _post.id}, null)
+        .then((values) {
+      print("postCancelVoteData() data is: " + values);
+      if ("" == values) {
+        //取消点赞成功
+        _post.isVote = false;
+        _post.votes--;
+        setState(() {});
+      }
+    });
+  }
+
+  void postVoteData() async {
+    await ApiUtil.getInstance()
+        .netFetch("/vote/vote", RequestMethod.POST, {"postId": _post.id}, null)
+        .then((values) {
+      print("postVoteData() data is: " + values);
+      if ("" == values) {
+        //点赞成功
+        _post.isVote = true;
+        _post.votes++;
+        setState(() {});
+      }
+    });
+  }
+
+  //点赞图标
+  Widget getVoteIcon() {
+    if (_post.isVote) {
+      return Icon(Icons.favorite, size: 20.0, color: Colors.red);
+    } else {
+      return Icon(Icons.favorite, size: 20.0, color: Colors.grey);
+    }
+  }
 }

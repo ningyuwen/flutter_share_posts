@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:geolocator/geolocator.dart';
+//import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 // import 'package:my_mini_app/util/api_util.dart';
 import 'package:dio/dio.dart';
@@ -89,7 +89,7 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
   var currentLocation = <String, double>{};
   var location = new Location();
 
-  Position _position;
+//  Position _position;
   final TextEditingController _storeController =
       TextEditingController(text: "");
   final TextEditingController _costController = TextEditingController(text: "");
@@ -292,11 +292,11 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
   }
 
   void getPosition() async {
-    _position = await Geolocator().getLastKnownPosition(desiredAccuracy: LocationAccuracy.high);
-    print(_position.longitude);
-    setState(() {
-      _positionController.text = _position.toString();
-    });
+//    _position = await Geolocator().getLastKnownPosition(desiredAccuracy: LocationAccuracy.high);
+//    print(_position.longitude);
+//    setState(() {
+//      _positionController.text = _position.toString();
+//    });
     // Platform messages may fail, so we use a try/catch PlatformException.
 //    try {
 //      currentLocation = await location.getLocation();

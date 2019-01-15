@@ -5,6 +5,7 @@ import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
+import 'package:my_mini_app/been/detail_comment.dart';
 
 class DetailPageStatelessWidget extends StatelessWidget {
   final PostDetailArgument _postDetailArgument;
@@ -14,12 +15,83 @@ class DetailPageStatelessWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("详情"),
-          backgroundColor: Color.fromARGB(255, 51, 51, 51),
-          centerTitle: true,
+      appBar: AppBar(
+        title: Text("详情"),
+        backgroundColor: Color.fromARGB(255, 51, 51, 51),
+        centerTitle: true,
+      ),
+      body: DetailPageStateFulWidget(_postDetailArgument),
+      bottomSheet: BottomSheet(
+          onClosing: () {},
+          builder: (BuildContext context) {
+            return SendCommentStatefulWidget();
+          }),
+//      bottomNavigationBar: BottomNavigationBar(
+//          items: [BottomNavigationBarItem(icon: Icon(Icons.more_vert))]),
+    );
+  }
+}
+
+class SendCommentStatefulWidget extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return SendCommentState();
+  }
+}
+
+class SendCommentState extends State<SendCommentStatefulWidget> {
+  final _sendMsgTextField = TextEditingController(text: "");
+
+  @override
+  void initState() {
+    super.initState();
+    _sendMsgTextField.addListener(() {
+      if (_sendMsgTextField.text != "") {}
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(left: 10.0, right: 10.0),
+      color: Colors.black12,
+      height: 60.0,
+      child: Center(
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Container(
+              width: MediaQuery.of(context).size.width - 56.0,
+              child: TextField(
+                controller: _sendMsgTextField,
+                maxLines: 1,
+                keyboardType: TextInputType.text,
+//                textInputAction: TextInputAction.next,
+                decoration: const InputDecoration(
+                  hintText: '发布回复点评',
+                ),
+              ),
+            ),
+            GestureDetector(
+              child: Icon(
+                Icons.send,
+                color: getSendBtnColor(),
+                size: 28.0,
+              ),
+            )
+          ],
         ),
-        body: DetailPageStateFulWidget(_postDetailArgument));
+      ),
+    );
+  }
+
+  Color getSendBtnColor() {
+    if (_sendMsgTextField.text == "") {
+      return Colors.grey;
+    } else {
+      return Colors.blue;
+    }
   }
 }
 
@@ -34,26 +106,84 @@ class DetailPageStateFulWidget extends StatefulWidget {
   }
 }
 
+abstract class ListItem {}
+
+class HeadViewItem extends ListItem {
+  final PostDetail _postDetail;
+
+  HeadViewItem(this._postDetail);
+}
+
+class CommentsItem extends ListItem {
+  final DetailComment _comment;
+
+  CommentsItem(this._comment);
+}
+
 class DetailPageState extends State<DetailPageStateFulWidget> {
   PostDetail _postDetail;
+  Future<PostDetail> data;
+
+//  final items;
 
   @override
   void initState() {
     super.initState();
     _postDetail = new PostDetail();
-    getPostDetailData();
+    data = getPostDetailData();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        showUserInformation(),
-        showContent(),
-        showPicture(),
-        showComments(),
-      ],
+    return FutureBuilder<PostDetail>(
+      future: data,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          _postDetail = snapshot.data;
+          final items =
+              List<ListItem>.generate(_postDetail.mCommentList.length + 1, (i) {
+            if (i == 0) {
+              return HeadViewItem(_postDetail);
+            } else {
+              return CommentsItem(_postDetail.mCommentList[i - 1]);
+            }
+          });
+          return ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                final item = items[index];
+                if (item is HeadViewItem) {
+                  return Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            showUserInformation(),
+                            showContent(),
+                            showPicture(),
+                            showPosition(),
+                          ],
+                        ),
+                      ),
+                      Divider(
+                        height: 3.0,
+                      )
+                    ],
+                  );
+                } else if (item is CommentsItem) {
+                  return showCommentsItem(item);
+                }
+              });
+        } else if (snapshot.hasError) {
+          return Center();
+        }
+        // By default, show a loading spinner
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
     );
   }
 
@@ -138,7 +268,8 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
     );
   }
 
-  void getPostDetailData() async {
+  Future<PostDetail> getPostDetailData() async {
+    PostDetail postDetail;
     await ApiUtil.getInstance()
         .netFetch(
             "/post/getPostDetails",
@@ -151,13 +282,96 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
             null)
         .then((values) {
       print("getPostDetailData() data is: " + values.toString());
-      _postDetail = PostDetail.fromJson(values);
-      print("getPostDetailData() url is: ${_postDetail.contentUrl}");
-      setState(() {});
+      postDetail = PostDetail.fromJson(values);
     });
+    return postDetail;
   }
 
-  Widget showComments() {
-    return Text("aduning");
+  Widget showComments(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(left: 10.0, top: 10.0),
+      child: Text(
+        "评论",
+        style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget showPosition() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Image.asset("image/ic_map.png", height: 24.0),
+          GestureDetector(
+            child: Container(
+              color: Color.fromARGB(255, 239, 240, 241),
+              child: Text(
+                _postDetail.location,
+                style: TextStyle(fontSize: 16.0),
+              ),
+            ),
+            onTap: () {
+              SnackBarUtil.show(context, "点击location");
+            },
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget showCommentsItem(CommentsItem item) {
+    return Column(
+      children: <Widget>[
+        ListTile(
+          leading: GestureDetector(
+            child: CircleAvatar(
+                radius: 22.0,
+                backgroundImage: NetworkImage(
+                  item._comment.headUrl,
+                )),
+            onTap: () {
+              SnackBarUtil.show(context, "点击头像");
+            },
+          ),
+          title: Text(item._comment.username),
+          subtitle: Text(item._comment.content),
+          trailing: GestureDetector(
+            child: Icon(Icons.more_vert),
+            onTap: () {
+              SnackBarUtil.show(context, "点击更多");
+            },
+          ),
+          onTap: () {
+            SnackBarUtil.show(context, "点击评论条目");
+          },
+        ),
+        Divider(
+          height: 3.0,
+        )
+      ],
+    );
+  }
+}
+
+class ListViewCommentItem extends StatefulWidget {
+  final DetailComment data;
+
+  ListViewCommentItem({Key key, this.data}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() {
+    return ListViewCommentItemState();
+  }
+}
+
+class ListViewCommentItemState extends State<ListViewCommentItem> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 100.0,
+      child: Text(widget.data.content),
+    );
   }
 }

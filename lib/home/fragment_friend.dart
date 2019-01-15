@@ -3,13 +3,15 @@ import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 import 'package:my_mini_app/home/post_item_view.dart';
+import 'package:my_mini_app/been/post_detail_argument.dart';
+import 'package:my_mini_app/detail/detail_page.dart';
 
 //从后台获取数据
 Future<List<Post>> getData() async {
   List<Post> posts = new List();
   await ApiUtil.getInstance()
       .netFetch("/post/getPostsAround", RequestMethod.GET,
-          {"longitude": 113.347868, "latitude": 23.007985, "pageId": 1}, null)
+      {"longitude": 113.347868, "latitude": 23.007985, "pageId": 1}, null)
       .then((values) {
     for (var value in values) {
       Post post = Post.fromJson(value);
@@ -25,7 +27,6 @@ Future<String> loadLastName2(String firstName) async {
   await new Future.delayed(Duration(milliseconds: 200));
   return firstName + 'son';
 }
-
 
 //好友fragment
 class FragmentFriend extends StatelessWidget {
@@ -97,7 +98,6 @@ class FriendState extends State<FragmentFriendAndAround>
     _posts = List();
     print("post length is: ${_posts.length}");
     setData();
-    setOnClickListener();
   }
 
   @override
@@ -109,19 +109,31 @@ class FriendState extends State<FragmentFriendAndAround>
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: RefreshIndicator(
+        child: RefreshIndicator(
           child: ListView.builder(
             itemCount: _posts.length,
             itemBuilder: (context, index) {
-              return PostInfoItem(
-                key: new ObjectKey(_posts[index].id),
-                data: _posts[index],
+              return GestureDetector(
+                child: PostInfoItem(
+                  key: new ObjectKey(_posts[index].id),
+                  data: _posts[index],
+                ),
+                onTap: () {
+                  //进入详情页
+                  PostDetailArgument postDetailArgument = new PostDetailArgument(
+                      _posts[index].id, 113.347868, 23.007985);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => new DetailPageStatelessWidget(postDetailArgument)));
+                },
               );
             },
             controller: _scrollController,
+
           ),
           onRefresh: _refresh,
-      )
+        )
     );
   }
 
@@ -130,15 +142,6 @@ class FriendState extends State<FragmentFriendAndAround>
     _posts.clear();
     setData();
     return;
-  }
-
-  void setOnClickListener() {
-//    _scrollController.addListener(() {
-//      print(
-//          "fragment_friend scroll position is: ${_scrollController.position}");
-//      ToastUtil.showToast(
-//          "fragment_friend scroll position is: ${_scrollController.position}");
-//    });
   }
 
   @override

@@ -21,7 +21,7 @@ class PostItemView extends StatefulWidget {
 }
 
 class TimelineTwoPageState extends State<PostItemView> {
-//  ScrollController scrollController;
+
   Post _post;
 
   @override
@@ -49,21 +49,7 @@ class TimelineTwoPageState extends State<PostItemView> {
 //      backgroundColor: Colors.grey.shade900,
 //      body: bodyData(),
 //    );
-    return GestureDetector(
-      child: Container(
-        child: bodyData(),
-      ),
-      behavior: HitTestBehavior.deferToChild,
-      onTap: () {
-        //进入详情页
-        PostDetailArgument postDetailArgument = new PostDetailArgument(
-            _post.id, 113.347868, 23.007985);
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => new DetailPageStatelessWidget(postDetailArgument)));
-      },
-    );
+    return bodyData();
   }
 
   Widget bodyData() {

@@ -119,11 +119,14 @@ class CommentsItem extends ListItem {
   CommentsItem(this._comment);
 }
 
+class BlankItem extends ListItem {
+
+  BlankItem();
+}
+
 class DetailPageState extends State<DetailPageStateFulWidget> {
   PostDetail _postDetail;
   Future<PostDetail> data;
-
-//  final items;
 
   @override
   void initState() {
@@ -140,11 +143,13 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
         if (snapshot.hasData) {
           _postDetail = snapshot.data;
           final items =
-              List<ListItem>.generate(_postDetail.mCommentList.length + 1, (i) {
+              List<ListItem>.generate(_postDetail.mCommentList.length + 2, (i) {
             if (i == 0) {
               return HeadViewItem(_postDetail);
-            } else {
+            } else if (i > 0 && i < _postDetail.mCommentList.length + 1){
               return CommentsItem(_postDetail.mCommentList[i - 1]);
+            } else {
+              return BlankItem();
             }
           });
           return ListView.builder(
@@ -173,6 +178,8 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
                   );
                 } else if (item is CommentsItem) {
                   return showCommentsItem(item);
+                } else if (item is BlankItem) {
+                  return showBlankItem();
                 }
               });
         } else if (snapshot.hasError) {
@@ -338,7 +345,10 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(item._comment.username),
-              Text(item._comment.time, style: TextStyle(fontSize: 12.0),),
+              Text(
+                item._comment.time,
+                style: TextStyle(fontSize: 12.0),
+              ),
             ],
           ),
           subtitle: Text(item._comment.content),
@@ -356,6 +366,12 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
           height: 3.0,
         )
       ],
+    );
+  }
+
+  Widget showBlankItem() {
+    return SizedBox(
+      height: 30.0,
     );
   }
 }

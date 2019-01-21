@@ -15,7 +15,7 @@ class ApiUtil {
   ApiUtil() {
     _dio = new Dio();
     // _dio.options.baseUrl = "http://172.26.52.30:8080";
-    _dio.options.baseUrl = "http://172.25.160.41:8080";
+    _dio.options.baseUrl = "http://192.168.1.5:8080";
 //    _dio.options.baseUrl = "http://192.168.0.102:8080";
     _dio.options.method = "get";
     _dio.options.connectTimeout = 60000;

@@ -124,7 +124,7 @@ class TimelineTwoPageState extends State<PostItemView> {
                   padding: const EdgeInsets.all(0.0),
                   icon: Icon(Icons.share, size: 20.0, color: Colors.grey),
                   onPressed: () {
-                    ToastUtil.showToast("分享");
+                    SnackBarUtil.show(context, "分享");
                   },
                 )),
           ],

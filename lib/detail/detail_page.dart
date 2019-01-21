@@ -67,7 +67,6 @@ class SendCommentState extends State<SendCommentStatefulWidget> {
                 controller: _sendMsgTextField,
                 maxLines: 1,
                 keyboardType: TextInputType.text,
-//                textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(
                   hintText: '发布回复点评',
                 ),
@@ -327,7 +326,7 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
         ListTile(
           leading: GestureDetector(
             child: CircleAvatar(
-                radius: 22.0,
+                radius: 20.0,
                 backgroundImage: NetworkImage(
                   item._comment.headUrl,
                 )),
@@ -335,7 +334,13 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
               SnackBarUtil.show(context, "点击头像");
             },
           ),
-          title: Text(item._comment.username),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(item._comment.username),
+              Text(item._comment.time, style: TextStyle(fontSize: 12.0),),
+            ],
+          ),
           subtitle: Text(item._comment.content),
           trailing: GestureDetector(
             child: Icon(Icons.more_vert),

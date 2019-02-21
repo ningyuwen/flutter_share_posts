@@ -36,7 +36,7 @@ dependencies:
   path_provider: ^0.4.1
 #  permission_handler: ^2.1.2
   rxdart: ^0.20.0
-  jaguar_retrofit: ^2.6.4
+#  jaguar_retrofit: ^2.6.4
   decimal: ^0.3.2
   location: ^1.4.1
 #  geolocator: ^2.1.1

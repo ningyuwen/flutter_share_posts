@@ -18,7 +18,7 @@ Future<bool> publishPost(PublishBeen been) async {
   Dio dio = new Dio();
 //  dio.options.baseUrl = "http://192.168.0.102:8080/";
   // dio.options.baseUrl = "http://172.26.52.30:8080/";
-  dio.options.baseUrl = "http://192.168.1.5:8080/";
+  dio.options.baseUrl = "http://172.26.52.30:8080/";
   dio.options.method = "post";
   dio.options.connectTimeout = 60000;
   //此行代码非常重要，设置传输文本格式

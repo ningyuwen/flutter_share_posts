@@ -186,7 +186,7 @@ class TimelineTwoPageState extends State<PostItemView> {
                       },
                       child: Image.network(
                         _post.imgUrl,
-//                        filterQuality: FilterQuality.high,
+                        filterQuality: FilterQuality.high,
                         fit: BoxFit.cover,
                         width: MediaQuery.of(context).size.width,
                         height: 200.0,

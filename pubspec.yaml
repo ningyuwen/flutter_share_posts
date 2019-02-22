@@ -38,7 +38,7 @@ dependencies:
   rxdart: ^0.20.0
 #  jaguar_retrofit: ^2.6.4
   decimal: ^0.3.2
-  location: ^1.4.1
+  location: ^2.0.0
 #  geolocator: ^2.1.1
   auto_size_text: ^0.3.0
   flutter_local_notifications: ^0.4.4+2

@@ -11,6 +11,7 @@ import 'dart:convert';
 import 'package:my_mini_app/been/been.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/services.dart';
+import 'package:location/location.dart';
 
 
 //发布
@@ -307,6 +308,17 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
 //    } catch (e) {
 //      currentLocation = null;
 //    }
+
+    var currentLocation = <String, double>{};
+    var location = new Location();
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      currentLocation = location.getLocation as Map<String, double>;
+      ToastUtil.showToast(currentLocation["latitude"].toString());
+    } on PlatformException {
+      currentLocation = null;
+      ToastUtil.showToast("获取位置为空");
+    }
   }
 
   Widget scrollView() {

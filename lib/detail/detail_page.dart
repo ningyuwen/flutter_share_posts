@@ -198,7 +198,7 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
       padding: EdgeInsets.all(10.0),
       child: Text(
         _postDetail.content,
-        style: TextStyle(fontSize: 20.0),
+        style: TextStyle(fontSize: 18.0),
       ),
     );
   }
@@ -216,7 +216,7 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
         },
         child: Image.network(
           _postDetail.contentUrl,
-//          filterQuality: FilterQuality.high,
+          filterQuality: FilterQuality.high,
           fit: BoxFit.cover,
           width: MediaQuery.of(context).size.width,
         ),
@@ -315,7 +315,7 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
               color: Color.fromARGB(255, 239, 240, 241),
               child: Text(
                 _postDetail.location,
-                style: TextStyle(fontSize: 16.0),
+                style: TextStyle(fontSize: 13.0),
               ),
             ),
             onTap: () {

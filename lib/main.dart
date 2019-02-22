@@ -64,6 +64,12 @@ class _MyHomePageState extends State<MyHomePage> {
     judgeHasLogin();
   }
 
+  @override
+  void dispose() {
+    //注意这里关闭
+    super.dispose();
+  }
+
   void judgeHasLogin() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     bool isLogin = preferences.getBool("isLogin");

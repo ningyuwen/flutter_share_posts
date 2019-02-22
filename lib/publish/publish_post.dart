@@ -10,7 +10,7 @@ import 'dart:convert';
 import 'package:my_mini_app/been/been.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/services.dart';
-
+import 'package:location/location.dart';
 
 //发布
 Future<bool> publishPost(PublishBeen been) async {
@@ -86,6 +86,7 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
   final FocusNode _positionFocus = FocusNode();
   final FocusNode _contentFocus = FocusNode();
   var currentLocation = <String, double>{};
+
 //  var location = new Location();
 
 //  Position _position;
@@ -105,6 +106,11 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
     super.initState();
     getPosition();
 //    _platform.invokeMethod('getCurrentLocation', { 'message': '你点击了按钮！'}); //调用相应方法，并传入相关参数。
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -317,6 +323,22 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
 //      currentLocation = null;
 //      ToastUtil.showToast("获取位置为空");
 //    }
+
+//    AMapLocation location = await AMapLocationClient.getLocation(true);
+//    ToastUtil.showToast(location.altitude.toString());
+
+
+//    var location = new Location();
+//
+//    location.onLocationChanged().listen((Map<String,double> currentLocation) {
+//      print(currentLocation["latitude"]);
+//      print(currentLocation["longitude"]);
+//      print(currentLocation["accuracy"]);
+//      print(currentLocation["altitude"]);
+//      print(currentLocation["speed"]);
+//      print(currentLocation["speed_accuracy"]); // Will always be 0 on iOS
+//      ToastUtil.showToast(currentLocation["latitude"].toString());
+//    });
   }
 
   Widget scrollView() {

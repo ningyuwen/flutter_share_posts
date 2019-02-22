@@ -4,7 +4,6 @@ import 'package:my_mini_app/been/post_detail_been.dart';
 import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
-import 'package:my_mini_app/util/snack_bar_util.dart';
 import 'package:my_mini_app/been/detail_comment.dart';
 
 class DetailPageStatelessWidget extends StatelessWidget {

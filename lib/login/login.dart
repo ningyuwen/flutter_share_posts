@@ -1,4 +1,4 @@
-import 'package:flutter_qq/flutter_qq.dart';
+//import 'package:flutter_qq/flutter_qq.dart';
 import 'package:flutter/material.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 import 'package:my_mini_app/util/api_util.dart';
@@ -19,7 +19,7 @@ class LoginView extends StatefulWidget {
 
   @override
   _LoginState createState() {
-    FlutterQq.registerQQ('1106940064');
+//    FlutterQq.registerQQ('1106940064');
     return _LoginState();
   }
 }
@@ -45,56 +45,56 @@ class _LoginState extends State<LoginView> {
     }
   }
 
-  Future<Null> _handleisQQInstalled() async {
-    var result = await FlutterQq.isQQInstalled();
-    var output;
-    if (result) {
-      output = "QQ已安装";
-    } else {
-      output = "QQ未安装";
-    }
-    setState(() {
-      hasQQ = output;
-    });
-  }
+//  Future<Null> _handleisQQInstalled() async {
+//    var result = await FlutterQq.isQQInstalled();
+//    var output;
+//    if (result) {
+//      output = "QQ已安装";
+//    } else {
+//      output = "QQ未安装";
+//    }
+//    setState(() {
+//      hasQQ = output;
+//    });
+//  }
 
-  Future<Null> _handleLogin() async {
-    try {
-      var qqResult = await FlutterQq.login();
-      var output;
-      if (qqResult.code == 0) {
-        ToastUtil.showToast("登陆成功");
-        print("json data is: ${qqResult.response["accessToken"].toString()}");
-        //发送openid到服务器
-        var loginMap = await ApiUtil.getInstance().netFetch(
-            "/user/login",
-            RequestMethod.POST,
-            {
-              "access_token": qqResult.response["accessToken"],
-              "openid": qqResult.response["openid"]
-            },
-            null);
-        LoginBeen loginBeen = new LoginBeen.fromJson(loginMap);
-        _saveDataToSharedPref(loginBeen);
-        print('hello this is data: ${loginBeen.username}');
-        //登陆成功，跳转activity
-        Navigator.push(
-          context,
-          new MaterialPageRoute(builder: (context) => new MainPage()),
-        );
-//        Navigator.pop(context);
-      } else if (qqResult.code == 1) {
-        ToastUtil.showToast("登录失败 ${qqResult.message}");
-      } else {
-        ToastUtil.showToast("用户取消");
-      }
-      setState(() {
-        hasQQ = output;
-      });
-    } catch (error) {
-      print("flutter_plugin_qq_example:" + error.toString());
-    }
-  }
+//  Future<Null> _handleLogin() async {
+//    try {
+//      var qqResult = await FlutterQq.login();
+//      var output;
+//      if (qqResult.code == 0) {
+//        ToastUtil.showToast("登陆成功");
+//        print("json data is: ${qqResult.response["accessToken"].toString()}");
+//        //发送openid到服务器
+//        var loginMap = await ApiUtil.getInstance().netFetch(
+//            "/user/login",
+//            RequestMethod.POST,
+//            {
+//              "access_token": qqResult.response["accessToken"],
+//              "openid": qqResult.response["openid"]
+//            },
+//            null);
+//        LoginBeen loginBeen = new LoginBeen.fromJson(loginMap);
+//        _saveDataToSharedPref(loginBeen);
+//        print('hello this is data: ${loginBeen.username}');
+//        //登陆成功，跳转activity
+//        Navigator.push(
+//          context,
+//          new MaterialPageRoute(builder: (context) => new MainPage()),
+//        );
+////        Navigator.pop(context);
+//      } else if (qqResult.code == 1) {
+//        ToastUtil.showToast("登录失败 ${qqResult.message}");
+//      } else {
+//        ToastUtil.showToast("用户取消");
+//      }
+//      setState(() {
+//        hasQQ = output;
+//      });
+//    } catch (error) {
+//      print("flutter_plugin_qq_example:" + error.toString());
+//    }
+//  }
 
   void _saveDataToSharedPref(LoginBeen loginBeen) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

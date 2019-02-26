@@ -1,7 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:my_mini_app/util/api_util.dart';
-import 'package:my_mini_app/util/toast_util.dart';
 import 'package:my_mini_app/home/post_item_view.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/detail_page.dart';
@@ -11,7 +12,7 @@ Future<List<Post>> getData() async {
   List<Post> posts = new List();
   await ApiUtil.getInstance()
       .netFetch("/post/getPostsAround", RequestMethod.GET,
-      {"longitude": 113.347868, "latitude": 23.007985, "pageId": 1}, null)
+          {"longitude": 113.347868, "latitude": 23.007985, "pageId": 1}, null)
       .then((values) {
     for (var value in values) {
       Post post = Post.fromJson(value);
@@ -110,31 +111,30 @@ class FriendState extends State<FragmentFriendAndAround>
   Widget build(BuildContext context) {
     return Container(
         child: RefreshIndicator(
-          child: ListView.builder(
-            itemCount: _posts.length,
-            itemBuilder: (context, index) {
-              return GestureDetector(
-                child: PostInfoItem(
-                  key: new ObjectKey(_posts[index].id),
-                  data: _posts[index],
-                ),
-                onTap: () {
-                  //进入详情页
-                  PostDetailArgument postDetailArgument = new PostDetailArgument(
-                      _posts[index].id, 113.347868, 23.007985);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => new DetailPageStatelessWidget(postDetailArgument)));
-                },
-              );
+      child: ListView.builder(
+        itemCount: _posts.length,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            child: PostInfoItem(
+              key: new ObjectKey(_posts[index].id),
+              data: _posts[index],
+            ),
+            onTap: () {
+              //进入详情页
+              PostDetailArgument postDetailArgument = new PostDetailArgument(
+                  _posts[index].id, 113.347868, 23.007985);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          new DetailPageStatelessWidget(postDetailArgument)));
             },
-            controller: _scrollController,
-
-          ),
-          onRefresh: _refresh,
-        )
-    );
+          );
+        },
+        controller: _scrollController,
+      ),
+      onRefresh: _refresh,
+    ));
   }
 
   //下拉刷新
@@ -144,8 +144,9 @@ class FriendState extends State<FragmentFriendAndAround>
     return;
   }
 
+  //控制页面重绘
   @override
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => false;
 
   void setData() async {
     _posts = await getData();
@@ -167,6 +168,9 @@ class PostInfoItem extends StatefulWidget {
 class PostInfoState extends State<PostInfoItem> {
   @override
   Widget build(BuildContext context) {
-    return PostItemView(key: widget.key, data: widget.data,);
+    return PostItemView(
+      key: widget.key,
+      data: widget.data,
+    );
   }
 }

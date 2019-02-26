@@ -7,7 +7,8 @@ import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
 import 'package:my_mini_app/detail/detail_page.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
-
+import 'package:photo_view/photo_view_gallery.dart';
+import 'package:photo_view/photo_view.dart';
 
 class PostItemView extends StatefulWidget {
   final Post data;
@@ -21,7 +22,6 @@ class PostItemView extends StatefulWidget {
 }
 
 class TimelineTwoPageState extends State<PostItemView> {
-
   Post _post;
 
   @override
@@ -160,39 +160,60 @@ class TimelineTwoPageState extends State<PostItemView> {
                   ]),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16.0, 8.0, 8.0, 8.0),
-                child: Text(
-                  post.content,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.normal,
-                    fontSize: 15.0,
-                  ),
-                  maxLines: 4,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 16.0),
-                child: ClipRRect(
-                    borderRadius: new BorderRadius.circular(8.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => new PhotoViewUtil(
-                                    widget.key, _post.imgUrl)));
-                      },
-                      child: Image.network(
-                        _post.imgUrl,
-                        filterQuality: FilterQuality.high,
-                        fit: BoxFit.cover,
-                        width: MediaQuery.of(context).size.width,
-                        height: 200.0,
-                      ),
-                    )),
-              ),
+              showContent(), //文字
+              Container(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  height: 200.0,
+                  child: ClipRRect(
+                      borderRadius: new BorderRadius.circular(8.0),
+                      child: showPhotos())),
+
+//              Expanded(
+//                  child: PageView.builder(
+////      controller: _pageController,
+////      itemCount: _post.imgUrls.length,
+//                itemCount: 3,
+////      itemBuilder: (context, index) {
+////        return _rendRow(context, index);
+////      },
+//                itemBuilder: (context, position) {
+//                  return Container(
+//                    height: 100.0,
+//                    color: position % 2 == 0 ? Colors.pink : Colors.cyan,
+//                  );
+//                },
+//                scrollDirection: Axis.horizontal,
+//              )),
+
+//              Padding(
+//                padding: const EdgeInsets.only(left: 16.0),
+//                child: showPhotos(),
+//                child: ClipRRect(
+//                  borderRadius: new BorderRadius.circular(8.0),
+//                  child: showPhotos(),
+//                    child: GestureDetector(
+//                      onTap: () {
+//                        Navigator.push(
+//                            context,
+//                            MaterialPageRoute(
+//                                builder: (context) =>
+//                                new PhotoViewUtil(
+//                                    widget.key, _post.imgUrl)));
+//                      },
+//                      child: Image.network(
+////                        _post.imgUrl,
+//                        "https://www.baidu.com/img/bd_logo1.png",
+//                        filterQuality: FilterQuality.high,
+//                        fit: BoxFit.cover,
+//                        width: MediaQuery
+//                            .of(context)
+//                            .size
+//                            .width,
+//                        height: 200.0,
+//                      ),
+//                    )
+//                ),
+//              ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 8.0, 0.0, 8.0),
                 child: Row(
@@ -264,5 +285,61 @@ class TimelineTwoPageState extends State<PostItemView> {
     } else {
       return Icon(Icons.favorite, size: 20.0, color: Colors.grey);
     }
+  }
+
+  Widget showPhotos() {
+    return PageView.builder(
+      itemCount: _post.imgUrls.length,
+//      itemCount: 3,
+      itemBuilder: (context, index) {
+        return _rendRow(context, index);
+      },
+//      itemBuilder: (context, position) {
+//        return Container(
+//          color: position % 2 == 0 ? Colors.pink : Colors.cyan,
+//        );
+//      },
+      scrollDirection: Axis.horizontal,
+    );
+  }
+
+  Widget _rendRow(BuildContext context, int index) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    new PhotoViewUtil(widget.key, _post.imgUrls[index])));
+      },
+      child: Image.network(
+        _post.imgUrls[index],
+//        "https://www.baidu.com/img/bd_logo1.png",
+        filterQuality: FilterQuality.high,
+        fit: BoxFit.cover,
+        width: MediaQuery.of(context).size.width,
+        height: 200.0,
+      ),
+    );
+  }
+
+  Widget showContent() {
+    if ("" == _post.content) {
+      return Container(
+        padding: const EdgeInsets.fromLTRB(16.0, 1.0, 8.0, 8.0),
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16.0, 8.0, 8.0, 8.0),
+      child: Text(
+        _post.content,
+        style: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.normal,
+          fontSize: 15.0,
+        ),
+        maxLines: 4,
+      ),
+    );
   }
 }

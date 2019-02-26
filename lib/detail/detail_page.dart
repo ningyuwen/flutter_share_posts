@@ -119,7 +119,6 @@ class CommentsItem extends ListItem {
 }
 
 class BlankItem extends ListItem {
-
   BlankItem();
 }
 
@@ -145,7 +144,7 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
               List<ListItem>.generate(_postDetail.mCommentList.length + 2, (i) {
             if (i == 0) {
               return HeadViewItem(_postDetail);
-            } else if (i > 0 && i < _postDetail.mCommentList.length + 1){
+            } else if (i > 0 && i < _postDetail.mCommentList.length + 1) {
               return CommentsItem(_postDetail.mCommentList[i - 1]);
             } else {
               return BlankItem();
@@ -214,7 +213,8 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
                       new PhotoViewUtil(widget.key, _postDetail.contentUrl)));
         },
         child: Image.network(
-          _postDetail.contentUrl,
+//          _postDetail.contentUrl,
+          "https://www.baidu.com/s?wd=%E4%BB%8A%E6%97%A5%E6%96%B0%E9%B2%9C%E4%BA%8B&tn=SE_PclogoS_8whnvm25&sa=ire_dl_gh_logo&rsv_dl=igh_logo_pcs",
           filterQuality: FilterQuality.high,
           fit: BoxFit.cover,
           width: MediaQuery.of(context).size.width,

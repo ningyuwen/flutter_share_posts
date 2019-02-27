@@ -24,6 +24,8 @@ class PostItemView extends StatefulWidget {
 
 class TimelineTwoPageState extends State<PostItemView> {
   Post _post;
+  PageController _photosPageController = PageController(); //图片滑动监听
+  var currentPageValue = 0.0; //当前页面编号
 
   @override
   void initState() {
@@ -46,10 +48,6 @@ class TimelineTwoPageState extends State<PostItemView> {
 
   @override
   Widget build(BuildContext context) {
-//    return Scaffold(
-//      backgroundColor: Colors.grey.shade900,
-//      body: bodyData(),
-//    );
     return bodyData();
   }
 
@@ -167,54 +165,12 @@ class TimelineTwoPageState extends State<PostItemView> {
                   height: 200.0,
                   child: ClipRRect(
                       borderRadius: new BorderRadius.circular(8.0),
-                      child: showPhotos())),
-
-//              Expanded(
-//                  child: PageView.builder(
-////      controller: _pageController,
-////      itemCount: _post.imgUrls.length,
-//                itemCount: 3,
-////      itemBuilder: (context, index) {
-////        return _rendRow(context, index);
-////      },
-//                itemBuilder: (context, position) {
-//                  return Container(
-//                    height: 100.0,
-//                    color: position % 2 == 0 ? Colors.pink : Colors.cyan,
-//                  );
-//                },
-//                scrollDirection: Axis.horizontal,
-//              )),
-
-//              Padding(
-//                padding: const EdgeInsets.only(left: 16.0),
-//                child: showPhotos(),
-//                child: ClipRRect(
-//                  borderRadius: new BorderRadius.circular(8.0),
-//                  child: showPhotos(),
-//                    child: GestureDetector(
-//                      onTap: () {
-//                        Navigator.push(
-//                            context,
-//                            MaterialPageRoute(
-//                                builder: (context) =>
-//                                new PhotoViewUtil(
-//                                    widget.key, _post.imgUrl)));
-//                      },
-//                      child: Image.network(
-////                        _post.imgUrl,
-//                        "https://www.baidu.com/img/bd_logo1.png",
-//                        filterQuality: FilterQuality.high,
-//                        fit: BoxFit.cover,
-//                        width: MediaQuery
-//                            .of(context)
-//                            .size
-//                            .width,
-//                        height: 200.0,
-//                      ),
-//                    )
-//                ),
-//              ),
+                      child: Stack(
+                        children: <Widget>[
+                          showPhotos(), //图片
+                          showIndicator(), //指示器
+                        ],
+                      ))),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 8.0, 0.0, 8.0),
                 child: Row(
@@ -289,17 +245,17 @@ class TimelineTwoPageState extends State<PostItemView> {
   }
 
   Widget showPhotos() {
+    _photosPageController.addListener(() {
+      setState(() {
+        currentPageValue = _photosPageController.page;
+      });
+    });
     return PageView.builder(
+      controller: _photosPageController,
       itemCount: _post.imgUrls.length,
-//      itemCount: 3,
       itemBuilder: (context, index) {
         return _rendRow(context, index);
       },
-//      itemBuilder: (context, position) {
-//        return Container(
-//          color: position % 2 == 0 ? Colors.pink : Colors.cyan,
-//        );
-//      },
       scrollDirection: Axis.horizontal,
     );
   }
@@ -313,14 +269,6 @@ class TimelineTwoPageState extends State<PostItemView> {
                 builder: (context) =>
                     new PhotoViewUtil(widget.key, _post.imgUrls[index])));
       },
-//      child: Image.network(
-//        _post.imgUrls[index],
-////        "https://www.baidu.com/img/bd_logo1.png",
-//        filterQuality: FilterQuality.high,
-//        fit: BoxFit.cover,
-//        width: MediaQuery.of(context).size.width,
-//        height: 200.0,
-//      ),
       child: CachedNetworkImage(
         imageUrl: _post.imgUrls[index],
         height: 200.0,
@@ -348,5 +296,31 @@ class TimelineTwoPageState extends State<PostItemView> {
         maxLines: 4,
       ),
     );
+  }
+
+  //图片显示第几张
+  Widget showIndicator() {
+    if (_post.imgUrls.length == 1) {
+      return Container();
+    }
+    return Align(
+        alignment: FractionalOffset.topRight,
+        child: Container(
+          margin: EdgeInsets.fromLTRB(0.0, 10.0, 10.0, 0.0),
+          height: 28.0,
+          width: 40.0,
+          decoration: BoxDecoration(
+            borderRadius: new BorderRadius.circular(10.0),
+            color: Colors.black54,
+          ),
+          child: Center(
+            child: Text(
+              "${currentPageValue.toInt() + 1}/${_post.imgUrls.length}",
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ));
   }
 }

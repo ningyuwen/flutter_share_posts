@@ -146,7 +146,7 @@ class FriendState extends State<FragmentFriendAndAround>
 
   //控制页面重绘
   @override
-  bool get wantKeepAlive => false;
+  bool get wantKeepAlive => true;
 
   void setData() async {
     _posts = await getData();

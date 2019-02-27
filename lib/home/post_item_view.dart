@@ -9,6 +9,7 @@ import 'package:my_mini_app/detail/detail_page.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class PostItemView extends StatefulWidget {
   final Post data;
@@ -312,13 +313,19 @@ class TimelineTwoPageState extends State<PostItemView> {
                 builder: (context) =>
                     new PhotoViewUtil(widget.key, _post.imgUrls[index])));
       },
-      child: Image.network(
-        _post.imgUrls[index],
-//        "https://www.baidu.com/img/bd_logo1.png",
-        filterQuality: FilterQuality.high,
+//      child: Image.network(
+//        _post.imgUrls[index],
+////        "https://www.baidu.com/img/bd_logo1.png",
+//        filterQuality: FilterQuality.high,
+//        fit: BoxFit.cover,
+//        width: MediaQuery.of(context).size.width,
+//        height: 200.0,
+//      ),
+      child: CachedNetworkImage(
+        imageUrl: _post.imgUrls[index],
+        height: 200.0,
         fit: BoxFit.cover,
         width: MediaQuery.of(context).size.width,
-        height: 200.0,
       ),
     );
   }

@@ -176,13 +176,16 @@ class TimelineTwoPageState extends State<PostItemView> {
                 child: Row(
                   children: <Widget>[
                     Image.asset("image/ic_map.png", height: 16.0),
-                    Container(
+                    Flexible(
+                        child: Container(
                       color: Color.fromARGB(255, 239, 240, 241),
                       child: Text(
                         _post.position,
-                        style: TextStyle(fontSize: 11.0),
+//                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 12.0),
                       ),
-                    )
+                    ))
                   ],
                 ),
               ),
@@ -270,11 +273,19 @@ class TimelineTwoPageState extends State<PostItemView> {
                     new PhotoViewUtil(widget.key, _post.imgUrls[index])));
       },
       child: CachedNetworkImage(
-        imageUrl: _post.imgUrls[index],
-        height: 200.0,
-        fit: BoxFit.cover,
-        width: MediaQuery.of(context).size.width,
-      ),
+          imageUrl: _post.imgUrls[index],
+          height: 200.0,
+          fit: BoxFit.cover,
+          width: MediaQuery.of(context).size.width,
+          errorWidget: Container(
+            color: Colors.black45,
+            child: Center(
+              child: Text(
+                "无法查看图片，请稍后重试...",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          )),
     );
   }
 

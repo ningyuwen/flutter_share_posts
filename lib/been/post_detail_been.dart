@@ -1,12 +1,15 @@
+import 'dart:convert';
+
 import 'package:my_mini_app/been/detail_comment.dart';
 
-class PostDetail{
+class PostDetail {
   int id;
   int userId;
   String username;
   String headUrl;
   String content;
-  String contentUrl;
+//  String contentUrl;
+  List<String> imgUrls = new List();
   String location;
   double longitude;
   double latitude;
@@ -27,9 +30,10 @@ class PostDetail{
     this.username = "aduning",
     this.headUrl = "",
     this.content = "",
-    this.contentUrl = "",
+    this.imgUrls,
     this.location = "",
-    this.longitude,this.latitude,
+    this.longitude,
+    this.latitude,
     this.store = "",
     this.imgLabel = "",
     this.releaseTime = "",
@@ -42,53 +46,59 @@ class PostDetail{
     this.mCommentList,
   });
 
-  static PostDetail fromJson(Map<String,dynamic> json){
+  static PostDetail fromJson(Map<String, dynamic> json) {
     List<DetailComment> detailComments = new List();
-    for(var value in json['mCommentList']) {
+    for (var value in json['mCommentList']) {
       detailComments.add(DetailComment.fromJson(value));
     }
+
+    List<String> imageUrls = new List();
+    List list = jsonDecode(json['contentUrl'].toString());
+    for (var img in list) {
+      imageUrls.add(img["url"]);
+    }
     return PostDetail(
-      id: json['id'],
-      userId: json['userId'],
-      username: json['username'],
-      headUrl: json['headUrl'],
-      content: json['content'],
-      contentUrl: json['contentUrl'],
-      location: json['location'],
-      longitude: json['longitude'],
-      latitude: json['latitude'],
-      store: json['store'],
-      imgLabel: json['imgLabel'],
-      releaseTime: json['releaseTime'],
-      cost: json['cost'],
-      votes: json['votes'],
-      comments: json['comments'],
-      district: json['district'],
-      distance: json['distance'],
-      isVote: json['isVote'],
-      mCommentList: detailComments
-    );
+        id: json['id'],
+        userId: json['userId'],
+        username: json['username'],
+        headUrl: json['headUrl'],
+        content: json['content'],
+//      contentUrl: json['contentUrl'],
+        imgUrls: imageUrls,
+        location: json['location'],
+        longitude: json['longitude'],
+        latitude: json['latitude'],
+        store: json['store'],
+        imgLabel: json['imgLabel'],
+        releaseTime: json['releaseTime'],
+        cost: json['cost'],
+        votes: json['votes'],
+        comments: json['comments'],
+        district: json['district'],
+        distance: json['distance'],
+        isVote: json['isVote'],
+        mCommentList: detailComments);
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'userId': userId,
-    'username': username,
-    'headUrl': headUrl,
-    'content': content,
-    'contentUrl': contentUrl,
-    'location': location,
-    'longitude': longitude,
-    'latitude': latitude,
-    'store': store,
-    'imgLabel': imgLabel,
-    'releaseTime': releaseTime,
-    'cost': cost,
-    'votes': votes,
-    'comments': comments,
-    'district': district,
-    'distance': distance,
-    'isVote': isVote,
-    'mCommentList': mCommentList,
-  };
+        'id': id,
+        'userId': userId,
+        'username': username,
+        'headUrl': headUrl,
+        'content': content,
+        'contentUrl': imgUrls,
+        'location': location,
+        'longitude': longitude,
+        'latitude': latitude,
+        'store': store,
+        'imgLabel': imgLabel,
+        'releaseTime': releaseTime,
+        'cost': cost,
+        'votes': votes,
+        'comments': comments,
+        'district': district,
+        'distance': distance,
+        'isVote': isVote,
+        'mCommentList': mCommentList,
+      };
 }

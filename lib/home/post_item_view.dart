@@ -5,11 +5,8 @@ import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
-import 'package:my_mini_app/detail/detail_page.dart';
-import 'package:my_mini_app/been/post_detail_argument.dart';
-import 'package:photo_view/photo_view_gallery.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:mmkv_flutter/mmkv_flutter.dart';
 
 class PostItemView extends StatefulWidget {
   final Post data;

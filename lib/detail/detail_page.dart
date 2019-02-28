@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:mmkv_flutter/mmkv_flutter.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:my_mini_app/been/post_detail_been.dart';
 import 'package:my_mini_app/util/api_util.dart';
@@ -112,6 +116,12 @@ class HeadViewItem extends ListItem {
   HeadViewItem(this._postDetail);
 }
 
+class PhotosViewItem extends ListItem {
+  final String _imgUrl; //多张图片中的其中一张
+
+  PhotosViewItem(this._imgUrl);
+}
+
 class CommentsItem extends ListItem {
   final DetailComment _comment;
 
@@ -124,7 +134,8 @@ class BlankItem extends ListItem {
 
 class DetailPageState extends State<DetailPageStateFulWidget> {
   PostDetail _postDetail;
-  Future<PostDetail> data;
+  Future<PostDetail> data;      //需要对data存储，根据id存储
+  MmkvFlutter mmkv;
 
   @override
   void initState() {
@@ -140,12 +151,21 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           _postDetail = snapshot.data;
-          final items =
-              List<ListItem>.generate(_postDetail.mCommentList.length + 2, (i) {
+          //总items个数是头部加图片加评论加空白item
+          final items = List<ListItem>.generate(
+              _postDetail.mCommentList.length + _postDetail.imgUrls.length + 2,
+              (i) {
             if (i == 0) {
               return HeadViewItem(_postDetail);
-            } else if (i > 0 && i < _postDetail.mCommentList.length + 1) {
-              return CommentsItem(_postDetail.mCommentList[i - 1]);
+            } else if (i > 0 && i <= _postDetail.imgUrls.length) {
+              return PhotosViewItem(_postDetail.imgUrls[i - 1]);
+            } else if (i > _postDetail.imgUrls.length &&
+                i <
+                    _postDetail.imgUrls.length +
+                        _postDetail.mCommentList.length +
+                        1) {
+              return CommentsItem(
+                  _postDetail.mCommentList[i - _postDetail.imgUrls.length - 1]);
             } else {
               return BlankItem();
             }
@@ -164,7 +184,7 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
                           children: <Widget>[
                             showUserInformation(),
                             showContent(),
-                            showPicture(),
+//                            showPicture(),
                             showPosition(),
                           ],
                         ),
@@ -174,6 +194,8 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
                       )
                     ],
                   );
+                } else if (item is PhotosViewItem) {
+                  return showPicture(item);
                 } else if (item is CommentsItem) {
                   return showCommentsItem(item);
                 } else if (item is BlankItem) {
@@ -201,26 +223,35 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
     );
   }
 
-  Widget showPicture() {
-    return Padding(
-      padding: EdgeInsets.all(10.0),
-      child: GestureDetector(
+  //显示图片
+  Widget showPicture(PhotosViewItem item) {
+    return GestureDetector(
         onTap: () {
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      new PhotoViewUtil(widget.key, _postDetail.contentUrl)));
+                      new PhotoViewUtil(widget.key, item._imgUrl)));
         },
-        child: Image.network(
-//          _postDetail.contentUrl,
-          "https://www.baidu.com/s?wd=%E4%BB%8A%E6%97%A5%E6%96%B0%E9%B2%9C%E4%BA%8B&tn=SE_PclogoS_8whnvm25&sa=ire_dl_gh_logo&rsv_dl=igh_logo_pcs",
-          filterQuality: FilterQuality.high,
-          fit: BoxFit.cover,
-          width: MediaQuery.of(context).size.width,
-        ),
-      ),
-    );
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: CachedNetworkImage(
+                imageUrl: item._imgUrl,
+                fit: BoxFit.cover,
+                width: MediaQuery.of(context).size.width,
+                errorWidget: Container(
+                  color: Colors.black45,
+                  child: Center(
+                    child: Text(
+                      "无法查看图片，请稍后重试...",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                )),
+          ),
+        ));
   }
 
   Widget showUserInformation() {
@@ -275,6 +306,18 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
 
   Future<PostDetail> getPostDetailData() async {
     PostDetail postDetail;
+
+    mmkv = await MmkvFlutter.getInstance();   //初始化mmkv
+    // 读取缓存数据
+    String string = await mmkv.getString("/post/getPostDetails+${widget._postDetailArgument.postId}");
+    if ("" != string) {
+      //有缓存数据
+      print("getPostDetailData() has data is: $string");
+      return PostDetail.fromJson(jsonDecode(string));
+    }
+//    _postDetail = PostDetail.fromJson(jsonDecode(string));
+
+
     await ApiUtil.getInstance()
         .netFetch(
             "/post/getPostDetails",
@@ -288,6 +331,7 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
         .then((values) {
       print("getPostDetailData() data is: " + values.toString());
       postDetail = PostDetail.fromJson(values);
+      mmkv.setString("/post/getPostDetails+${widget._postDetailArgument.postId}", jsonEncode(values));
     });
     return postDetail;
   }
@@ -370,7 +414,7 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
 
   Widget showBlankItem() {
     return SizedBox(
-      height: 30.0,
+      height: 80.0,
     );
   }
 }

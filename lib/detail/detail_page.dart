@@ -134,7 +134,7 @@ class BlankItem extends ListItem {
 
 class DetailPageState extends State<DetailPageStateFulWidget> {
   PostDetail _postDetail;
-  Future<PostDetail> data;      //需要对data存储，根据id存储
+  Future<PostDetail> data; //需要对data存储，根据id存储
   MmkvFlutter mmkv;
 
   @override
@@ -243,6 +243,7 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
                 width: MediaQuery.of(context).size.width,
                 errorWidget: Container(
                   color: Colors.black45,
+                  height: 200.0,
                   child: Center(
                     child: Text(
                       "无法查看图片，请稍后重试...",
@@ -307,16 +308,15 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
   Future<PostDetail> getPostDetailData() async {
     PostDetail postDetail;
 
-    mmkv = await MmkvFlutter.getInstance();   //初始化mmkv
+    mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
     // 读取缓存数据
-    String string = await mmkv.getString("/post/getPostDetails+${widget._postDetailArgument.postId}");
+    String string = await mmkv
+        .getString("/post/getPostDetails+${widget._postDetailArgument.postId}");
     if ("" != string) {
       //有缓存数据
       print("getPostDetailData() has data is: $string");
       return PostDetail.fromJson(jsonDecode(string));
     }
-//    _postDetail = PostDetail.fromJson(jsonDecode(string));
-
 
     await ApiUtil.getInstance()
         .netFetch(
@@ -331,7 +331,9 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
         .then((values) {
       print("getPostDetailData() data is: " + values.toString());
       postDetail = PostDetail.fromJson(values);
-      mmkv.setString("/post/getPostDetails+${widget._postDetailArgument.postId}", jsonEncode(values));
+      mmkv.setString(
+          "/post/getPostDetails+${widget._postDetailArgument.postId}",
+          jsonEncode(values));
     });
     return postDetail;
   }
@@ -353,18 +355,15 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Image.asset("image/ic_map.png", height: 24.0),
-          GestureDetector(
-            child: Container(
-              color: Color.fromARGB(255, 239, 240, 241),
-              child: Text(
-                _postDetail.location,
-                style: TextStyle(fontSize: 13.0),
-              ),
+          Flexible(
+              child: Container(
+            color: Color.fromARGB(255, 239, 240, 241),
+            child: Text(
+              _postDetail.location,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 12.0),
             ),
-            onTap: () {
-              SnackBarUtil.show(context, "点击location");
-            },
-          )
+          ))
         ],
       ),
     );

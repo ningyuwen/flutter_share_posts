@@ -178,7 +178,6 @@ class TimelineTwoPageState extends State<PostItemView> {
                       color: Color.fromARGB(255, 239, 240, 241),
                       child: Text(
                         _post.position,
-//                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(fontSize: 12.0),
                       ),

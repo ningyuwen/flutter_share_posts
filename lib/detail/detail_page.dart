@@ -172,6 +172,7 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
           });
           return ListView.builder(
               itemCount: items.length,
+              physics: const AlwaysScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 final item = items[index];
                 if (item is HeadViewItem) {
@@ -238,9 +239,10 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
             child: CachedNetworkImage(
+                placeholder: CircularProgressIndicator(),
                 imageUrl: item._imgUrl,
                 fit: BoxFit.cover,
-                width: MediaQuery.of(context).size.width,
+                width: MediaQuery.of(context).size.width, //屏幕宽度
                 errorWidget: Container(
                   color: Colors.black45,
                   height: 200.0,

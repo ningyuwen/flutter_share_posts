@@ -16,7 +16,8 @@ import 'package:location/location.dart';
 Future<bool> publishPost(PublishBeen been) async {
   Dio dio = new Dio();
 //  dio.options.baseUrl = "http://192.168.0.102:8080/";
-  // dio.options.baseUrl = "http://172.26.52.30:8080/";
+//   dio.options.baseUrl = "http://192.168.0.104:8080/adu/";
+//  dio.options.baseUrl = "http://47.112.12.104:8080/wam/";
   dio.options.baseUrl = "http://172.26.52.30:8080/";
   dio.options.method = "post";
   dio.options.connectTimeout = 60000;

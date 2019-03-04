@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 //void main() => runApp(MyApp());
 void main() {
 //  debugPaintSizeEnabled = true;
+//  debugDumpRenderTree();
   runApp(MyApp());
 }
 

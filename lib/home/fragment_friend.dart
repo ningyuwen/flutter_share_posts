@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:my_mini_app/been/post_around_been.dart';
@@ -6,6 +7,9 @@ import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/home/post_item_view.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/detail_page.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:my_mini_app/util/snack_bar_util.dart';
+import 'package:my_mini_app/util/toast_util.dart';
 
 //从后台获取数据
 Future<List<Post>> getData() async {
@@ -91,7 +95,10 @@ class FragmentFriendAndAround extends StatefulWidget {
 class FriendState extends State<FragmentFriendAndAround>
     with AutomaticKeepAliveClientMixin {
   ScrollController _scrollController = new ScrollController();
-  List<Post> _posts;
+  List<Post> _posts; //保存首页列表数据，下拉刷新，推荐点赞、评论最多，或者热门商家里的点评数据
+//  LinkedList _linkedList = new LinkedList as LinkedList<LinkedListEntry>;
+  GlobalKey<EasyRefreshState> _easyRefreshKey =
+      new GlobalKey<EasyRefreshState>();
 
   @override
   void initState() {
@@ -109,38 +116,60 @@ class FriendState extends State<FragmentFriendAndAround>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: RefreshIndicator(
-      child: ListView.builder(
-        itemCount: _posts.length,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            child: PostInfoItem(
-              key: new ObjectKey(_posts[index].id),
-              data: _posts[index],
-            ),
-            onTap: () {
-              //进入详情页
-              PostDetailArgument postDetailArgument = new PostDetailArgument(
-                  _posts[index].id, 113.347868, 23.007985);
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          new DetailPageStatelessWidget(postDetailArgument)));
-            },
-          );
+    return EasyRefresh(
+        key: _easyRefreshKey,
+        child: ListView.builder(
+          itemCount: _posts.length,
+          physics: const AlwaysScrollableScrollPhysics(),
+          itemBuilder: (context, index) {
+            return GestureDetector(
+              child: PostInfoItem(
+                key: new ObjectKey(_posts[index].id),
+                data: _posts[index],
+              ),
+              onTap: () {
+                //进入详情页
+                PostDetailArgument postDetailArgument = new PostDetailArgument(
+                    _posts[index].id, 113.347868, 23.007985);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            new DetailPageStatelessWidget(postDetailArgument)));
+              },
+            );
+          },
+          controller: _scrollController,
+        ),
+        onRefresh: () async {
+//          SnackBarUtil.show(context, "下啦刷新");
+          _refresh();
         },
-        controller: _scrollController,
-      ),
-      onRefresh: _refresh,
-    ));
+        loadMore: () async {
+          _loadMore();
+          setState(() {});
+//          SnackBarUtil.show(context, "上拉加载");
+        });
   }
 
-  //下拉刷新
+  //下拉刷新，推荐点赞、评论最多，或者热门商家里的点评数据
   Future<Null> _refresh() async {
-    _posts.clear();
-    setData();
+//    _posts.clear();
+//    _posts.setAll(0, _posts[0]);
+    _posts.insert(0, _posts[1]);
+//    setData();
+    setState(() {});
+    return;
+  }
+
+  //上拉加载更多，按照时间顺序排序的点评数据
+  Future<Null> _loadMore() async {
+    _posts.add(_posts[4]);
+    _posts.add(_posts[5]);
+    _posts.add(_posts[6]);
+    _posts.add(_posts[7]);
+    _posts.add(_posts[8]);
+    _posts.add(_posts[9]);
     return;
   }
 

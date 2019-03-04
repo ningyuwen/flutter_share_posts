@@ -5,6 +5,7 @@ import 'package:my_mini_app/been/been.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 //import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
 
 enum RequestMethod { GET, POST, PUT }
 
@@ -14,8 +15,8 @@ class ApiUtil {
 
   ApiUtil() {
     _dio = new Dio();
-    // _dio.options.baseUrl = "http://172.26.52.30:8080";
     _dio.options.baseUrl = "http://172.26.52.30:8080";
+//    _dio.options.baseUrl = "http://47.112.12.104:8080/wam";
 //    _dio.options.baseUrl = "http://192.168.0.102:8080";
     _dio.options.method = "get";
     _dio.options.connectTimeout = 60000;

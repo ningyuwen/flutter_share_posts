@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:mmkv_flutter/mmkv_flutter.dart';
 
 class PostItemView extends StatefulWidget {
   final Post data;
@@ -68,6 +68,13 @@ class TimelineTwoPageState extends State<PostItemView> {
                 },
               ),
               rightColumn(_post),
+//              Container(
+//                height: 350.0,
+//                width: MediaQuery.of(context).size.width,
+//                child: Center(
+//                  child: Text("ningyuwen"),
+//                ),
+//              )
             ],
           ),
         ),
@@ -157,17 +164,41 @@ class TimelineTwoPageState extends State<PostItemView> {
                 ),
               ),
               showContent(), //文字
+//              CachedNetworkImage(
+//                  imageUrl: _post.imgUrls[0],
+//                  fit: BoxFit.cover,
+//                  height: 200.0,
+//                  width: MediaQuery.of(context).size.width,
+//                  placeholder: Center(
+//                    child: CircularProgressIndicator(),
+//                  ),
+//                  errorWidget: Container(
+//                    color: Colors.black45,
+//                    child: Center(
+//                      child: Text(
+//                        "无法查看图片，请稍后重试...",
+//                        style: TextStyle(color: Colors.white),
+//                      ),
+//                    ),
+//                  )),
+//              Container(
+//                height: 200.0,
+//                child: Center(
+//                  child: Text("ningyuwen"),
+//                ),
+//              ),
               Container(
                   padding: const EdgeInsets.only(left: 16.0),
                   height: 200.0,
                   child: ClipRRect(
-                      borderRadius: new BorderRadius.circular(8.0),
+                    borderRadius: new BorderRadius.circular(8.0),
                       child: Stack(
                         children: <Widget>[
                           showPhotos(), //图片
                           showIndicator(), //指示器
                         ],
-                      ))),
+                      )
+                  )),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 8.0, 0.0, 8.0),
                 child: Row(
@@ -254,25 +285,40 @@ class TimelineTwoPageState extends State<PostItemView> {
       itemCount: _post.imgUrls.length,
       itemBuilder: (context, index) {
         return _rendRow(context, index);
+//        return Container(
+//          height: 200.0,
+//        );
       },
       scrollDirection: Axis.horizontal,
     );
   }
 
+  static const MethodChannel _channel =
+      const MethodChannel('com.mrper.framework.plugins/toast');
+
   Widget _rendRow(BuildContext context, int index) {
     return GestureDetector(
       onTap: () {
+//        showToast();
+
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) =>
                     new PhotoViewUtil(widget.key, _post.imgUrls[index])));
       },
+//      child: Container(
+//        height: 200.0,
+//      ),
+
       child: CachedNetworkImage(
           imageUrl: _post.imgUrls[index],
-          height: 200.0,
           fit: BoxFit.cover,
-          width: MediaQuery.of(context).size.width,
+          width: MediaQuery.of(context).size.width, //屏幕宽度
+          height: 200.0,
+          placeholder: Center(
+            child: CircularProgressIndicator(),
+          ),
           errorWidget: Container(
             color: Colors.black45,
             child: Center(
@@ -329,5 +375,9 @@ class TimelineTwoPageState extends State<PostItemView> {
             ),
           ),
         ));
+  }
+
+  void showToast() {
+    _channel.invokeMethod('showToast', {'message': '你点击了按钮！', 'duration': 6});
   }
 }

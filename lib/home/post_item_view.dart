@@ -7,6 +7,7 @@ import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:share/share.dart';
 
 class PostItemView extends StatefulWidget {
   final Post data;
@@ -127,12 +128,24 @@ class TimelineTwoPageState extends State<PostItemView> {
                   padding: const EdgeInsets.all(0.0),
                   icon: Icon(Icons.share, size: 20.0, color: Colors.grey),
                   onPressed: () {
-                    SnackBarUtil.show(context, "分享");
+//                    SnackBarUtil.show(context, "分享");
+                    Share.share('${_post.content}；\n下面是拍的几张照片：'
+                        '${getImgUrlsString()}店铺地址是：${_post.position}\n您也'
+                        '可以下载Q晒单查看详细信息哦～');
                   },
                 )),
           ],
         ),
       );
+
+  String getImgUrlsString() {
+    StringBuffer stringBuffer = new StringBuffer();
+    for (String str in _post.imgUrls) {
+      stringBuffer.write(str);
+      stringBuffer.write("，\n");
+    }
+    return stringBuffer.toString();
+  }
 
   Widget rightColumn(Post post) => Expanded(
         child: Padding(

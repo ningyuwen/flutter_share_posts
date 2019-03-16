@@ -1,22 +1,22 @@
 import 'dart:async';
-import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:my_mini_app/been/post_around_been.dart';
-import 'package:my_mini_app/util/api_util.dart';
-import 'package:my_mini_app/home/post_item_view.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/detail_page.dart';
-import 'package:flutter_easyrefresh/easy_refresh.dart';
-import 'package:my_mini_app/util/snack_bar_util.dart';
-import 'package:my_mini_app/util/toast_util.dart';
+import 'package:my_mini_app/home/post_item_view.dart';
+import 'package:my_mini_app/util/api_util.dart';
 
 //从后台获取数据
-Future<List<Post>> getData() async {
+Future<List<Post>> getData(int pageId) async {
   List<Post> posts = new List();
   await ApiUtil.getInstance()
-      .netFetch("/post/getPostsAround", RequestMethod.GET,
-          {"longitude": 113.347868, "latitude": 23.007985, "pageId": 1}, null)
+      .netFetch(
+          "/post/getPostsAround",
+          RequestMethod.GET,
+          {"longitude": 113.347868, "latitude": 23.007985, "pageId": pageId},
+          null)
       .then((values) {
     for (var value in values) {
       Post post = Post.fromJson(value);
@@ -142,34 +142,24 @@ class FriendState extends State<FragmentFriendAndAround>
           controller: _scrollController,
         ),
         onRefresh: () async {
-//          SnackBarUtil.show(context, "下啦刷新");
           _refresh();
+          setState(() {});
         },
         loadMore: () async {
           _loadMore();
           setState(() {});
-//          SnackBarUtil.show(context, "上拉加载");
         });
   }
 
   //下拉刷新，推荐点赞、评论最多，或者热门商家里的点评数据
   Future<Null> _refresh() async {
-//    _posts.clear();
-//    _posts.setAll(0, _posts[0]);
-    _posts.insert(0, _posts[1]);
-//    setData();
-    setState(() {});
+    _posts.insertAll(0, await getData(2));
     return;
   }
 
   //上拉加载更多，按照时间顺序排序的点评数据
   Future<Null> _loadMore() async {
-    _posts.add(_posts[4]);
-    _posts.add(_posts[5]);
-    _posts.add(_posts[6]);
-    _posts.add(_posts[7]);
-    _posts.add(_posts[8]);
-    _posts.add(_posts[9]);
+    _posts.addAll(await getData(2));
     return;
   }
 
@@ -178,7 +168,7 @@ class FriendState extends State<FragmentFriendAndAround>
   bool get wantKeepAlive => true;
 
   void setData() async {
-    _posts = await getData();
+    _posts = await getData(1);
     setState(() {});
   }
 }

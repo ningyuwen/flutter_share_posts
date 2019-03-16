@@ -269,11 +269,14 @@ class TimelineTwoPageState extends State<PostItemView> {
       print("postVoteData() data is: " + values);
       if ("" == values) {
         //点赞成功
-        _post.isVote = true;
-        _post.votes++;
-        setState(() {});
+//        _post.votes++;
+//        _post.isVote = true;
+        setState(() {
+          _post.votes++;
+          _post.isVote = true;
+        });
 
-        SnackBarUtil.show(context, "点赞成功");
+//        SnackBarUtil.show(context, "点赞成功");
       }
     });
   }
@@ -330,7 +333,19 @@ class TimelineTwoPageState extends State<PostItemView> {
           width: MediaQuery.of(context).size.width, //屏幕宽度
           height: 200.0,
           placeholder: Center(
-            child: CircularProgressIndicator(),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                CircularProgressIndicator(
+                  backgroundColor: Colors.amber,
+                  strokeWidth: 2.0,
+                ),
+                SizedBox(
+                  height: 15.0,
+                ),
+                Text("图片加载中...")
+              ],
+            )
           ),
           errorWidget: Container(
             color: Colors.black45,

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter_easyrefresh/phoenix_header.dart';
 import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/detail_page.dart';
@@ -100,6 +101,12 @@ class FriendState extends State<FragmentFriendAndAround>
   GlobalKey<EasyRefreshState> _easyRefreshKey =
       new GlobalKey<EasyRefreshState>();
 
+  GlobalKey<RefreshHeaderState> _headerKey =
+      new GlobalKey<RefreshHeaderState>();
+
+  GlobalKey<RefreshFooterState> _footerKey =
+      new GlobalKey<RefreshFooterState>();
+
   @override
   void initState() {
     super.initState();
@@ -117,6 +124,18 @@ class FriendState extends State<FragmentFriendAndAround>
   @override
   Widget build(BuildContext context) {
     return EasyRefresh(
+        refreshHeader: PhoenixHeader(
+          key: _headerKey,
+        ),
+        firstRefresh: true,
+        refreshFooter: ClassicsFooter(
+            key: _footerKey,
+            loadHeight: 50.0,
+            loadText: "加载中",
+            loadReadyText: "加载中",
+            noMoreText: "已推荐10条点评信息",
+            bgColor: Colors.white,
+            textColor: Colors.black),
         key: _easyRefreshKey,
         child: ListView.builder(
           itemCount: _posts.length,
@@ -141,25 +160,26 @@ class FriendState extends State<FragmentFriendAndAround>
           },
           controller: _scrollController,
         ),
+        autoLoad: true,
         onRefresh: () async {
           _refresh();
-          setState(() {});
         },
         loadMore: () async {
           _loadMore();
-          setState(() {});
         });
   }
 
   //下拉刷新，推荐点赞、评论最多，或者热门商家里的点评数据
   Future<Null> _refresh() async {
     _posts.insertAll(0, await getData(2));
+    setState(() {});
     return;
   }
 
   //上拉加载更多，按照时间顺序排序的点评数据
   Future<Null> _loadMore() async {
     _posts.addAll(await getData(2));
+    setState(() {});
     return;
   }
 

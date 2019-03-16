@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mmkv_flutter/mmkv_flutter.dart';
-import 'package:my_mini_app/util/photo_view_util.dart';
+import 'package:my_mini_app/been/detail_comment.dart';
+import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/been/post_detail_been.dart';
 import 'package:my_mini_app/util/api_util.dart';
+import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
-import 'package:my_mini_app/been/post_detail_argument.dart';
-import 'package:my_mini_app/been/detail_comment.dart';
 
 class DetailPageStatelessWidget extends StatelessWidget {
   final PostDetailArgument _postDetailArgument;
@@ -208,8 +208,19 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
         }
         // By default, show a loading spinner
         return Center(
-          child: CircularProgressIndicator(),
-        );
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            CircularProgressIndicator(
+              backgroundColor: Colors.amber,
+              strokeWidth: 2.0,
+            ),
+            SizedBox(
+              height: 15.0,
+            ),
+            Text("数据加载中...")
+          ],
+        ));
       },
     );
   }
@@ -239,10 +250,28 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
             child: CachedNetworkImage(
-                placeholder: CircularProgressIndicator(),
+                placeholder: SizedBox(
+                  height: 220.0,
+                  child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          CircularProgressIndicator(
+                            backgroundColor: Colors.amber,
+                            strokeWidth: 2.0,
+                          ),
+                          SizedBox(
+                            height: 15.0,
+                          ),
+                          Text("图片加载中...")
+                        ],
+                      )),
+                ),
                 imageUrl: item._imgUrl,
                 fit: BoxFit.cover,
-                width: MediaQuery.of(context).size.width, //屏幕宽度
+                width: MediaQuery.of(context).size.width,
+//                height: 300.0,
+                //屏幕宽度
                 errorWidget: Container(
                   color: Colors.black45,
                   height: 200.0,

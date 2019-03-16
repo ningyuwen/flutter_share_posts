@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:my_mini_app/publish/publish_post.dart';
+
 import 'fragment_friend.dart';
 import 'fragment_mine.dart';
-import 'package:my_mini_app/publish/publish_post.dart';
 
 class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: choices.length,
-        initialIndex: 1,
-        child: MainPageView()
-    );
+        length: choices.length, initialIndex: 0, child: MainPageView());
   }
 }
 
@@ -26,7 +24,7 @@ class Choice {
 
   final String title;
   final IconData icon;
-  final int type;       //控制显示类型，附近的人、好友、我的
+  final int type; //控制显示类型，附近的人、好友、我的
 }
 
 const List<Choice> choices = const <Choice>[
@@ -36,7 +34,6 @@ const List<Choice> choices = const <Choice>[
 ];
 
 class MainTabBarItemView extends StatelessWidget {
-
   const MainTabBarItemView({Key key, this.choice}) : super(key: key);
   final Choice choice;
 
@@ -59,7 +56,6 @@ class MainTabBarItemView extends StatelessWidget {
 }
 
 class _MainPageState extends State<MainPageView> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,9 +83,9 @@ class _MainPageState extends State<MainPageView> {
             onPressed: () {
               //跳转发布页面
               Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => new PublishPostView())
-              );
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => new PublishPostView()));
             },
           )
         ],

@@ -15,9 +15,9 @@ class ApiUtil {
 
   ApiUtil() {
     _dio = new Dio();
-//    _dio.options.baseUrl = "http://172.26.52.30:8080";
+    _dio.options.baseUrl = "http://172.26.52.30:8080";
 //    _dio.options.baseUrl = "http://47.112.12.104:8080/wam";
-    _dio.options.baseUrl = "http://192.168.0.103:8080";
+//    _dio.options.baseUrl = "http://192.168.0.103:8080";
     _dio.options.method = "get";
     _dio.options.connectTimeout = 60000;
     //此行代码非常重要，设置传输文本格式
@@ -57,16 +57,17 @@ class ApiUtil {
           return been.data;
         } else if (been.code == -1) {
           //登陆失效，重新登录
-          SharedPreferences preferences = await SharedPreferences.getInstance();
-          await preferences.setBool("isLogin", false);
+//          SharedPreferences preferences = await SharedPreferences.getInstance();
+//          await preferences.setBool("isLogin", false);
         }
       } else {
         ToastUtil.showToast(response.statusCode.toString());
       }
     } catch (error) {
       print(error);
+      return error;
     }
-    return "sad";
+    return "error";
   }
 
 }

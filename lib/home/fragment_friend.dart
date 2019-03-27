@@ -5,7 +5,7 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_easyrefresh/phoenix_header.dart';
 import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
-import 'package:my_mini_app/detail/detail_page.dart';
+import 'package:my_mini_app/detail/DetailPage.dart';
 import 'package:my_mini_app/home/post_item_view.dart';
 import 'package:my_mini_app/util/api_util.dart';
 
@@ -123,6 +123,7 @@ class FriendState extends State<FragmentFriendAndAround>
 
   @override
   Widget build(BuildContext context) {
+//    print("fragment show build");
     return EasyRefresh(
         refreshHeader: PhoenixHeader(
           key: _headerKey,
@@ -154,7 +155,7 @@ class FriendState extends State<FragmentFriendAndAround>
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            new DetailPageStatelessWidget(postDetailArgument)));
+                        new DetailPageLessWidget(postDetailArgument)));
               },
             );
           },

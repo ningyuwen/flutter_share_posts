@@ -1,3 +1,4 @@
+import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'login/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -5,10 +6,23 @@ import 'package:my_mini_app/home/main_page.dart';
 import 'package:flutter/rendering.dart';
 
 
+class SimpleBlocDelegate extends BlocDelegate {
+  @override
+  void onTransition(Transition transition) {
+    print(transition);
+  }
+
+  @override
+  void onError(Object error, StackTrace stacktrace) {
+    print(error);
+  }
+}
+
 //void main() => runApp(MyApp());
 void main() {
 //  debugPaintSizeEnabled = true;
 //  debugDumpRenderTree();
+  BlocSupervisor().delegate = SimpleBlocDelegate();
   runApp(MyApp());
 }
 

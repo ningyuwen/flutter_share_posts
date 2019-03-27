@@ -2,16 +2,19 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mmkv_flutter/mmkv_flutter.dart';
 import 'package:my_mini_app/been/detail_comment.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/been/post_detail_been.dart';
+import 'package:my_mini_app/provider/detail_page_provider.dart';
 import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
 
 class DetailPageStatelessWidget extends StatelessWidget {
   final PostDetailArgument _postDetailArgument;
+  DetailPageProvider _detailPageProvider;
 
   DetailPageStatelessWidget(this._postDetailArgument);
 
@@ -27,15 +30,16 @@ class DetailPageStatelessWidget extends StatelessWidget {
       bottomSheet: BottomSheet(
           onClosing: () {},
           builder: (BuildContext context) {
-            return SendCommentStatefulWidget();
+            return SendCommentStatefulWidget(_postDetailArgument.postId);
           }),
-//      bottomNavigationBar: BottomNavigationBar(
-//          items: [BottomNavigationBarItem(icon: Icon(Icons.more_vert))]),
     );
   }
 }
 
 class SendCommentStatefulWidget extends StatefulWidget {
+  final int postId;
+  SendCommentStatefulWidget(this.postId);
+
   @override
   State<StatefulWidget> createState() {
     return SendCommentState();
@@ -49,9 +53,13 @@ class SendCommentState extends State<SendCommentStatefulWidget> {
   void initState() {
     super.initState();
     _sendMsgTextField.addListener(() {
-      if (_sendMsgTextField.text != "") {}
+      print(_sendMsgTextField.text);
+      setState(() {});
     });
   }
+
+  static final GlobalKey<FormFieldState<String>> _orderFormKey =
+      GlobalKey<FormFieldState<String>>();
 
   @override
   Widget build(BuildContext context) {
@@ -70,12 +78,18 @@ class SendCommentState extends State<SendCommentStatefulWidget> {
                 controller: _sendMsgTextField,
                 maxLines: 1,
                 keyboardType: TextInputType.text,
+                key: _orderFormKey,
                 decoration: const InputDecoration(
                   hintText: '发布回复点评',
                 ),
               ),
             ),
             GestureDetector(
+              onTap: () {
+                if (_sendMsgTextField.toString() != "") {
+                  postComment();
+                }
+              },
               child: Icon(
                 Icons.send,
                 color: getSendBtnColor(),
@@ -94,6 +108,15 @@ class SendCommentState extends State<SendCommentStatefulWidget> {
     } else {
       return Colors.blue;
     }
+  }
+
+  void postComment() async {
+    await ApiUtil.getInstance()
+        .netFetch("/comment/comment", RequestMethod.POST,
+            {"postId": widget.postId, "content": _sendMsgTextField.text.toString()}, null)
+        .then((values) {
+      print("postComment() data is: " + values);
+    });
   }
 }
 
@@ -254,18 +277,18 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
                   height: 220.0,
                   child: Center(
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          CircularProgressIndicator(
-                            backgroundColor: Colors.amber,
-                            strokeWidth: 2.0,
-                          ),
-                          SizedBox(
-                            height: 15.0,
-                          ),
-                          Text("图片加载中...")
-                        ],
-                      )),
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      CircularProgressIndicator(
+                        backgroundColor: Colors.amber,
+                        strokeWidth: 2.0,
+                      ),
+                      SizedBox(
+                        height: 15.0,
+                      ),
+                      Text("图片加载中...")
+                    ],
+                  )),
                 ),
                 imageUrl: item._imgUrl,
                 fit: BoxFit.cover,
@@ -336,37 +359,55 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
     );
   }
 
+//  Future<PostDetail> getPostDetailFromCache
+
   Future<PostDetail> getPostDetailData() async {
-    PostDetail postDetail;
+//    PostDetail postDetail;
+//
+//    mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
+//    // 读取缓存数据
+//    String string = await mmkv
+//        .getString("/post/getPostDetails+${widget._postDetailArgument.postId}");
+//    if ("" != string) {
+//      //有缓存数据
+//      print("getPostDetailData() has data is: $string");
+//      return PostDetail.fromJson(jsonDecode(string));
+//    }
 
-    mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
-    // 读取缓存数据
-    String string = await mmkv
-        .getString("/post/getPostDetails+${widget._postDetailArgument.postId}");
-    if ("" != string) {
-      //有缓存数据
-      print("getPostDetailData() has data is: $string");
-      return PostDetail.fromJson(jsonDecode(string));
-    }
+//    CompositeSubscription
 
-    await ApiUtil.getInstance()
+//    await ApiUtil.getInstance()
+//        .netFetch(
+//            "/post/getPostDetails",
+//            RequestMethod.GET,
+//            {
+//              "id": widget._postDetailArgument.postId,
+//              "longitude": widget._postDetailArgument.longitude,
+//              "latitude": widget._postDetailArgument.latitude
+//            },
+//            null)
+//        .then((values) {
+//      print("getPostDetailData() data is: " + values.toString());
+//      postDetail = PostDetail.fromJson(values);
+//      mmkv.setString(
+//          "/post/getPostDetails+${widget._postDetailArgument.postId}",
+//          jsonEncode(values));
+//    });
+
+    dynamic value = await ApiUtil.getInstance()
         .netFetch(
-            "/post/getPostDetails",
-            RequestMethod.GET,
-            {
-              "id": widget._postDetailArgument.postId,
-              "longitude": widget._postDetailArgument.longitude,
-              "latitude": widget._postDetailArgument.latitude
-            },
-            null)
-        .then((values) {
-      print("getPostDetailData() data is: " + values.toString());
-      postDetail = PostDetail.fromJson(values);
-      mmkv.setString(
-          "/post/getPostDetails+${widget._postDetailArgument.postId}",
-          jsonEncode(values));
-    });
-    return postDetail;
+        "/post/getPostDetails",
+        RequestMethod.GET,
+        {
+          "id": widget._postDetailArgument.postId,
+          "longitude": widget._postDetailArgument.longitude,
+          "latitude": widget._postDetailArgument.latitude
+        },
+        null);
+    PostDetail postDetail1 = PostDetail.fromJson(value);
+    print("postDetail is: $postDetail1");
+
+    return postDetail1;
   }
 
   Widget showComments(BuildContext context) {

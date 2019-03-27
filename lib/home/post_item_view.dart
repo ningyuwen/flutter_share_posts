@@ -1,12 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:my_mini_app/util/toast_util.dart';
 import 'package:my_mini_app/been/post_around_been.dart';
-import 'package:my_mini_app/util/photo_view_util.dart';
+import 'package:my_mini_app/been/post_detail_argument.dart';
+import 'package:my_mini_app/detail/DetailPage.dart';
+import 'package:my_mini_app/detail/detail_page.dart';
 import 'package:my_mini_app/util/api_util.dart';
+import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share/share.dart';
 
 class PostItemView extends StatefulWidget {
@@ -98,7 +100,13 @@ class TimelineTwoPageState extends State<PostItemView> {
                       padding: const EdgeInsets.all(0.0),
                       icon: Icon(Icons.comment, size: 20.0, color: Colors.grey),
                       onPressed: () {
-//                        ToastUtil.showToast("评论");
+                        PostDetailArgument postDetailArgument = new PostDetailArgument(
+                            post.id, 113.347868, 23.007985);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                new DetailPageWidget(postDetailArgument)));
                       },
                     )),
                 Text(_post.comments.toString()),
@@ -204,14 +212,13 @@ class TimelineTwoPageState extends State<PostItemView> {
                   padding: const EdgeInsets.only(left: 16.0),
                   height: 200.0,
                   child: ClipRRect(
-                    borderRadius: new BorderRadius.circular(8.0),
+                      borderRadius: new BorderRadius.circular(8.0),
                       child: Stack(
                         children: <Widget>[
                           showPhotos(), //图片
                           showIndicator(), //指示器
                         ],
-                      )
-                  )),
+                      ))),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 8.0, 0.0, 8.0),
                 child: Row(
@@ -253,9 +260,10 @@ class TimelineTwoPageState extends State<PostItemView> {
       print("postCancelVoteData() data is: " + values);
       if ("" == values) {
         //取消点赞成功
-        _post.isVote = false;
-        _post.votes--;
-        setState(() {});
+        setState(() {
+          _post.isVote = false;
+          _post.votes--;
+        });
 
         SnackBarUtil.show(context, "取消点赞成功");
       }
@@ -269,14 +277,12 @@ class TimelineTwoPageState extends State<PostItemView> {
       print("postVoteData() data is: " + values);
       if ("" == values) {
         //点赞成功
-//        _post.votes++;
-//        _post.isVote = true;
         setState(() {
           _post.votes++;
           _post.isVote = true;
         });
 
-//        SnackBarUtil.show(context, "点赞成功");
+        SnackBarUtil.show(context, "点赞成功");
       }
     });
   }
@@ -330,23 +336,23 @@ class TimelineTwoPageState extends State<PostItemView> {
       child: CachedNetworkImage(
           imageUrl: _post.imgUrls[index],
           fit: BoxFit.cover,
-          width: MediaQuery.of(context).size.width, //屏幕宽度
+          width: MediaQuery.of(context).size.width,
+          //屏幕宽度
           height: 200.0,
           placeholder: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                CircularProgressIndicator(
-                  backgroundColor: Colors.amber,
-                  strokeWidth: 2.0,
-                ),
-                SizedBox(
-                  height: 15.0,
-                ),
-                Text("图片加载中...")
-              ],
-            )
-          ),
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              CircularProgressIndicator(
+                backgroundColor: Colors.amber,
+                strokeWidth: 2.0,
+              ),
+              SizedBox(
+                height: 15.0,
+              ),
+              Text("图片加载中...")
+            ],
+          )),
           errorWidget: Container(
             color: Colors.black45,
             child: Center(

@@ -14,12 +14,16 @@ import 'package:my_mini_app/util/snack_bar_util.dart';
 
 class DetailPageStatelessWidget extends StatelessWidget {
   final PostDetailArgument _postDetailArgument;
-  DetailPageProvider _detailPageProvider;
 
   DetailPageStatelessWidget(this._postDetailArgument);
+  bool isAdded = false;
 
   @override
   Widget build(BuildContext context) {
+    print("DetailPageStatelessWidget build isAdded: $isAdded");
+    if (!isAdded) {
+      isAdded = true;
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text("详情"),
@@ -63,6 +67,7 @@ class SendCommentState extends State<SendCommentStatefulWidget> {
 
   @override
   Widget build(BuildContext context) {
+    print("SendCommentState build");
     return Container(
       padding: EdgeInsets.only(left: 10.0, right: 10.0),
       color: Colors.black12,
@@ -162,6 +167,7 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
 
   @override
   void initState() {
+    print("initState()");
     super.initState();
     _postDetail = new PostDetail();
     data = getPostDetailData();
@@ -169,6 +175,7 @@ class DetailPageState extends State<DetailPageStateFulWidget> {
 
   @override
   Widget build(BuildContext context) {
+    print("DetailPageState build");
     return FutureBuilder<PostDetail>(
       future: data,
       builder: (context, snapshot) {

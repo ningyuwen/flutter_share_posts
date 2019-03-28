@@ -5,35 +5,59 @@ import 'package:my_mini_app/been/detail_comment.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/been/post_detail_been.dart';
 import 'package:my_mini_app/provider/detail_page_provider.dart';
+import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
 
+//class
+
 class DetailPageLessWidget extends StatelessWidget {
   final PostDetailArgument _postDetailArgument;
+
   DetailPageLessWidget(this._postDetailArgument);
 
   @override
   Widget build(BuildContext context) {
+    print("DetailPageLessWidget build");
     return BlocProvider(
       bloc: DetailPageProvider(),
-      child: DetailPageWidget(_postDetailArgument),
+      child: DetailPageStatefulWidget(_postDetailArgument),
     );
-//    MaterialApp(
-////      home: HomePage(),
-//      home: BlocProvider(
-//        bloc: TestBloc(),
-//        child: HomePageState(context),
-//      ),
-//    );
+  }
+}
+
+class DetailPageStatefulWidget extends StatefulWidget {
+  final PostDetailArgument _postDetailArgument;
+
+  DetailPageStatefulWidget(this._postDetailArgument);
+    @override
+  State<StatefulWidget> createState() {
+    return new DetailPageState();
+  }
+}
+
+class DetailPageState extends State<DetailPageStatefulWidget> {
+  DetailPageProvider _detailPageProvider;
+
+  @override
+  void initState() {
+    print("DetailPageState initState()");
+    _detailPageProvider = BlocProvider.of<DetailPageProvider>(this.context);
+    _detailPageProvider
+        .dispatch(DetailPageEventLoading(widget._postDetailArgument));
+    super.initState();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return DetailPageWidget(widget._postDetailArgument, _detailPageProvider);
+  }
 }
 
 class DetailPageWidget extends StatelessWidget {
-
   bool isAdded = false;
 
-  DetailPageProvider _detailPageProvider;
+  final DetailPageProvider _detailPageProvider;
 
   PostDetail _postDetail;
 
@@ -41,15 +65,15 @@ class DetailPageWidget extends StatelessWidget {
 
   BuildContext context;
 
-  DetailPageWidget(this._postDetailArgument);
+  DetailPageWidget(this._postDetailArgument, this._detailPageProvider);
 
   @override
   Widget build(BuildContext context) {
-    print("build");
+    print("DetailPageWidget build isAdded: $isAdded");
     this.context = context;
     if (!isAdded) {
-      _detailPageProvider = BlocProvider.of<DetailPageProvider>(this.context);
-      _detailPageProvider.dispatch(DetailPageEventLoading(_postDetailArgument));
+//      _detailPageProvider = BlocProvider.of<DetailPageProvider>(this.context);
+//      _detailPageProvider.dispatch(DetailPageEventLoading(_postDetailArgument));
       isAdded = true;
     }
     return Scaffold(
@@ -58,30 +82,33 @@ class DetailPageWidget extends StatelessWidget {
         backgroundColor: Color.fromARGB(255, 51, 51, 51),
         centerTitle: true,
       ),
-      body: BlocProvider<DetailPageProvider>(
-        bloc: _detailPageProvider,
-        child: BlocBuilder(
-            bloc: _detailPageProvider,
-            builder: (BuildContext context, BaseState state) {
-              print("state is : $state");
-              if (state is DetailPageStateLoaded) {
-                return _detailPage(state.postDetail);
-//                return Center(
-//                  child: Text("加载完成"),
-//                );
-              }
-              if (state is DetailPageStateLoading) {
-                return Center(
-                  child: Text("加载中"),
-                );
-              }
-            }),
-      ),
-//      bottomSheet: BottomSheet(
-//          onClosing: () {},
-//          builder: (BuildContext context) {
-////            return SendCommentStatefulWidget(_postDetailArgument.postId);
-//          }),
+      body: BlocBuilder(
+          bloc: _detailPageProvider,
+          builder: (BuildContext context, BaseState state) {
+            print("state is : $state");
+            if (state is DetailPageStateLoaded) {
+              return _detailPage(state.postDetail);
+            }
+            if (state is DetailPageStateLoading) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          }),
+      bottomSheet: BottomSheet(
+          onClosing: () {},
+          builder: (BuildContext context) {
+            return SendCommentStatefulWidget(_postDetailArgument.postId);
+//            return GestureDetector(
+//              onTap: () {
+//                SnackBarUtil.show(context, "button");
+//              },
+//              child: Icon(
+//                Icons.send,
+//                size: 28.0,
+//              ),
+//            );
+          }),
     );
   }
 
@@ -89,23 +116,22 @@ class DetailPageWidget extends StatelessWidget {
     _postDetail = postDetail;
     //总items个数是头部加图片加评论加空白item
     final items = List<ListItem>.generate(
-        _postDetail.mCommentList.length + _postDetail.imgUrls.length + 2,
-            (i) {
-          if (i == 0) {
-            return HeadViewItem(_postDetail);
-          } else if (i > 0 && i <= _postDetail.imgUrls.length) {
-            return PhotosViewItem(_postDetail.imgUrls[i - 1]);
-          } else if (i > _postDetail.imgUrls.length &&
-              i <
-                  _postDetail.imgUrls.length +
-                      _postDetail.mCommentList.length +
-                      1) {
-            return CommentsItem(
-                _postDetail.mCommentList[i - _postDetail.imgUrls.length - 1]);
-          } else {
-            return BlankItem();
-          }
-        });
+        _postDetail.mCommentList.length + _postDetail.imgUrls.length + 2, (i) {
+      if (i == 0) {
+        return HeadViewItem(_postDetail);
+      } else if (i > 0 && i <= _postDetail.imgUrls.length) {
+        return PhotosViewItem(_postDetail.imgUrls[i - 1]);
+      } else if (i > _postDetail.imgUrls.length &&
+          i <
+              _postDetail.imgUrls.length +
+                  _postDetail.mCommentList.length +
+                  1) {
+        return CommentsItem(
+            _postDetail.mCommentList[i - _postDetail.imgUrls.length - 1]);
+      } else {
+        return BlankItem();
+      }
+    });
     return ListView.builder(
         itemCount: items.length,
         physics: const AlwaysScrollableScrollPhysics(),
@@ -158,8 +184,7 @@ class DetailPageWidget extends StatelessWidget {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                  new PhotoViewUtil(key, item._imgUrl)));
+                  builder: (context) => new PhotoViewUtil(key, item._imgUrl)));
         },
         child: Padding(
           padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
@@ -170,18 +195,18 @@ class DetailPageWidget extends StatelessWidget {
                   height: 220.0,
                   child: Center(
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          CircularProgressIndicator(
-                            backgroundColor: Colors.amber,
-                            strokeWidth: 2.0,
-                          ),
-                          SizedBox(
-                            height: 15.0,
-                          ),
-                          Text("图片加载中...")
-                        ],
-                      )),
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      CircularProgressIndicator(
+                        backgroundColor: Colors.amber,
+                        strokeWidth: 2.0,
+                      ),
+                      SizedBox(
+                        height: 15.0,
+                      ),
+                      Text("图片加载中...")
+                    ],
+                  )),
                 ),
                 imageUrl: item._imgUrl,
                 fit: BoxFit.cover,
@@ -271,13 +296,13 @@ class DetailPageWidget extends StatelessWidget {
           Image.asset("image/ic_map.png", height: 24.0),
           Flexible(
               child: Container(
-                color: Color.fromARGB(255, 239, 240, 241),
-                child: Text(
-                  _postDetail.location,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 12.0),
-                ),
-              ))
+            color: Color.fromARGB(255, 239, 240, 241),
+            child: Text(
+              _postDetail.location,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 12.0),
+            ),
+          ))
         ],
       ),
     );
@@ -354,4 +379,101 @@ class CommentsItem extends ListItem {
 
 class BlankItem extends ListItem {
   BlankItem();
+}
+
+class SendCommentStatefulWidget extends StatefulWidget {
+  final int postId;
+
+  SendCommentStatefulWidget(this.postId);
+
+  @override
+  State<StatefulWidget> createState() {
+    return SendCommentState();
+  }
+}
+
+class SendCommentState extends State<SendCommentStatefulWidget>
+    with AutomaticKeepAliveClientMixin {
+  final _sendMsgTextField = TextEditingController(text: "");
+
+  @override
+  void initState() {
+    super.initState();
+    _sendMsgTextField.addListener(() {
+      print(_sendMsgTextField.text);
+//      setState(() {});
+    });
+  }
+
+  static final GlobalKey<FormFieldState<String>> _orderFormKey =
+      GlobalKey<FormFieldState<String>>();
+
+  //控制页面重绘
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return Container(
+      padding: EdgeInsets.only(left: 10.0, right: 10.0),
+      color: Colors.black12,
+      height: 60.0,
+      child: Center(
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Container(
+              width: MediaQuery.of(context).size.width - 56.0,
+              child: TextField(
+                controller: _sendMsgTextField,
+                maxLines: 1,
+                keyboardType: TextInputType.text,
+                key: _orderFormKey,
+                decoration: const InputDecoration(
+                  hintText: '发布回复点评',
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                if (_sendMsgTextField.toString() != "") {
+                  postComment();
+                }
+              },
+              child: Icon(
+                Icons.send,
+                color: getSendBtnColor(),
+                size: 28.0,
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Color getSendBtnColor() {
+    if (_sendMsgTextField.text == "") {
+      return Colors.grey;
+    } else {
+      return Colors.blue;
+    }
+  }
+
+  void postComment() async {
+    await ApiUtil.getInstance()
+        .netFetch(
+            "/comment/comment",
+            RequestMethod.POST,
+            {
+              "postId": widget.postId,
+              "content": _sendMsgTextField.text.toString()
+            },
+            null)
+        .then((values) {
+      print("postComment() data is: " + values);
+    });
+  }
 }

@@ -6,6 +6,7 @@ import 'package:flutter_easyrefresh/phoenix_header.dart';
 import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/DetailPage.dart';
+import 'package:my_mini_app/detail/detail_page.dart';
 import 'package:my_mini_app/home/post_item_view.dart';
 import 'package:my_mini_app/util/api_util.dart';
 
@@ -151,11 +152,14 @@ class FriendState extends State<FragmentFriendAndAround>
                 //进入详情页
                 PostDetailArgument postDetailArgument = new PostDetailArgument(
                     _posts[index].id, 113.347868, 23.007985);
+                print("进入详情页");
                 Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                        new DetailPageLessWidget(postDetailArgument)));
+                        new DetailPageLessWidget(postDetailArgument)
+//                            new DetailPageStatelessWidget(postDetailArgument)
+                    ));
               },
             );
           },

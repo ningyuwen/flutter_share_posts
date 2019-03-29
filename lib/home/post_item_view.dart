@@ -106,7 +106,7 @@ class TimelineTwoPageState extends State<PostItemView> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                new DetailPageStatelessWidget(postDetailArgument)));
+                                new DetailPagefulWidget(postDetailArgument)));
                       },
                     )),
                 Text(_post.comments.toString()),

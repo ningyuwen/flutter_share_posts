@@ -1,51 +1,42 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_mini_app/been/detail_comment.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/been/post_detail_been.dart';
+import 'package:my_mini_app/provider/base_state.dart';
 import 'package:my_mini_app/provider/detail_page_provider.dart';
-import 'package:my_mini_app/util/api_util.dart';
+import 'package:my_mini_app/provider/text_field_provider.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
 
-//class
-
-class DetailPageLessWidget extends StatelessWidget {
+class DetailPagefulWidget extends StatefulWidget {
   final PostDetailArgument _postDetailArgument;
 
-  DetailPageLessWidget(this._postDetailArgument);
+  DetailPagefulWidget(this._postDetailArgument);
 
   @override
-  Widget build(BuildContext context) {
-    print("DetailPageLessWidget build");
-    return BlocProvider(
-      bloc: DetailPageProvider(),
-      child: DetailPageStatefulWidget(_postDetailArgument),
-    );
-  }
-}
-
-class DetailPageStatefulWidget extends StatefulWidget {
-  final PostDetailArgument _postDetailArgument;
-
-  DetailPageStatefulWidget(this._postDetailArgument);
-    @override
   State<StatefulWidget> createState() {
     return new DetailPageState();
   }
 }
 
-class DetailPageState extends State<DetailPageStatefulWidget> {
-  DetailPageProvider _detailPageProvider;
+class DetailPageState extends State<DetailPagefulWidget> {
+  DetailPageProvider _detailPageProvider = DetailPageProvider();
 
   @override
   void initState() {
     print("DetailPageState initState()");
-    _detailPageProvider = BlocProvider.of<DetailPageProvider>(this.context);
     _detailPageProvider
         .dispatch(DetailPageEventLoading(widget._postDetailArgument));
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _detailPageProvider.dispose();
+    super.dispose();
   }
 
   @override
@@ -69,11 +60,8 @@ class DetailPageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("DetailPageWidget build isAdded: $isAdded");
     this.context = context;
     if (!isAdded) {
-//      _detailPageProvider = BlocProvider.of<DetailPageProvider>(this.context);
-//      _detailPageProvider.dispatch(DetailPageEventLoading(_postDetailArgument));
       isAdded = true;
     }
     return Scaffold(
@@ -98,7 +86,8 @@ class DetailPageWidget extends StatelessWidget {
       bottomSheet: BottomSheet(
           onClosing: () {},
           builder: (BuildContext context) {
-            return SendCommentStatefulWidget(_postDetailArgument.postId);
+            return SendCommentStatefulWidget(
+                _postDetailArgument.postId, _detailPageProvider);
 //            return GestureDetector(
 //              onTap: () {
 //                SnackBarUtil.show(context, "button");
@@ -160,6 +149,7 @@ class DetailPageWidget extends StatelessWidget {
           } else if (item is PhotosViewItem) {
             return showPicture(item);
           } else if (item is CommentsItem) {
+            print("has 评论");
             return showCommentsItem(item);
           } else if (item is BlankItem) {
             return showBlankItem();
@@ -383,8 +373,9 @@ class BlankItem extends ListItem {
 
 class SendCommentStatefulWidget extends StatefulWidget {
   final int postId;
+  final DetailPageProvider detailPageProvider;
 
-  SendCommentStatefulWidget(this.postId);
+  SendCommentStatefulWidget(this.postId, this.detailPageProvider);
 
   @override
   State<StatefulWidget> createState() {
@@ -395,13 +386,18 @@ class SendCommentStatefulWidget extends StatefulWidget {
 class SendCommentState extends State<SendCommentStatefulWidget>
     with AutomaticKeepAliveClientMixin {
   final _sendMsgTextField = TextEditingController(text: "");
+  final TextFieldProvider _bloc = TextFieldProvider();
 
   @override
   void initState() {
     super.initState();
     _sendMsgTextField.addListener(() {
+      if (_sendMsgTextField.text.isEmpty) {
+        _bloc.dispatch(DetailPageEventTextField(false));
+      } else {
+        _bloc.dispatch(DetailPageEventTextField(true));
+      }
       print(_sendMsgTextField.text);
-//      setState(() {});
     });
   }
 
@@ -426,7 +422,7 @@ class SendCommentState extends State<SendCommentStatefulWidget>
           children: <Widget>[
             Container(
               width: MediaQuery.of(context).size.width - 56.0,
-              child: TextField(
+              child: TextFormField(
                 controller: _sendMsgTextField,
                 maxLines: 1,
                 keyboardType: TextInputType.text,
@@ -436,44 +432,42 @@ class SendCommentState extends State<SendCommentStatefulWidget>
                 ),
               ),
             ),
-            GestureDetector(
-              onTap: () {
-                if (_sendMsgTextField.toString() != "") {
-                  postComment();
-                }
-              },
-              child: Icon(
-                Icons.send,
-                color: getSendBtnColor(),
-                size: 28.0,
-              ),
-            )
+            BlocBuilder(
+                bloc: _bloc,
+                builder: (BuildContext context, BaseState state) {
+                  return GestureDetector(
+                    onTap: () {
+                      if (_sendMsgTextField.text != "") {
+                        widget.detailPageProvider.dispatch(
+                            DetailPageEventPostComment(widget.postId,
+                                _sendMsgTextField.text.toString()));
+                        FocusScope.of(context).requestFocus(new FocusNode());
+                        SystemChannels.textInput.invokeMethod('TextInput.hide');
+                      }
+                    },
+                    child: Icon(
+                      Icons.send,
+                      color: getSendBtnColor(state),
+                      size: 28.0,
+                    ),
+                  );
+                })
           ],
         ),
       ),
     );
   }
 
-  Color getSendBtnColor() {
-    if (_sendMsgTextField.text == "") {
-      return Colors.grey;
-    } else {
+  Color getSendBtnColor(BaseState state) {
+    if (state is DetailPageTextFieldInput) {
       return Colors.blue;
+    } else if (state is DetailPageTextFieldNotInput) {
+      return Colors.grey;
     }
-  }
-
-  void postComment() async {
-    await ApiUtil.getInstance()
-        .netFetch(
-            "/comment/comment",
-            RequestMethod.POST,
-            {
-              "postId": widget.postId,
-              "content": _sendMsgTextField.text.toString()
-            },
-            null)
-        .then((values) {
-      print("postComment() data is: " + values);
-    });
+//    if (_sendMsgTextField.text == "") {
+//      return Colors.grey;
+//    } else {
+//      return Colors.blue;
+//    }
   }
 }

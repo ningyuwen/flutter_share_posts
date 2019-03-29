@@ -1,11 +1,8 @@
-import 'package:dio/dio.dart';
-import 'dart:io';
 import 'dart:convert';
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:my_mini_app/been/been.dart';
 import 'package:my_mini_app/util/toast_util.dart';
-//import 'package:jaguar_retrofit/jaguar_retrofit.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/services.dart';
 
 enum RequestMethod { GET, POST, PUT }
 
@@ -33,8 +30,8 @@ class ApiUtil {
   }
 
   //网络请求
-  Future<dynamic> netFetch(path, RequestMethod method, params,
-      Map<String, String> header) async {
+  Future<dynamic> netFetch(
+      path, RequestMethod method, params, Map<String, String> header) async {
     switch (method) {
       case RequestMethod.GET:
         _dio.options.method = "GET";
@@ -69,5 +66,4 @@ class ApiUtil {
     }
     return "error";
   }
-
 }

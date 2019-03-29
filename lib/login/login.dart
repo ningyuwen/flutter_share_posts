@@ -1,5 +1,6 @@
 //import 'package:flutter_qq/flutter_qq.dart';
 import 'package:flutter/material.dart';
+import 'package:mmkv_flutter/mmkv_flutter.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/been/login_been.dart';
@@ -97,12 +98,13 @@ class _LoginState extends State<LoginView> {
 //  }
 
   void _saveDataToSharedPref(LoginBeen loginBeen) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("openid", loginBeen.openid);
-    await prefs.setString("username", loginBeen.username);
-    await prefs.setString("headUrl", loginBeen.headUrl);
-    await prefs.setBool("sex", loginBeen.sex);
-    await prefs.setBool("isLogin", true);
+    MmkvFlutter mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
+//    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await mmkv.setString("openid", loginBeen.openid);
+    await mmkv.setString("username", loginBeen.username);
+    await mmkv.setString("headUrl", loginBeen.headUrl);
+    await mmkv.setBool("sex", loginBeen.sex);
+    await mmkv.setBool("isLogin", true);
     print("saveDataToSharedPref savedata is success");
   }
 

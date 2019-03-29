@@ -1,15 +1,15 @@
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:mmkv_flutter/mmkv_flutter.dart';
+import 'package:my_mini_app/been/detail_comment.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/been/post_detail_been.dart';
+import 'package:my_mini_app/provider/base_event.dart';
+import 'package:my_mini_app/provider/base_state.dart';
 import 'package:my_mini_app/util/api_util.dart';
 
 //enum BlocEvent { start, loading, loaded, error }
-
-abstract class BaseEvent extends Equatable {}
 
 class DetailPageEventLoading extends BaseEvent {
   PostDetailArgument postDetailArgument;
@@ -19,7 +19,12 @@ class DetailPageEventLoading extends BaseEvent {
 
 class DetailPageEventLoaded extends BaseEvent {}
 
-abstract class BaseState extends Equatable {}
+class DetailPageEventPostComment extends BaseEvent {
+  int postId;
+  String content;
+
+  DetailPageEventPostComment(this.postId, this.content);
+}
 
 class DetailPageStateLoading extends BaseState {}
 
@@ -27,6 +32,14 @@ class DetailPageStateLoaded extends BaseState {
   PostDetail postDetail;
 
   DetailPageStateLoaded(this.postDetail);
+
+  DetailPageStateLoaded copyWith({
+    PostDetail detail,
+  }) {
+    return DetailPageStateLoaded(
+        detail ?? this.postDetail
+    );
+  }
 
   @override
   String toString() {
@@ -74,6 +87,31 @@ class DetailPageProvider extends Bloc<BaseEvent, BaseState> {
           print("相同");
         }
       }
+    } else if (event is DetailPageEventPostComment) {
+      //发布评论
+      if (currentState is DetailPageStateLoaded) {
+        DetailComment comment = await postComment(event);
+        MmkvFlutter mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
+        comment.headUrl = await mmkv.getString("headUrl");
+        comment.username = await mmkv.getString("username");
+        PostDetail detail = (currentState as DetailPageStateLoaded).postDetail;
+        detail.mCommentList.insert(0, comment);
+        print("评论成功: ${comment.content}");
+//        currentState = state;
+//        return;
+
+//        (currentState as DetailPageStateLoaded).props.add(comment);
+        yield DetailPageStateLoaded(detail);
+      }
     }
+  }
+
+  Future<DetailComment> postComment(DetailPageEventPostComment event) async {
+    dynamic map = await ApiUtil.getInstance().netFetch(
+        "/comment/comment",
+        RequestMethod.POST,
+        {"postId": event.postId, "content": event.content},
+        null);
+    return DetailComment.fromJson(map);
   }
 }

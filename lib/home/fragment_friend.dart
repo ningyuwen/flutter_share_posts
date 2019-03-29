@@ -157,7 +157,7 @@ class FriendState extends State<FragmentFriendAndAround>
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                        new DetailPageLessWidget(postDetailArgument)
+                        new DetailPagefulWidget(postDetailArgument)
 //                            new DetailPageStatelessWidget(postDetailArgument)
                     ));
               },

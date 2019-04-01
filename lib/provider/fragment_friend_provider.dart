@@ -6,9 +6,9 @@ import 'package:rxdart/rxdart.dart';
 class FragmentFriendProvider {
   final String _EMPTY = "_empty_";
 
-  final _fetcher = new PublishSubject<List<Post>>();
+  final _fetcher = new PublishSubject<List<PostWithUser>>();
 
-  List<Post> _data = new List();
+  List<PostWithUser> _data = new List();
 
   stream() => _fetcher.stream;
 
@@ -27,7 +27,7 @@ class FragmentFriendProvider {
     Observable.fromFuture(getData(1)).map((map) {
       try {
         for (var value in map) {
-          Post post = Post.fromJson(value);
+          PostWithUser post = PostWithUser.fromJson(value);
           print("ningyuwen post username: ${post.username}");
           _data.add(post);
         }
@@ -46,7 +46,7 @@ class FragmentFriendProvider {
     Observable.fromFuture(getData(1)).map((map) {
       try {
         for (var value in map) {
-          Post post = Post.fromJson(value);
+          PostWithUser post = PostWithUser.fromJson(value);
           print("ningyuwen post username: ${post.username}");
           _data.insert(0, post);
         }
@@ -97,7 +97,6 @@ class FragmentFriendProvider {
 
   //从后台获取数据
   Future<dynamic> getData(int pageId) async {
-//    List<Post> posts = new List();
     dynamic map = await ApiUtil.getInstance().netFetch(
         "/post/getPostsAround",
         RequestMethod.GET,

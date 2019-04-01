@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:my_mini_app/home/FragmentFriend.dart';
-//import 'package:my_mini_app/home/FragmentFriend.dart';
 import 'package:my_mini_app/publish/publish_post.dart';
 
 import 'fragment_friend.dart';
-import 'fragment_mine.dart';
 
 class MainPage extends StatelessWidget {
   @override
@@ -32,7 +29,7 @@ class Choice {
 const List<Choice> choices = const <Choice>[
   const Choice(title: '附近的人', icon: Icons.directions_car, type: 1),
   const Choice(title: '好友', icon: Icons.directions_bike, type: 2),
-//  const Choice(title: '我的', icon: Icons.directions_boat, type: 3),
+  const Choice(title: '我的', icon: Icons.directions_boat, type: 3),
 ];
 
 class MainTabBarItemView extends StatelessWidget {
@@ -44,11 +41,8 @@ class MainTabBarItemView extends StatelessWidget {
     final TextStyle textStyle = Theme.of(context).textTheme.display1;
     switch (choice.type) {
       case 1:
-//        return FragmentAround.instance;
         return FragmentAround();
-//        return FragmentAround2();
       case 2:
-//        return FragmentFriend.instance;
         return FragmentFriend();
       case 3:
         return FragmentMine();

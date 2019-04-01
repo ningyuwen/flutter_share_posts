@@ -1,7 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'dart:convert';
 
-class Post {
+class PostWithUser {
   String username = "";
   String head_url = "";
   int distance;
@@ -21,7 +21,7 @@ class Post {
   String district;
   bool isVote;
 
-  Post(
+  PostWithUser(
       {this.username,
       this.head_url,
       this.distance,
@@ -41,13 +41,13 @@ class Post {
       this.district,
       this.isVote});
 
-  static Post fromJson(Map<String, dynamic> json) {
+  static PostWithUser fromJson(Map<String, dynamic> json) {
     List<String> imageUrls = new List();
     List list = jsonDecode(json['imgUrl'].toString());
     for (var img in list) {
       imageUrls.add(img["url"]);
     }
-    return Post(
+    return PostWithUser(
         username: json['username'],
         head_url: json['head_url'],
         distance: json['distance'],

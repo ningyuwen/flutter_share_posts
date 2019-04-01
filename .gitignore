@@ -64,3 +64,4 @@ build/
 android/.gradle/
 android/.settings/
 android/.project
+android/.vscode/

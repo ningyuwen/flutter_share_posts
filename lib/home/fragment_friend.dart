@@ -2,37 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter_easyrefresh/material_footer.dart';
 import 'package:flutter_easyrefresh/phoenix_header.dart';
 import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/DetailPage.dart';
 import 'package:my_mini_app/home/post_item_view.dart';
-import 'package:my_mini_app/util/api_util.dart';
-
-//从后台获取数据
-Future<List<Post>> getData(int pageId) async {
-  List<Post> posts = new List();
-  await ApiUtil.getInstance()
-      .netFetch(
-          "/post/getPostsAround",
-          RequestMethod.GET,
-          {"longitude": 113.347868, "latitude": 23.007985, "pageId": pageId},
-          null)
-      .then((values) {
-    for (var value in values) {
-      Post post = Post.fromJson(value);
-      print("ningyuwen post username: ${post.username}");
-      posts.add(post);
-    }
-  });
-  //不能在then里返回
-  return posts;
-}
-
-Future<String> loadLastName2(String firstName) async {
-  await new Future.delayed(Duration(milliseconds: 200));
-  return firstName + 'son';
-}
+import 'package:my_mini_app/provider/fragment_friend_provider.dart';
 
 //好友fragment
 class FragmentFriend extends StatelessWidget {
@@ -95,9 +71,10 @@ class FragmentFriendAndAround extends StatefulWidget {
 
 class FriendState extends State<FragmentFriendAndAround>
     with AutomaticKeepAliveClientMixin {
+  FragmentFriendProvider _blocProvider = FragmentFriendProvider.newInstance();
+
   ScrollController _scrollController = new ScrollController();
-  List<Post> _posts; //保存首页列表数据，下拉刷新，推荐点赞、评论最多，或者热门商家里的点评数据
-//  LinkedList _linkedList = new LinkedList as LinkedList<LinkedListEntry>;
+
   GlobalKey<EasyRefreshState> _easyRefreshKey =
       new GlobalKey<EasyRefreshState>();
 
@@ -109,89 +86,101 @@ class FriendState extends State<FragmentFriendAndAround>
 
   @override
   void initState() {
+    _blocProvider.fetchQueryList();
     super.initState();
-    _posts = List();
-    print("post length is: ${_posts.length}");
-    setData();
   }
 
   @override
   void dispose() {
+    _blocProvider.dispose();
     _scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return EasyRefresh(
-        refreshHeader: PhoenixHeader(
-          key: _headerKey,
-        ),
-        firstRefresh: true,
-        refreshFooter: ClassicsFooter(
+    return _blocProvider.streamBuilder<List>(success: (List<Post> data) {
+      print("刷新完成得到数据 data size is: ${data.length}");
+      return EasyRefresh(
+          refreshHeader: PhoenixHeader(
+            key: _headerKey,
+          ),
+          firstRefresh: false,
+          refreshFooter: MaterialFooter(
             key: _footerKey,
-            loadHeight: 50.0,
-            loadText: "加载中",
-            loadReadyText: "加载中",
-            noMoreText: "已推荐10条点评信息",
-            bgColor: Colors.white,
-            textColor: Colors.black),
-        key: _easyRefreshKey,
-        child: ListView.builder(
-          itemCount: _posts.length,
-          physics: const AlwaysScrollableScrollPhysics(),
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              child: PostInfoItem(
-                key: new ObjectKey(_posts[index].id),
-                data: _posts[index],
-              ),
-              onTap: () {
-                //进入详情页
-                PostDetailArgument postDetailArgument = new PostDetailArgument(
-                    _posts[index].id, 113.347868, 23.007985);
-                print("进入详情页");
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            new DetailPagefulWidget(postDetailArgument)));
-              },
-            );
+          ),
+          key: _easyRefreshKey,
+          child: ListView.builder(
+            itemCount: data.length,
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                child: PostInfoItem(
+                  key: new ObjectKey(data[index].id),
+                  data: data[index],
+                ),
+                onTap: () {
+                  //进入详情页
+                  PostDetailArgument postDetailArgument =
+                      new PostDetailArgument(
+                          data[index].id, 113.347868, 23.007985);
+                  print("进入详情页");
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              new DetailPagefulWidget(postDetailArgument)));
+                },
+              );
+            },
+            controller: _scrollController,
+          ),
+          autoLoad: true,
+          onRefresh: () async {
+            _refresh();
           },
-          controller: _scrollController,
+          loadMore: () async {
+            _loadMore();
+          });
+    }, error: (msg) {
+      return Container(
+        child: Center(
+          child: Text(msg),
         ),
-        autoLoad: true,
-        onRefresh: () async {
-          _refresh();
-        },
-        loadMore: () async {
-          _loadMore();
-        });
+      );
+    }, empty: () {
+      return Container(
+        child: Center(
+          child: Text("暂无数据"),
+        ),
+      );
+    }, loading: () {
+      return Container(
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }, finished: () {
+      print("刷新完成 ${_headerKey.currentState}");
+      if (_headerKey.currentState != null) {
+        _headerKey.currentState.onRefreshClose();
+      }
+    });
   }
 
   //下拉刷新，推荐点赞、评论最多，或者热门商家里的点评数据
   Future<Null> _refresh() async {
-    _posts.insertAll(0, await getData(2));
-    setState(() {});
-    return;
+    _blocProvider.refreshData();
   }
 
   //上拉加载更多，按照时间顺序排序的点评数据
   Future<Null> _loadMore() async {
-    _posts.addAll(await getData(2));
-    setState(() {});
-    return;
+    _blocProvider.loadMore();
   }
 
   //控制页面重绘
   @override
   bool get wantKeepAlive => true;
-
-  void setData() async {
-    _posts = await getData(1);
-    setState(() {});
-  }
 }
 
 class PostInfoItem extends StatelessWidget {

@@ -61,7 +61,8 @@ build/
 # ios/
 *.iml
 
-android/.gradle/
-android/.settings/
-android/.project
-android/.vscode/
+android/
+.gradle/
+.settings/
+.project
+.vscode/

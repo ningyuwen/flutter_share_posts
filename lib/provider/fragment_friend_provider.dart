@@ -1,69 +1,111 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter/widgets.dart';
 import 'package:my_mini_app/been/post_around_been.dart';
-import 'package:my_mini_app/provider/base_event.dart';
-import 'package:my_mini_app/provider/base_state.dart';
 import 'package:my_mini_app/util/api_util.dart';
+import 'package:rxdart/rxdart.dart';
 
-class FragmentFriendEventLoading extends BaseEvent {
-  final LoadType type;
+class FragmentFriendProvider {
+  final String _EMPTY = "_empty_";
 
-  FragmentFriendEventLoading(this.type);
-}
+  final _fetcher = new PublishSubject<List<Post>>();
 
-class FragmentFriendEventLoaded extends BaseEvent {}
+  List<Post> _data = new List();
 
-class FragmentFriendStateLoading extends BaseState {}
+  stream() => _fetcher.stream;
 
-enum LoadType { loadMore, refresh }
-
-class FragmentFriendStateLoaded extends BaseState {
-  final List<Post> posts;
-  final LoadType type;
-  final int page;
-
-  FragmentFriendStateLoaded(this.posts, this.type, this.page);
-}
-
-class FragmentFriendProvider extends Bloc<BaseEvent, BaseState> {
-  int _page = 1;
+  void dispose() {
+    if (!_fetcher.isClosed) {
+      _fetcher.close();
+    }
+  }
 
   @override
-  BaseState get initialState => FragmentFriendStateLoading();
+  String toString() {
+    return super.toString();
+  }
 
-//  @override
-//  Stream<BaseState> mapEventToState(BaseEvent event) async* {
-//    if (event is FragmentFriendEventLoading) {
-//      //加载数据
-//      List<Post> posts = await getData(_page++);
-//      yield FragmentFriendStateLoaded(posts, event.type, _page);
-//    }
-//  }
+  void fetchQueryList() async {
+    Observable.fromFuture(getData(1)).map((map) {
+      try {
+        for (var value in map) {
+          Post post = Post.fromJson(value);
+          print("ningyuwen post username: ${post.username}");
+          _data.add(post);
+        }
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }).listen((success) {
+      if (success) {
+        _fetcher.sink.add(_data);
+      }
+    });
+  }
 
-  Future<List<Post>> getData(int pageId) async {
-    List<Post> posts = new List();
-    dynamic list = await ApiUtil.getInstance().netFetch(
+  void refreshData() async {
+    Observable.fromFuture(getData(1)).map((map) {
+      try {
+        for (var value in map) {
+          Post post = Post.fromJson(value);
+          print("ningyuwen post username: ${post.username}");
+          _data.insert(0, post);
+        }
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }).listen((success) {
+      if (success) {
+        _fetcher.sink.add(_data);
+      }
+    });
+  }
+
+  void loadMore() async {
+    fetchQueryList();
+  }
+
+  Widget streamBuilder<T>({
+    T initialData,
+    Function success,
+    Function error,
+    Function empty,
+    Function loading,
+    Function finished,
+  }) {
+    return StreamBuilder(
+        stream: stream(),
+        initialData: initialData,
+        builder: (context, AsyncSnapshot<T> snapshot) {
+          if (finished != null) {
+            finished();
+          }
+          if (snapshot.hasData) {
+            if (success != null) return success(snapshot.data);
+          } else if (snapshot.hasError) {
+            final errorStr = snapshot.error;
+            if (errorStr == _EMPTY) {
+              if (empty != null) return empty();
+            } else {
+              if (error != null) return error(errorStr);
+            }
+          } else {
+            if (loading != null) return loading();
+          }
+        });
+  }
+
+  //从后台获取数据
+  Future<dynamic> getData(int pageId) async {
+//    List<Post> posts = new List();
+    dynamic map = await ApiUtil.getInstance().netFetch(
         "/post/getPostsAround",
         RequestMethod.GET,
         {"longitude": 113.347868, "latitude": 23.007985, "pageId": pageId},
         null);
-    if (list is List) {
-      for (var value in list) {
-        Post post = Post.fromJson(value);
-        print("ningyuwen post username: ${post.username}");
-        posts.add(post);
-      }
-    }
     //不能在then里返回
-    return posts;
+    return map;
   }
 
-  @override
-  Stream<BaseState> mapEventToState(
-      BaseState currentState, BaseEvent event) async* {
-    if (event is FragmentFriendEventLoading) {
-      //加载数据
-      List<Post> posts = await getData(_page++);
-      yield FragmentFriendStateLoaded(posts, event.type, _page);
-    }
-  }
+  static FragmentFriendProvider newInstance() => new FragmentFriendProvider();
 }

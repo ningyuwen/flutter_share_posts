@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_mini_app/home/FragmentFriend.dart';
+//import 'package:my_mini_app/home/FragmentFriend.dart';
 import 'package:my_mini_app/publish/publish_post.dart';
 
 import 'fragment_friend.dart';

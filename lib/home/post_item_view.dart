@@ -37,11 +37,15 @@ class PostItemView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               GestureDetector(
-                child: CircleAvatar(
-                    radius: 22.0,
-                    backgroundImage: NetworkImage(
-                      _post.head_url,
-                    )),
+                child: ClipOval(
+                  child: CachedNetworkImage(
+                    width: 44,
+                    height: 44,
+                    fit: BoxFit.cover,
+                    imageUrl: _post.head_url,
+//                    placeholder: CircularProgressIndicator(),
+                  ),
+                ),
                 onTap: () {
                   SnackBarUtil.show(context, "点击头像");
                 },

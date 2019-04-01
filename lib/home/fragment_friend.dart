@@ -6,7 +6,6 @@ import 'package:flutter_easyrefresh/phoenix_header.dart';
 import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/DetailPage.dart';
-import 'package:my_mini_app/detail/detail_page.dart';
 import 'package:my_mini_app/home/post_item_view.dart';
 import 'package:my_mini_app/util/api_util.dart';
 
@@ -143,25 +142,28 @@ class FriendState extends State<FragmentFriendAndAround>
           itemCount: _posts.length,
           physics: const AlwaysScrollableScrollPhysics(),
           itemBuilder: (context, index) {
-            return GestureDetector(
-              child: PostInfoItem(
-                key: new ObjectKey(_posts[index].id),
-                data: _posts[index],
-              ),
-              onTap: () {
-                //进入详情页
-                PostDetailArgument postDetailArgument = new PostDetailArgument(
-                    _posts[index].id, 113.347868, 23.007985);
-                print("进入详情页");
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                        new DetailPagefulWidget(postDetailArgument)
-//                            new DetailPageStatelessWidget(postDetailArgument)
-                    ));
-              },
+            return PostInfoItem(
+              key: new ObjectKey(_posts[index].id),
+              data: _posts[index],
             );
+//            return GestureDetector(
+//              child: PostInfoItem(
+//                key: new ObjectKey(_posts[index].id),
+//                data: _posts[index],
+//              ),
+//              onTap: () {
+//                //进入详情页
+//                PostDetailArgument postDetailArgument = new PostDetailArgument(
+//                    _posts[index].id, 113.347868, 23.007985);
+//                print("进入详情页");
+//                Navigator.push(
+//                    context,
+//                    MaterialPageRoute(
+//                        builder: (context) =>
+//                            new DetailPagefulWidget(postDetailArgument)
+//                        ));
+//              },
+//            );
           },
           controller: _scrollController,
         ),
@@ -198,23 +200,13 @@ class FriendState extends State<FragmentFriendAndAround>
   }
 }
 
-class PostInfoItem extends StatefulWidget {
+class PostInfoItem extends StatelessWidget {
   final Post data;
 
   PostInfoItem({Key key, this.data}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() {
-    return PostInfoState();
-  }
-}
-
-class PostInfoState extends State<PostInfoItem> {
-  @override
   Widget build(BuildContext context) {
-    return PostItemView(
-      key: widget.key,
-      data: widget.data,
-    );
+    return PostItemView(key, data);
   }
 }

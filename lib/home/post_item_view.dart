@@ -6,48 +6,26 @@ import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/DetailPage.dart';
 import 'package:my_mini_app/detail/detail_page.dart';
+import 'package:my_mini_app/provider/base_state.dart';
 import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:share/share.dart';
 
-class PostItemView extends StatefulWidget {
-  final Post data;
-
-  PostItemView({Key key, this.data}) : super(key: key);
-
-  @override
-  TimelineTwoPageState createState() {
-    return TimelineTwoPageState();
-  }
-}
-
-class TimelineTwoPageState extends State<PostItemView> {
+class PostItemView extends StatelessWidget {
   Post _post;
+  BuildContext context;
   PageController _photosPageController = PageController(); //图片滑动监听
   var currentPageValue = 0.0; //当前页面编号
 
-  @override
-  void initState() {
-    super.initState();
-    _post = widget.data;
-//    scrollController = ScrollController();
-//    scrollController.addListener(() {
-//      if (scrollController.position.userScrollDirection ==
-//          ScrollDirection.reverse) postBloc.fabSink.add(false);
-//      if (scrollController.position.userScrollDirection ==
-//          ScrollDirection.forward) postBloc.fabSink.add(true);
-//    });
-  }
-
-  @override
-  void dispose() {
-//    postBloc?.dispose();
-    super.dispose();
+  PostItemView(Key key, Post post) {
+    this._post = post;
   }
 
   @override
   Widget build(BuildContext context) {
+    this.context = context;
     return bodyData();
   }
 
@@ -71,13 +49,6 @@ class TimelineTwoPageState extends State<PostItemView> {
                 },
               ),
               rightColumn(_post),
-//              Container(
-//                height: 350.0,
-//                width: MediaQuery.of(context).size.width,
-//                child: Center(
-//                  child: Text("ningyuwen"),
-//                ),
-//              )
             ],
           ),
         ),
@@ -86,7 +57,8 @@ class TimelineTwoPageState extends State<PostItemView> {
     );
   }
 
-  Widget actionRow(Post post) => Padding(
+  Widget actionRow(Post post) =>
+      Padding(
         padding: const EdgeInsets.only(left: 8.0, bottom: 8.0, right: 50.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -100,35 +72,21 @@ class TimelineTwoPageState extends State<PostItemView> {
                       padding: const EdgeInsets.all(0.0),
                       icon: Icon(Icons.comment, size: 20.0, color: Colors.grey),
                       onPressed: () {
-                        PostDetailArgument postDetailArgument = new PostDetailArgument(
+                        PostDetailArgument postDetailArgument =
+                        new PostDetailArgument(
                             post.id, 113.347868, 23.007985);
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                new DetailPagefulWidget(postDetailArgument)));
+                                new DetailPagefulWidget(
+                                    postDetailArgument)));
                       },
                     )),
                 Text(_post.comments.toString()),
               ],
             ),
-            Row(
-              children: <Widget>[
-                SizedBox(
-                    height: 26.0,
-                    width: 34.0,
-                    child: new IconButton(
-                      padding: const EdgeInsets.all(0.0),
-                      icon: getVoteIcon(),
-                      onPressed: () {
-//                        ToastUtil.showToast("喜爱");
-                        //添加喜爱
-                        clickVoteIcon();
-                      },
-                    )),
-                Text(_post.votes.toString()),
-              ],
-            ),
+            _LikeWidget(_post),
             SizedBox(
                 height: 26.0,
                 width: 34.0,
@@ -155,7 +113,8 @@ class TimelineTwoPageState extends State<PostItemView> {
     return stringBuffer.toString();
   }
 
-  Widget rightColumn(Post post) => Expanded(
+  Widget rightColumn(Post post) =>
+      Expanded(
         child: Padding(
           padding: const EdgeInsets.only(right: 4.0),
           child: Column(
@@ -185,29 +144,6 @@ class TimelineTwoPageState extends State<PostItemView> {
                 ),
               ),
               showContent(), //文字
-//              CachedNetworkImage(
-//                  imageUrl: _post.imgUrls[0],
-//                  fit: BoxFit.cover,
-//                  height: 200.0,
-//                  width: MediaQuery.of(context).size.width,
-//                  placeholder: Center(
-//                    child: CircularProgressIndicator(),
-//                  ),
-//                  errorWidget: Container(
-//                    color: Colors.black45,
-//                    child: Center(
-//                      child: Text(
-//                        "无法查看图片，请稍后重试...",
-//                        style: TextStyle(color: Colors.white),
-//                      ),
-//                    ),
-//                  )),
-//              Container(
-//                height: 200.0,
-//                child: Center(
-//                  child: Text("ningyuwen"),
-//                ),
-//              ),
               Container(
                   padding: const EdgeInsets.only(left: 16.0),
                   height: 200.0,
@@ -226,13 +162,13 @@ class TimelineTwoPageState extends State<PostItemView> {
                     Image.asset("image/ic_map.png", height: 16.0),
                     Flexible(
                         child: Container(
-                      color: Color.fromARGB(255, 239, 240, 241),
-                      child: Text(
-                        _post.position,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 12.0),
-                      ),
-                    ))
+                          color: Color.fromARGB(255, 239, 240, 241),
+                          child: Text(
+                            _post.position,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: 12.0),
+                          ),
+                        ))
                   ],
                 ),
               ),
@@ -242,117 +178,54 @@ class TimelineTwoPageState extends State<PostItemView> {
         ),
       );
 
-  void clickVoteIcon() {
-    if (_post.isVote) {
-      //已点赞，取消赞
-      postCancelVoteData();
-    } else {
-      //未点赞，点赞
-      postVoteData();
-    }
-  }
-
-  void postCancelVoteData() async {
-    await ApiUtil.getInstance()
-        .netFetch(
-            "/vote/cancelVote", RequestMethod.POST, {"postId": _post.id}, null)
-        .then((values) {
-      print("postCancelVoteData() data is: " + values);
-      if ("" == values) {
-        //取消点赞成功
-        setState(() {
-          _post.isVote = false;
-          _post.votes--;
-        });
-
-        SnackBarUtil.show(context, "取消点赞成功");
-      }
-    });
-  }
-
-  void postVoteData() async {
-    await ApiUtil.getInstance()
-        .netFetch("/vote/vote", RequestMethod.POST, {"postId": _post.id}, null)
-        .then((values) {
-      print("postVoteData() data is: " + values);
-      if ("" == values) {
-        //点赞成功
-        setState(() {
-          _post.votes++;
-          _post.isVote = true;
-        });
-
-        SnackBarUtil.show(context, "点赞成功");
-      }
-    });
-  }
-
-  //点赞图标
-  Widget getVoteIcon() {
-    if (_post.isVote) {
-      return Icon(Icons.favorite, size: 20.0, color: Colors.red);
-    } else {
-      return Icon(Icons.favorite, size: 20.0, color: Colors.grey);
-    }
-  }
-
   Widget showPhotos() {
     _photosPageController.addListener(() {
-      setState(() {
-        currentPageValue = _photosPageController.page;
-      });
+//      setState(() {
+//        currentPageValue = _photosPageController.page;
+//      });
     });
     return PageView.builder(
       controller: _photosPageController,
       itemCount: _post.imgUrls.length,
       itemBuilder: (context, index) {
         return _rendRow(context, index);
-//        return Container(
-//          height: 200.0,
-//        );
       },
       scrollDirection: Axis.horizontal,
     );
   }
 
-  static const MethodChannel _channel =
-      const MethodChannel('com.mrper.framework.plugins/toast');
-
   Widget _rendRow(BuildContext context, int index) {
     return GestureDetector(
       onTap: () {
-//        showToast();
-
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    new PhotoViewUtil(widget.key, _post.imgUrls[index])));
+                new PhotoViewUtil(key, _post.imgUrls[index])));
       },
-//      child: Container(
-//        height: 200.0,
-//      ),
-
       child: CachedNetworkImage(
           imageUrl: _post.imgUrls[index],
           fit: BoxFit.cover,
-          width: MediaQuery.of(context).size.width,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width,
           //屏幕宽度
           height: 200.0,
           placeholder: Center(
               child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              CircularProgressIndicator(
-                backgroundColor: Colors.amber,
-                strokeWidth: 2.0,
-              ),
-              SizedBox(
-                height: 15.0,
-              ),
-              Text("图片加载中...")
-            ],
-          )),
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(
+                    backgroundColor: Colors.amber,
+                    strokeWidth: 2.0,
+                  ),
+                  SizedBox(
+                    height: 15.0,
+                  ),
+                  Text("图片加载中...")
+                ],
+              )),
           errorWidget: Container(
             color: Colors.black45,
             child: Center(
@@ -410,8 +283,115 @@ class TimelineTwoPageState extends State<PostItemView> {
           ),
         ));
   }
+}
 
-  void showToast() {
-    _channel.invokeMethod('showToast', {'message': '你点击了按钮！', 'duration': 6});
+class _LikeWidget extends StatefulWidget {
+  final Post _post;
+
+  _LikeWidget(this._post);
+
+  @override
+  State<StatefulWidget> createState() {
+    print("_LikeState()");
+//    Observable.fromFuture(future)
+    return new _LikeState();
   }
+}
+
+class _LikeState extends State<_LikeWidget> {
+
+  final subject = new PublishSubject<Future<bool>>();
+
+
+  @override
+  void dispose() {
+    subject.close();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        SizedBox(
+            height: 26.0,
+            width: 34.0,
+            child: new IconButton(
+              padding: const EdgeInsets.all(0.0),
+              icon: getVoteIcon(),
+              onPressed: () {
+                //添加喜爱
+                clickVoteIcon();
+              },
+            )),
+        Text(widget._post.votes.toString()),
+      ],
+    );
+  }
+
+  //点赞图标
+  Widget getVoteIcon() {
+    if (widget._post.isVote) {
+      return Icon(Icons.favorite, size: 20.0, color: Colors.red);
+    } else {
+      return Icon(Icons.favorite, size: 20.0, color: Colors.grey);
+    }
+  }
+
+  void clickVoteIcon() {
+    if (widget._post.isVote) {
+      //已点赞，取消赞
+      postCancelVoteData();
+    } else {
+      //未点赞，点赞
+      Observable.fromFuture(postVoteData()).listen((data) {
+        print("data is: $data");
+        if (data) {
+          setState(() {
+            widget._post.votes++;
+            widget._post.isVote = true;
+            SnackBarUtil.show(context, "点赞成功");
+          });
+        }
+      });
+
+//      subject.listen((data) {
+//        print("data is: $data");
+//      });
+//      subject.stream.listen((data) {
+//        print("data is: $data");
+//      });
+//      subject.sink.add(postVoteData());
+    }
+  }
+
+  void postCancelVoteData() async {
+    await ApiUtil.getInstance()
+        .netFetch(
+        "/vote/cancelVote", RequestMethod.POST, {"postId": widget._post.id},
+        null)
+        .then((values) {
+      print("postCancelVoteData() data is: " + values);
+      if ("" == values) {
+        //取消点赞成功
+        setState(() {
+          widget._post.isVote = false;
+          widget._post.votes--;
+        });
+
+        SnackBarUtil.show(context, "取消点赞成功");
+      }
+    });
+  }
+
+  Future<bool> postVoteData() async {
+    dynamic map = await ApiUtil.getInstance()
+        .netFetch(
+        "/vote/vote", RequestMethod.POST, {"postId": widget._post.id}, null);
+    if (map == "") {
+      return true;
+    }
+    return false;
+  }
+
 }

@@ -17,7 +17,7 @@ class TextFieldProvider extends Bloc<BaseEvent, BaseState> {
   BaseState get initialState => DetailPageTextFieldNotInput();
 
   @override
-  Stream<BaseState> mapEventToState(BaseEvent event) async* {
+  Stream<BaseState> mapEventToState(BaseState currentState, BaseEvent event) async* {
     if (event is DetailPageEventTextField) {
       if (event.isEmpty) {
         yield DetailPageTextFieldInput();
@@ -26,4 +26,15 @@ class TextFieldProvider extends Bloc<BaseEvent, BaseState> {
       }
     }
   }
+
+//  @override
+//  Stream<BaseState> mapEventToState(BaseEvent event) async* {
+//    if (event is DetailPageEventTextField) {
+//      if (event.isEmpty) {
+//        yield DetailPageTextFieldInput();
+//      } else {
+//        yield DetailPageTextFieldNotInput();
+//      }
+//    }
+//  }
 }

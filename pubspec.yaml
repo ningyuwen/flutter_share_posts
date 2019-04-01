@@ -47,7 +47,7 @@ dependencies:
   simple_permissions: ^0.1.9
   location: ^1.4.1
   mmkv_flutter: ^1.0.10
-  flutter_bloc: ^0.9.0
+  flutter_bloc: ^0.8.0
   equatable: ^0.2.0
 
 

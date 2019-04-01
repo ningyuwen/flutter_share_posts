@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_mini_app/home/FragmentFriend.dart';
 import 'package:my_mini_app/publish/publish_post.dart';
 
 import 'fragment_friend.dart';
@@ -44,6 +45,7 @@ class MainTabBarItemView extends StatelessWidget {
       case 1:
 //        return FragmentAround.instance;
         return FragmentAround();
+//        return FragmentAround2();
       case 2:
 //        return FragmentFriend.instance;
         return FragmentFriend();

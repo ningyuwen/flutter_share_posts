@@ -60,3 +60,7 @@ build/
 # android/
 # ios/
 *.iml
+
+android/.gradle/
+android/.settings/
+android/.project

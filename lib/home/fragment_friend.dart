@@ -123,7 +123,6 @@ class FriendState extends State<FragmentFriendAndAround>
 
   @override
   Widget build(BuildContext context) {
-//    print("fragment show build");
     return EasyRefresh(
         refreshHeader: PhoenixHeader(
           key: _headerKey,

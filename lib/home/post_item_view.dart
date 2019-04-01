@@ -1,12 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/DetailPage.dart';
-import 'package:my_mini_app/detail/detail_page.dart';
-import 'package:my_mini_app/provider/base_state.dart';
 import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/fast_click.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
@@ -181,20 +178,22 @@ class PostItemView extends StatelessWidget {
       );
 
   Widget showPhotos() {
-    _photosPageController.addListener(() {
-      //  setState(() {
-      //    currentPageValue = _photosPageController.page;
-      //  });
-      print("页面发生了改变 ${_photosPageController.page}");
-    });
-    return PageView.builder(
-      controller: _photosPageController,
-      itemCount: _post.imgUrls.length,
-      itemBuilder: (context, index) {
-        return _rendRow(context, index);
-      },
-      scrollDirection: Axis.horizontal,
-    );
+//    _photosPageController.addListener(() {
+//      //  setState(() {
+//      //    currentPageValue = _photosPageController.page;
+//      //  });
+//      print("页面发生了改变 ${_photosPageController.page}");
+//    });
+//    return PageView.builder(
+//      controller: _photosPageController,
+//      itemCount: _post.imgUrls.length,
+//      itemBuilder: (context, index) {
+//        return _rendRow(context, index);
+//      },
+//      scrollDirection: Axis.horizontal,
+//    );
+    //只展示一张图片
+    return _rendRow(context, 0);
   }
 
   Widget _rendRow(BuildContext context, int index) {
@@ -267,19 +266,25 @@ class PostItemView extends StatelessWidget {
         alignment: FractionalOffset.topRight,
         child: Container(
           margin: EdgeInsets.fromLTRB(0.0, 10.0, 10.0, 0.0),
-          height: 28.0,
-          width: 40.0,
+          height: 18.0,
+          width: 30.0,
           decoration: BoxDecoration(
-            borderRadius: new BorderRadius.circular(10.0),
+            borderRadius: new BorderRadius.circular(5.0),
             color: Colors.black54,
           ),
           child: Center(
-            child: Text(
-              "${currentPageValue.toInt() + 1}/${_post.imgUrls.length}",
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
+            child: Text("共${_post.imgUrls.length}张",
+                style: TextStyle(
+                  fontSize: 10.0,
+                  color: Colors.white,
+                )),
+
+//            child: Text(
+//              "${currentPageValue.toInt() + 1}/${_post.imgUrls.length}",
+//              style: TextStyle(
+//                color: Colors.white,
+//              ),
+//            ),
           ),
         ));
   }

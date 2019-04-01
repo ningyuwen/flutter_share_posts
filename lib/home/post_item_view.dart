@@ -8,6 +8,7 @@ import 'package:my_mini_app/detail/DetailPage.dart';
 import 'package:my_mini_app/detail/detail_page.dart';
 import 'package:my_mini_app/provider/base_state.dart';
 import 'package:my_mini_app/util/api_util.dart';
+import 'package:my_mini_app/util/fast_click.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
 import 'package:rxdart/rxdart.dart';
@@ -57,12 +58,12 @@ class PostItemView extends StatelessWidget {
     );
   }
 
-  Widget actionRow(Post post) =>
-      Padding(
+  Widget actionRow(Post post) => Padding(
         padding: const EdgeInsets.only(left: 8.0, bottom: 8.0, right: 50.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
+            //评论按钮
             Row(
               children: <Widget>[
                 SizedBox(
@@ -74,20 +75,21 @@ class PostItemView extends StatelessWidget {
                       onPressed: () {
                         SnackBarUtil.show(context, "点击详情");
                         PostDetailArgument postDetailArgument =
-                        new PostDetailArgument(
-                            post.id, 113.347868, 23.007985);
+                            new PostDetailArgument(
+                                post.id, 113.347868, 23.007985);
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                new DetailPagefulWidget(
+                                builder: (context) => new DetailPagefulWidget(
                                     postDetailArgument)));
                       },
                     )),
                 Text(_post.comments.toString()),
               ],
             ),
+            //点赞按钮
             _LikeWidget(_post),
+            //分享按钮
             SizedBox(
                 height: 26.0,
                 width: 34.0,
@@ -114,8 +116,7 @@ class PostItemView extends StatelessWidget {
     return stringBuffer.toString();
   }
 
-  Widget rightColumn(Post post) =>
-      Expanded(
+  Widget rightColumn(Post post) => Expanded(
         child: Padding(
           padding: const EdgeInsets.only(right: 4.0),
           child: Column(
@@ -154,6 +155,7 @@ class PostItemView extends StatelessWidget {
                           showIndicator(), //指示器
                         ],
                       ))),
+              //地址
               Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 8.0, 0.0, 8.0),
                 child: Row(
@@ -161,16 +163,17 @@ class PostItemView extends StatelessWidget {
                     Image.asset("image/ic_map.png", height: 16.0),
                     Flexible(
                         child: Container(
-                          color: Color.fromARGB(255, 239, 240, 241),
-                          child: Text(
-                            _post.position,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 12.0),
-                          ),
-                        ))
+                      color: Color.fromARGB(255, 239, 240, 241),
+                      child: Text(
+                        _post.position,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 12.0),
+                      ),
+                    ))
                   ],
                 ),
               ),
+              //点赞、评论、分享
               actionRow(post),
             ],
           ),
@@ -179,9 +182,9 @@ class PostItemView extends StatelessWidget {
 
   Widget showPhotos() {
     _photosPageController.addListener(() {
-    //  setState(() {
-    //    currentPageValue = _photosPageController.page;
-    //  });
+      //  setState(() {
+      //    currentPageValue = _photosPageController.page;
+      //  });
       print("页面发生了改变 ${_photosPageController.page}");
     });
     return PageView.builder(
@@ -201,31 +204,28 @@ class PostItemView extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                new PhotoViewUtil(key, _post.imgUrls[index])));
+                    new PhotoViewUtil(key, _post.imgUrls[index])));
       },
       child: CachedNetworkImage(
           imageUrl: _post.imgUrls[index],
           fit: BoxFit.cover,
-          width: MediaQuery
-              .of(context)
-              .size
-              .width,
+          width: MediaQuery.of(context).size.width,
           //屏幕宽度
           height: 200.0,
           placeholder: Center(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  CircularProgressIndicator(
-                    backgroundColor: Colors.amber,
-                    strokeWidth: 2.0,
-                  ),
-                  SizedBox(
-                    height: 15.0,
-                  ),
-                  Text("图片加载中...")
-                ],
-              )),
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              CircularProgressIndicator(
+                backgroundColor: Colors.amber,
+                strokeWidth: 2.0,
+              ),
+              SizedBox(
+                height: 15.0,
+              ),
+              Text("图片加载中...")
+            ],
+          )),
           errorWidget: Container(
             color: Colors.black45,
             child: Center(
@@ -292,16 +292,12 @@ class _LikeWidget extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    print("_LikeState()");
-//    Observable.fromFuture(future)
     return new _LikeState();
   }
 }
 
 class _LikeState extends State<_LikeWidget> {
-
   final subject = new PublishSubject<Future<bool>>();
-
 
   @override
   void dispose() {
@@ -339,59 +335,54 @@ class _LikeState extends State<_LikeWidget> {
   }
 
   void clickVoteIcon() {
+    if (FastClick.isFastClick()) {
+      return;
+    }
     if (widget._post.isVote) {
       //已点赞，取消赞
       postCancelVoteData();
+      Observable.fromFuture(postCancelVoteData()).listen((data) {
+        if (data) {
+          //取消点赞成功
+          setState(() {
+            widget._post.isVote = false;
+            widget._post.votes--;
+          });
+          SnackBarUtil.show(context, "取消点赞成功");
+        }
+      });
     } else {
       //未点赞，点赞
       Observable.fromFuture(postVoteData()).listen((data) {
         print("data is: $data");
         if (data) {
+          //点赞成功
           setState(() {
-            widget._post.votes++;
             widget._post.isVote = true;
+            widget._post.votes++;
             SnackBarUtil.show(context, "点赞成功");
           });
         }
       });
-
-//      subject.listen((data) {
-//        print("data is: $data");
-//      });
-//      subject.stream.listen((data) {
-//        print("data is: $data");
-//      });
-//      subject.sink.add(postVoteData());
     }
   }
 
-  void postCancelVoteData() async {
-    await ApiUtil.getInstance()
-        .netFetch(
-        "/vote/cancelVote", RequestMethod.POST, {"postId": widget._post.id},
-        null)
-        .then((values) {
-      print("postCancelVoteData() data is: " + values);
-      if ("" == values) {
-        //取消点赞成功
-        setState(() {
-          widget._post.isVote = false;
-          widget._post.votes--;
-        });
-
-        SnackBarUtil.show(context, "取消点赞成功");
-      }
-    });
-  }
-
-  Future<bool> postVoteData() async {
-    dynamic map = await ApiUtil.getInstance()
-        .netFetch(
-        "/vote/vote", RequestMethod.POST, {"postId": widget._post.id}, null);
+  Future<bool> postCancelVoteData() async {
+    dynamic map = await ApiUtil.getInstance().netFetch("/vote/cancelVote",
+        RequestMethod.POST, {"postId": widget._post.id}, null);
+    print("postCancelVoteData() data is: " + map);
     if (map == "") {
       return true;
     }
     return false;
   }
 
+  Future<bool> postVoteData() async {
+    dynamic map = await ApiUtil.getInstance().netFetch(
+        "/vote/vote", RequestMethod.POST, {"postId": widget._post.id}, null);
+    if (map == "") {
+      return true;
+    }
+    return false;
+  }
 }

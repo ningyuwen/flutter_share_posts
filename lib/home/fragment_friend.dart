@@ -146,24 +146,24 @@ class FriendState extends State<FragmentFriendAndAround>
               key: new ObjectKey(_posts[index].id),
               data: _posts[index],
             );
-//            return GestureDetector(
-//              child: PostInfoItem(
-//                key: new ObjectKey(_posts[index].id),
-//                data: _posts[index],
-//              ),
-//              onTap: () {
-//                //进入详情页
-//                PostDetailArgument postDetailArgument = new PostDetailArgument(
-//                    _posts[index].id, 113.347868, 23.007985);
-//                print("进入详情页");
-//                Navigator.push(
-//                    context,
-//                    MaterialPageRoute(
-//                        builder: (context) =>
-//                            new DetailPagefulWidget(postDetailArgument)
-//                        ));
-//              },
-//            );
+          //  return GestureDetector(
+          //    child: PostInfoItem(
+          //      key: new ObjectKey(_posts[index].id),
+          //      data: _posts[index],
+          //    ),
+          //    onTap: () {
+          //      //进入详情页
+          //      PostDetailArgument postDetailArgument = new PostDetailArgument(
+          //          _posts[index].id, 113.347868, 23.007985);
+          //      print("进入详情页");
+          //      Navigator.push(
+          //          context,
+          //          MaterialPageRoute(
+          //              builder: (context) =>
+          //                  new DetailPagefulWidget(postDetailArgument)
+          //              ));
+          //    },
+          //  );
           },
           controller: _scrollController,
         ),

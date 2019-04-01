@@ -72,6 +72,7 @@ class PostItemView extends StatelessWidget {
                       padding: const EdgeInsets.all(0.0),
                       icon: Icon(Icons.comment, size: 20.0, color: Colors.grey),
                       onPressed: () {
+                        SnackBarUtil.show(context, "点击详情");
                         PostDetailArgument postDetailArgument =
                         new PostDetailArgument(
                             post.id, 113.347868, 23.007985);
@@ -134,9 +135,6 @@ class PostItemView extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-//                    TextSpan(
-//                        text: "@${post.position} · ",
-//                        style: TextStyle(color: Colors.grey)),
                     TextSpan(
                         text: "${post.releaseTime}",
                         style: TextStyle(color: Colors.grey, fontSize: 12.0))
@@ -144,6 +142,7 @@ class PostItemView extends StatelessWidget {
                 ),
               ),
               showContent(), //文字
+              //图片
               Container(
                   padding: const EdgeInsets.only(left: 16.0),
                   height: 200.0,
@@ -180,9 +179,10 @@ class PostItemView extends StatelessWidget {
 
   Widget showPhotos() {
     _photosPageController.addListener(() {
-//      setState(() {
-//        currentPageValue = _photosPageController.page;
-//      });
+    //  setState(() {
+    //    currentPageValue = _photosPageController.page;
+    //  });
+      print("页面发生了改变 ${_photosPageController.page}");
     });
     return PageView.builder(
       controller: _photosPageController,

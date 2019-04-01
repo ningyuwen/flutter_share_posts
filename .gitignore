@@ -57,6 +57,6 @@ build/
 
 *.log
 
-android/
-ios/
+# android/
+# ios/
 *.iml

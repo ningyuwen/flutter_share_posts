@@ -1,0 +1,30 @@
+{
+  "name": "amap_location",
+  "version": "0.0.1",
+  "summary": "A Flutter plugin to use amap location.高德地图定位组件",
+  "description": "A Flutter plugin to use amap location.高德地图定位组件",
+  "homepage": "http://example.com",
+  "license": {
+    "file": "../LICENSE"
+  },
+  "authors": {
+    "JZoom": "jzoom8112@gmail.com"
+  },
+  "source": {
+    "path": "."
+  },
+  "source_files": "Classes/**/*",
+  "public_header_files": "Classes/**/*.h",
+  "dependencies": {
+    "Flutter": [
+
+    ],
+    "AMapLocation": [
+
+    ]
+  },
+  "static_framework": true,
+  "platforms": {
+    "ios": "8.0"
+  }
+}

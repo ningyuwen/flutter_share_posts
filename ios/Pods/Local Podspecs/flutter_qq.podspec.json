@@ -1,0 +1,29 @@
+{
+  "name": "flutter_qq",
+  "version": "0.0.3",
+  "summary": "Flutter plugin for QQ.",
+  "description": "Flutter plugin for QQ.",
+  "homepage": "https://github.com/marekchen/flutter_qq",
+  "license": {
+    "file": "../LICENSE"
+  },
+  "authors": {
+    "marekchen": "c491843272@gmail.com"
+  },
+  "source": {
+    "path": "."
+  },
+  "source_files": "Classes/**/*",
+  "public_header_files": "Classes/**/*.h",
+  "dependencies": {
+    "Flutter": [
+
+    ],
+    "QQSDK": [
+
+    ]
+  },
+  "platforms": {
+    "ios": "8.0"
+  }
+}

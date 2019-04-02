@@ -47,7 +47,7 @@ class ApiUtil {
       Response response = await _dio.request(_dio.options.baseUrl + path,
           data: params, options: _dio.options);
       if (response.statusCode == 200) {
-        print(response.data.toString());
+        // print(response.data.toString());
         Map map = jsonDecode(response.data.toString());
         var been = new Been.fromJson(map);
         if (been.code == 0) {

@@ -34,6 +34,7 @@ class FriendState extends State<FragmentFriendAndAround>
 
   @override
   void initState() {
+    print("FriendState initState()");
     _blocProvider.fetchQueryList();
     super.initState();
   }
@@ -47,7 +48,7 @@ class FriendState extends State<FragmentFriendAndAround>
 
   @override
   Widget build(BuildContext context) {
-    return _blocProvider.streamBuilder<List>(success: (List<PostWithUser> data) {
+    return _blocProvider.streamBuilder<List>(success: (List<Posts> data) {
 //      print("刷新完成得到数据 data size is: ${data.length}");
       return EasyRefresh(
           refreshHeader: PhoenixHeader(
@@ -132,7 +133,7 @@ class FriendState extends State<FragmentFriendAndAround>
 }
 
 class PostInfoItem extends StatelessWidget {
-  final PostWithUser data;
+  final Posts data;
 
   PostInfoItem({Key key, this.data}) : super(key: key);
 

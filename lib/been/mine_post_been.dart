@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 class MinePost {
   int userId;
   String username;
@@ -39,7 +41,7 @@ class Posts {
   int id;
   int userId;
   String content;
-  String imgUrl;
+  List<String> imgUrls = new List();
   String position;
   double longitude;
   double latitude;
@@ -55,7 +57,7 @@ class Posts {
       {this.id,
         this.userId,
         this.content,
-        this.imgUrl,
+        this.imgUrls,
         this.position,
         this.longitude,
         this.latitude,
@@ -68,10 +70,15 @@ class Posts {
         this.district});
 
   Posts.fromJson(Map<String, dynamic> json) {
+    List<String> imageUrls = new List();
+    List list = jsonDecode(json['imgUrl'].toString());
+    for (var img in list) {
+      imageUrls.add(img["url"]);
+    }
     id = json['id'];
     userId = json['userId'];
     content = json['content'];
-    imgUrl = json['imgUrl'];
+    imgUrls = imageUrls;
     position = json['position'];
     longitude = json['longitude'];
     latitude = json['latitude'];
@@ -89,7 +96,7 @@ class Posts {
     data['id'] = this.id;
     data['userId'] = this.userId;
     data['content'] = this.content;
-    data['imgUrl'] = this.imgUrl;
+    data['imgUrl'] = this.imgUrls;
     data['position'] = this.position;
     data['longitude'] = this.longitude;
     data['latitude'] = this.latitude;

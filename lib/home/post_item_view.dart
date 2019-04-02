@@ -12,12 +12,11 @@ import 'package:rxdart/rxdart.dart';
 import 'package:share/share.dart';
 
 class PostItemView extends StatelessWidget {
-  PostWithUser _post;
+  Posts _post;
   BuildContext context;
-  PageController _photosPageController = PageController(); //图片滑动监听
   var currentPageValue = 0.0; //当前页面编号
 
-  PostItemView(Key key, PostWithUser post) {
+  PostItemView(Key key, Posts post) {
     this._post = post;
   }
 
@@ -59,7 +58,7 @@ class PostItemView extends StatelessWidget {
     );
   }
 
-  Widget actionRow(PostWithUser post) => Padding(
+  Widget actionRow(Posts post) => Padding(
         padding: const EdgeInsets.only(left: 8.0, bottom: 8.0, right: 50.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -117,7 +116,7 @@ class PostItemView extends StatelessWidget {
     return stringBuffer.toString();
   }
 
-  Widget rightColumn(PostWithUser post) => Expanded(
+  Widget rightColumn(Posts post) => Expanded(
         child: Padding(
           padding: const EdgeInsets.only(right: 4.0),
           child: Column(
@@ -295,7 +294,7 @@ class PostItemView extends StatelessWidget {
 }
 
 class _LikeWidget extends StatefulWidget {
-  final PostWithUser _post;
+  final Posts _post;
 
   _LikeWidget(this._post);
 
@@ -306,11 +305,9 @@ class _LikeWidget extends StatefulWidget {
 }
 
 class _LikeState extends State<_LikeWidget> {
-  final subject = new PublishSubject<Future<bool>>();
 
   @override
   void dispose() {
-    subject.close();
     super.dispose();
   }
 

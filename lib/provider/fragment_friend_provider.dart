@@ -6,9 +6,9 @@ import 'package:rxdart/rxdart.dart';
 class FragmentFriendProvider {
   final String _EMPTY = "_empty_";
 
-  final _fetcher = new PublishSubject<List<PostWithUser>>();
+  final _fetcher = new PublishSubject<List<Posts>>();
 
-  List<PostWithUser> _data = new List();
+  List<Posts> _data = new List();
 
   stream() => _fetcher.stream;
 
@@ -27,8 +27,8 @@ class FragmentFriendProvider {
     Observable.fromFuture(getData(1)).map((map) {
       try {
         for (var value in map) {
-          PostWithUser post = PostWithUser.fromJson(value);
-          print("ningyuwen post username: ${post.username}");
+          Posts post = Posts.fromJson(value);
+//          print("ningyuwen post username: ${post.username}");
           _data.add(post);
         }
         return true;
@@ -46,8 +46,7 @@ class FragmentFriendProvider {
     Observable.fromFuture(getData(1)).map((map) {
       try {
         for (var value in map) {
-          PostWithUser post = PostWithUser.fromJson(value);
-          print("ningyuwen post username: ${post.username}");
+          Posts post = Posts.fromJson(value);
           _data.insert(0, post);
         }
         return true;

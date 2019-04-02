@@ -42,7 +42,6 @@ class PostItemView extends StatelessWidget {
                     height: 44,
                     fit: BoxFit.cover,
                     imageUrl: _post.head_url,
-//                    placeholder: CircularProgressIndicator(),
                   ),
                 ),
                 onTap: () {

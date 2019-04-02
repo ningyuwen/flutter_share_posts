@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_mini_app/publish/publish_post.dart';
+import 'package:my_mini_app/util/fast_click.dart';
 
 import 'fragment_friend.dart';
 
@@ -57,7 +58,20 @@ class _MainPageState extends State<MainPageView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Q晒单"),
+        title: SizedBox(
+            width: 700.0,
+            height: 100.0,
+            child: FlatButton(
+              child: Text(
+                "Q晒单",
+                style: TextStyle(fontSize: 18.0, color: Colors.white),
+              ),
+              onPressed: () {
+                if (FastClick.isFastClick()) {
+//                  ToastUtil.showToast("返回顶部s");
+                }
+              },
+            )),
         bottom: TabBar(
           isScrollable: true,
           indicatorColor: Colors.blue,
@@ -76,7 +90,7 @@ class _MainPageState extends State<MainPageView> {
               padding: EdgeInsets.all(6.0),
               child: Image.asset("image/iv_main_add.png"),
             ),
-            tooltip: 'Add Alarm',
+            tooltip: '发布',
             onPressed: () {
               //跳转发布页面
               Navigator.push(

@@ -1,16 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:my_mini_app/util/toast_util.dart';
-import 'package:image_picker/image_picker.dart';
-
-//import 'package:geolocator/geolocator.dart';
-// import 'package:my_mini_app/util/api_util.dart';
-import 'package:dio/dio.dart';
-import 'dart:io';
 import 'dart:convert';
-import 'package:my_mini_app/been/been.dart';
-import 'package:auto_size_text/auto_size_text.dart';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:location/location.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:my_mini_app/been/been.dart';
+import 'package:my_mini_app/util/toast_util.dart';
 
 //发布
 Future<bool> publishPost(PublishBeen been) async {
@@ -329,7 +325,6 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
 //    AMapLocation location = await AMapLocationClient.getLocation(true);
 //    ToastUtil.showToast(location.altitude.toString());
 
-
 //    var location = new Location();
 //
 //    location.onLocationChanged().listen((Map<String,double> currentLocation) {
@@ -375,7 +370,6 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
           child: RaisedButton(
               color: Color.fromARGB(255, 51, 51, 51),
               onPressed: () {
-//                ToastUtil.showToast("发布");
                 //发布，检查参数是否齐全
                 if (checkArgumentsIsRight()) {
                   ToastUtil.showToast("可以发布");

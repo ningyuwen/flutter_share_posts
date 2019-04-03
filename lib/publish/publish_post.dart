@@ -1,64 +1,11 @@
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:dio/dio.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:my_mini_app/been/been.dart';
+import 'package:mmkv_flutter/mmkv_flutter.dart';
+import 'package:my_mini_app/provider/publish_post_provider.dart';
 import 'package:my_mini_app/util/toast_util.dart';
-
-//发布
-Future<bool> publishPost(PublishBeen been) async {
-  Dio dio = new Dio();
-//  dio.options.baseUrl = "http://192.168.0.102:8080/";
-//   dio.options.baseUrl = "http://192.168.0.103:8080/";
-//  dio.options.baseUrl = "http://47.112.12.104:8080/wam/";
-  dio.options.baseUrl = "http://172.26.52.30:8080/";
-  dio.options.method = "post";
-  dio.options.connectTimeout = 60000;
-  //此行代码非常重要，设置传输文本格式
-  dio.options.contentType =
-      ContentType.parse("application/x-www-form-urlencoded");
-
-  FormData formData = new FormData.from({
-    "store": been.store,
-    "cost": been.cost,
-    "img": new UploadFileInfo(been.img, "upload.jpg"),
-    "content": been.content,
-    "imgLabel": been.imgLabel,
-    "position": been.position,
-    "longitude": been.longitude,
-    "latitude": been.latitude,
-    "district": been.district,
-  });
-  Response response = await dio.post(dio.options.baseUrl + "post/releasePost",
-      data: formData, options: dio.options);
-  Map map = jsonDecode(response.data.toString());
-  var basicBeen = new Been.fromJson(map);
-  if (basicBeen.code == 0) {
-    //发布成功，返回上一页
-    return true;
-  } else {
-    ToastUtil.showToast(basicBeen.data);
-    return false;
-  }
-}
-
-class PublishBeen {
-  String store;
-  double cost;
-  File img;
-  String content;
-  String imgLabel;
-  String position;
-  double longitude = 0.0;
-  double latitude = 0.0;
-  String district = "番禺区";
-
-  PublishBeen(this.store, this.cost, this.img, this.content, this.imgLabel,
-      this.position);
-}
 
 class PublishPostView extends StatelessWidget {
   @override
@@ -75,18 +22,13 @@ class PublishPostStatefulWidget extends StatefulWidget {
 }
 
 class PublishPostState extends State<PublishPostStatefulWidget> {
-//  Image
-  double _height = 0;
-  var _image;
+  PublishPostProvider _postProvider;
   final FocusNode _storeFocus = FocusNode();
   final FocusNode _costFocus = FocusNode();
   final FocusNode _positionFocus = FocusNode();
   final FocusNode _contentFocus = FocusNode();
   var currentLocation = <String, double>{};
 
-//  var location = new Location();
-
-//  Position _position;
   final TextEditingController _storeController =
       TextEditingController(text: "");
   final TextEditingController _costController = TextEditingController(text: "");
@@ -100,19 +42,21 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
 
   @override
   void initState() {
+    _postProvider = PublishPostProvider.newInstance();
+    print("initState()");
     super.initState();
-    getPosition();
-//    _platform.invokeMethod('getCurrentLocation', { 'message': '你点击了按钮！'}); //调用相应方法，并传入相关参数。
   }
 
   @override
   void dispose() {
+    _postProvider.dispose();
+    print("dispose()");
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: appBar(), body: scrollView());
+    return Scaffold(appBar: _appBar(), body: _scrollView());
   }
 
   Widget rightColumn() {
@@ -184,7 +128,7 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
             padding: EdgeInsets.only(top: 10.0),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
-              child: showPicFromFile(),
+              child: new _PhotosListWidget(_postProvider),
             ),
           ),
           Padding(
@@ -215,7 +159,7 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
       onTap: () {
         if (string == "拍照") {
           //跳转拍照
-          getImage();
+          _postProvider.takePhoto();
         } else if (string == "相册") {
           //跳转相册
 
@@ -245,18 +189,6 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
     );
   }
 
-  Future getImage() async {
-    var image = await ImagePicker.pickImage(
-      source: ImageSource.camera,
-      maxWidth: 800,
-      maxHeight: 600,
-    );
-
-    setState(() {
-      _image = image;
-    });
-  }
-
   Widget getPhotoInnerImage(String string) {
     if (string == "拍照") {
       return Image.asset(
@@ -270,75 +202,7 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
     return Text("");
   }
 
-  Widget showPicFromFile() {
-    if (_image != null) {
-      return Stack(
-        alignment: FractionalOffset.topRight,
-        children: <Widget>[
-          Image.file(_image),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                _image = null;
-              });
-            },
-            child: Padding(
-                padding: EdgeInsets.only(top: 15.0, right: 15.0),
-                child: Image.asset("image/ic_delete.png", width: 25.0)),
-          )
-        ],
-      );
-    }
-    return Container(
-      height: 0.0,
-    );
-  }
-
-  void getPosition() async {
-//    _position = await Geolocator().getLastKnownPosition(desiredAccuracy: LocationAccuracy.high);
-//    print(_position.longitude);
-//    setState(() {
-//      _positionController.text = _position.toString();
-//    });
-    // Platform messages may fail, so we use a try/catch PlatformException.
-//    try {
-//      currentLocation = await location.getLocation();
-//      print(currentLocation["longitude"]);
-//      setState(() {
-//        _positionController.text = currentLocation["longitude"].toString();
-//      });
-//    } catch (e) {
-//      currentLocation = null;
-//    }
-
-//    var currentLocation = <String, double>{};
-//    var location = new Location();
-//    // Platform messages may fail, so we use a try/catch PlatformException.
-//    try {
-//      currentLocation = location.getLocation as Map<String, double>;
-//      ToastUtil.showToast(currentLocation["latitude"].toString());
-//    } on PlatformException {
-//      currentLocation = null;
-//      ToastUtil.showToast("获取位置为空");
-//    }
-
-//    AMapLocation location = await AMapLocationClient.getLocation(true);
-//    ToastUtil.showToast(location.altitude.toString());
-
-//    var location = new Location();
-//
-//    location.onLocationChanged().listen((Map<String,double> currentLocation) {
-//      print(currentLocation["latitude"]);
-//      print(currentLocation["longitude"]);
-//      print(currentLocation["accuracy"]);
-//      print(currentLocation["altitude"]);
-//      print(currentLocation["speed"]);
-//      print(currentLocation["speed_accuracy"]); // Will always be 0 on iOS
-//      ToastUtil.showToast(currentLocation["latitude"].toString());
-//    });
-  }
-
-  Widget scrollView() {
+  Widget _scrollView() {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
@@ -346,11 +210,10 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            CircleAvatar(
-              radius: 18.0,
-              child: Image.asset("image/ic_qq.png"),
+            ClipOval(
+              child: _UserHeadWidget(),
             ),
-            SizedBox(
+            const SizedBox(
               width: 10.0,
             ),
             rightColumn()
@@ -360,7 +223,7 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
     );
   }
 
-  Widget appBar() {
+  Widget _appBar() {
     return AppBar(
       centerTitle: true,
       backgroundColor: Color.fromARGB(255, 51, 51, 51),
@@ -370,10 +233,10 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
           child: RaisedButton(
               color: Color.fromARGB(255, 51, 51, 51),
               onPressed: () {
-                //发布，检查参数是否齐全
+//                发布，检查参数是否齐全
                 if (checkArgumentsIsRight()) {
                   ToastUtil.showToast("可以发布");
-                  publish();
+//                  _postProvider.publish();
                 }
               },
               child: Text("发布",
@@ -396,23 +259,96 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
       ToastUtil.showToast("请输入店铺的位置");
       return false;
     }
-    if (_image == null) {
+    if (_postProvider.publishBeen.img == null) {
       ToastUtil.showToast("请添加一张美美的图片哦");
       return false;
     }
     return true;
   }
+}
 
-  void publish() async {
-    bool success = await publishPost(new PublishBeen(
-        _storeController.text,
-        3.09,
-        _image,
-        _contentController.text,
-        "imageLabel",
-        "番禺大道北666号自在城市花园"));
-    if (success) {
-      Navigator.pop(context);
-    }
+class _PhotosListWidget extends StatefulWidget {
+  final PublishPostProvider _postProvider;
+
+  _PhotosListWidget(this._postProvider);
+
+  @override
+  State<StatefulWidget> createState() {
+    return new _PhotoListState();
+  }
+}
+
+class _PhotoListState extends State<_PhotosListWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return new StreamBuilder(
+        stream: widget._postProvider.imgStream(),
+        builder: (context, AsyncSnapshot<File> snapshot) {
+          if (snapshot.hasData) {
+            return Stack(
+              alignment: FractionalOffset.topRight,
+              children: <Widget>[
+                Image.file(snapshot.data),
+                GestureDetector(
+                  onTap: () {
+                    return Container(
+                      height: 0.0,
+                    );
+                  },
+                  child: Padding(
+                      padding: EdgeInsets.only(top: 15.0, right: 15.0),
+                      child: Image.asset("image/ic_delete.png", width: 25.0)),
+                )
+              ],
+            );
+          } else if (snapshot.hasError) {
+            return Container(
+              height: 0.0,
+            );
+          } else {
+            return Container(
+              height: 0.0,
+            );
+          }
+        });
+  }
+}
+
+class _UserHeadWidget extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return new _UserHeadState();
+  }
+}
+
+class _UserHeadState extends State<_UserHeadWidget> {
+  Stream<String> _stream;
+
+  @override
+  void initState() {
+    _stream = _getUserHeadUrl().asStream();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+        stream: _stream,
+        builder: (context, AsyncSnapshot<String> snapshot) {
+          if (snapshot.hasData) {
+            return CachedNetworkImage(
+                height: 40.0,
+                width: 40.0,
+                fit: BoxFit.cover,
+                imageUrl: snapshot.data);
+          } else {
+            return CircularProgressIndicator(strokeWidth: 1.0);
+          }
+        });
+  }
+
+  Future<String> _getUserHeadUrl() async {
+    MmkvFlutter mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
+    return await mmkv.getString("headUrl");
   }
 }

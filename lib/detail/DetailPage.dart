@@ -89,15 +89,6 @@ class DetailPageWidget extends StatelessWidget {
           builder: (BuildContext context) {
             return SendCommentStatefulWidget(
                 _postDetailArgument.postId, _detailPageProvider);
-//            return GestureDetector(
-//              onTap: () {
-//                SnackBarUtil.show(context, "button");
-//              },
-//              child: Icon(
-//                Icons.send,
-//                size: 28.0,
-//              ),
-//            );
           }),
     );
   }
@@ -122,7 +113,13 @@ class DetailPageWidget extends StatelessWidget {
         return BlankItem();
       }
     });
+    final ScrollController scrollController = new ScrollController();
+    scrollController.addListener(() {
+      FocusScope.of(context).requestFocus(new FocusNode());
+//      SystemChannels.textInput.invokeMethod('TextInput.hide');
+    });
     return ListView.builder(
+        controller: scrollController,
         itemCount: items.length,
         physics: const AlwaysScrollableScrollPhysics(),
         itemBuilder: (context, index) {

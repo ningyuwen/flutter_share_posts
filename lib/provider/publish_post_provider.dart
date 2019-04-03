@@ -58,16 +58,6 @@ class PublishPostProvider {
 
   static PublishPostProvider newInstance() => new PublishPostProvider();
 
-  void takePhoto() async {
-    File file = await ImagePicker.pickImage(
-      source: ImageSource.camera,
-      maxWidth: 800,
-      maxHeight: 600,
-    );
-    _fetcher.sink.add(file);
-    publishBeen.img = file;
-  }
-
   void publish() async {
 //    bool success = await publishPost(new PublishBeen(
 //        _storeController.text,
@@ -80,6 +70,37 @@ class PublishPostProvider {
 //    if (success) {
 //      Navigator.pop(context);
 //    }
+  }
+
+  //系统相册
+  void getGalleryPhoto() async {
+    File file = await ImagePicker.pickImage(source: ImageSource.gallery);
+    if (file == null) {
+      return;
+    }
+    int size = await file.length();
+    print("file size is1: ${size / 1000}");
+    _fetcher.sink.add(file);
+    publishBeen.img = file;
+  }
+
+  void takePhoto() async {
+    File file = await ImagePicker.pickImage(
+      source: ImageSource.camera,
+      maxWidth: 1280,
+    );
+    if (file == null) {
+      return;
+    }
+    int size = await file.length();
+    print("file size is2: ${size / 1000}");
+    _fetcher.sink.add(file);
+    publishBeen.img = file;
+  }
+
+  void deleteImg() {
+    publishBeen.img = null;
+    _fetcher.sink.add(null);
   }
 }
 
@@ -104,5 +125,4 @@ class PublishBeen {
   File getImg() {
     return img;
   }
-
 }

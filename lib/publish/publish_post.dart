@@ -37,12 +37,18 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
   final TextEditingController _contentController =
       TextEditingController(text: "");
 
+  final ScrollController _scrollController = new ScrollController();
+
   //声明一个调用对象，需要把kotlin中注册的ChannelName传入构造函数
 //  static const _platform = const MethodChannel('aduning/tencent_location');
 
   @override
   void initState() {
     _postProvider = PublishPostProvider.newInstance();
+    _scrollController.addListener(() {
+      SystemChannels.textInput.invokeMethod('TextInput.hide');
+      _unFocusTextField();
+    });
     print("initState()");
     super.initState();
   }
@@ -50,6 +56,7 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
   @override
   void dispose() {
     _postProvider.dispose();
+    _scrollController.dispose();
     print("dispose()");
     super.dispose();
   }
@@ -116,7 +123,7 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
                 fontSize: 18.0,
                 fontWeight: FontWeight.normal),
             decoration: const InputDecoration(
-              border: InputBorder.none,
+//              border: InputBorder.none,
               hintText: '什么样的消费体验？',
             ),
             focusNode: _contentFocus,
@@ -159,10 +166,12 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
       onTap: () {
         if (string == "拍照") {
           //跳转拍照
+          _unFocusTextField();
           _postProvider.takePhoto();
         } else if (string == "相册") {
           //跳转相册
-
+          _unFocusTextField();
+          _postProvider.getGalleryPhoto();
         }
       },
       child: Container(
@@ -204,6 +213,8 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
 
   Widget _scrollView() {
     return SingleChildScrollView(
+      controller: _scrollController,
+      primary: false,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
         child: Row(
@@ -265,6 +276,13 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
     }
     return true;
   }
+
+  void _unFocusTextField() {
+    _positionFocus.unfocus();
+    _contentFocus.unfocus();
+    _storeFocus.unfocus();
+    _costFocus.unfocus();
+  }
 }
 
 class _PhotosListWidget extends StatefulWidget {
@@ -291,9 +309,7 @@ class _PhotoListState extends State<_PhotosListWidget> {
                 Image.file(snapshot.data),
                 GestureDetector(
                   onTap: () {
-                    return Container(
-                      height: 0.0,
-                    );
+                    widget._postProvider.deleteImg();
                   },
                   child: Padding(
                       padding: EdgeInsets.only(top: 15.0, right: 15.0),

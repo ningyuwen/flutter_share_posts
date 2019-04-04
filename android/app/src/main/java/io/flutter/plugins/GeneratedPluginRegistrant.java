@@ -6,7 +6,6 @@ import com.dexterous.flutterlocalnotifications.FlutterLocalNotificationsPlugin;
 import com.github.marekchen.flutterqq.FlutterQqPlugin;
 import io.github.ponnamkarthik.toast.fluttertoast.FluttertoastPlugin;
 import io.flutter.plugins.imagepicker.ImagePickerPlugin;
-import com.lyokone.location.LocationPlugin;
 import com.bigbug.mmkvflutter.MmkvFlutterPlugin;
 import io.flutter.plugins.pathprovider.PathProviderPlugin;
 import io.flutter.plugins.share.SharePlugin;
@@ -26,7 +25,6 @@ public final class GeneratedPluginRegistrant {
     FlutterQqPlugin.registerWith(registry.registrarFor("com.github.marekchen.flutterqq.FlutterQqPlugin"));
     FluttertoastPlugin.registerWith(registry.registrarFor("io.github.ponnamkarthik.toast.fluttertoast.FluttertoastPlugin"));
     ImagePickerPlugin.registerWith(registry.registrarFor("io.flutter.plugins.imagepicker.ImagePickerPlugin"));
-    LocationPlugin.registerWith(registry.registrarFor("com.lyokone.location.LocationPlugin"));
     MmkvFlutterPlugin.registerWith(registry.registrarFor("com.bigbug.mmkvflutter.MmkvFlutterPlugin"));
     PathProviderPlugin.registerWith(registry.registrarFor("io.flutter.plugins.pathprovider.PathProviderPlugin"));
     SharePlugin.registerWith(registry.registrarFor("io.flutter.plugins.share.SharePlugin"));

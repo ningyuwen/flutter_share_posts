@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:mmkv_flutter/mmkv_flutter.dart';
 import 'package:my_mini_app/provider/publish_post_provider.dart';
 import 'package:my_mini_app/util/toast_util.dart';
+//import 'package:location/location.dart';
 
 class PublishPostView extends StatelessWidget {
   @override
@@ -22,7 +23,7 @@ class PublishPostStatefulWidget extends StatefulWidget {
 }
 
 class PublishPostState extends State<PublishPostStatefulWidget> {
-  PublishPostProvider _postProvider;
+  PublishPostProvider _publishProvider;
   final FocusNode _storeFocus = FocusNode();
   final FocusNode _costFocus = FocusNode();
   final FocusNode _positionFocus = FocusNode();
@@ -44,20 +45,19 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
 
   @override
   void initState() {
-    _postProvider = PublishPostProvider.newInstance();
+    _publishProvider = PublishPostProvider.newInstance();
     _scrollController.addListener(() {
       SystemChannels.textInput.invokeMethod('TextInput.hide');
       _unFocusTextField();
     });
-    print("initState()");
+    _publishProvider.getPosition();
     super.initState();
   }
 
   @override
   void dispose() {
-    _postProvider.dispose();
+    _publishProvider.dispose();
     _scrollController.dispose();
-    print("dispose()");
     super.dispose();
   }
 
@@ -135,7 +135,7 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
             padding: EdgeInsets.only(top: 10.0),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
-              child: new _PhotosListWidget(_postProvider),
+              child: new _PhotosListWidget(_publishProvider),
             ),
           ),
           Padding(
@@ -167,11 +167,11 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
         if (string == "拍照") {
           //跳转拍照
           _unFocusTextField();
-          _postProvider.takePhoto();
+          _publishProvider.takePhoto();
         } else if (string == "相册") {
           //跳转相册
           _unFocusTextField();
-          _postProvider.getGalleryPhoto();
+          _publishProvider.getGalleryPhoto();
         }
       },
       child: Container(
@@ -270,7 +270,7 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
       ToastUtil.showToast("请输入店铺的位置");
       return false;
     }
-    if (_postProvider.publishBeen.img == null) {
+    if (_publishProvider.publishBeen.img == null) {
       ToastUtil.showToast("请添加一张美美的图片哦");
       return false;
     }

@@ -2,10 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+//import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
+//import 'package:location/location.dart';
 import 'package:my_mini_app/been/been.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 import 'package:rxdart/rxdart.dart';
+//import 'package:geolocator/models/location_accuracy.dart';
+import 'package:flutter/services.dart';
 
 class PublishPostProvider {
   final _fetcher = new PublishSubject<File>();
@@ -101,6 +105,38 @@ class PublishPostProvider {
   void deleteImg() {
     publishBeen.img = null;
     _fetcher.sink.add(null);
+  }
+
+  void getPosition() async {
+//    LocationData currentLocation;
+//    String error = "error";
+//
+//    var location = new Location();
+//
+//// Platform messages may fail, so we use a try/catch PlatformException.
+//    try {
+//      currentLocation = await location.getLocation();
+//      print("weizhi: ${currentLocation.latitude}");
+//      print("weizhi: ${currentLocation.longitude}");
+//    } on PlatformException catch (e) {
+//      if (e.code == 'PERMISSION_DENIED') {
+//        error = 'Permission denied';
+//      }
+//      currentLocation = null;
+//    }
+
+//    var location = new Location();
+//    print("location start");
+//    location.onLocationChanged().listen((LocationData currentLocation) {
+//      print(currentLocation.latitude);
+//      print(currentLocation.longitude);
+//    });
+
+//    List<Placemark> placemark = await Geolocator()
+//        .placemarkFromCoordinates(currentLocation.latitude, currentLocation.longitude);
+//    placemark.forEach((Placemark mark) {
+//      print("mark is: ${mark.name}");
+//    });
   }
 }
 

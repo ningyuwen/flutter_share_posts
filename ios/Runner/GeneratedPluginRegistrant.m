@@ -8,7 +8,6 @@
 #import <flutter_qq/FlutterQqPlugin.h>
 #import <fluttertoast/FluttertoastPlugin.h>
 #import <image_picker/ImagePickerPlugin.h>
-#import <location/LocationPlugin.h>
 #import <mmkv_flutter/MmkvFlutterPlugin.h>
 #import <path_provider/PathProviderPlugin.h>
 #import <share/SharePlugin.h>
@@ -23,7 +22,6 @@
   [FlutterQqPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterQqPlugin"]];
   [FluttertoastPlugin registerWithRegistrar:[registry registrarForPlugin:@"FluttertoastPlugin"]];
   [FLTImagePickerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTImagePickerPlugin"]];
-  [LocationPlugin registerWithRegistrar:[registry registrarForPlugin:@"LocationPlugin"]];
   [MmkvFlutterPlugin registerWithRegistrar:[registry registrarForPlugin:@"MmkvFlutterPlugin"]];
   [FLTPathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTPathProviderPlugin"]];
   [FLTSharePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTSharePlugin"]];

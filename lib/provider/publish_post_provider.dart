@@ -5,6 +5,8 @@ import 'package:amap_location/amap_location.dart';
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_mini_app/been/been.dart';
+import 'package:my_mini_app/been/mine_post_been.dart';
+import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:simple_permissions/simple_permissions.dart';
@@ -23,56 +25,17 @@ class PublishPostProvider {
     }
   }
 
-  //发布
-  Future<bool> publishPost(PublishBeen been) async {
-    Dio dio = new Dio();
-  dio.options.baseUrl = "http://192.168.0.101:8080/";
-//  dio.options.baseUrl = "http://47.112.12.104:8080/wam/";
-//    dio.options.baseUrl = "http://172.26.52.30:8080/";
-    dio.options.method = "post";
-    dio.options.connectTimeout = 60000;
-    //此行代码非常重要，设置传输文本格式
-    dio.options.contentType =
-        ContentType.parse("application/x-www-form-urlencoded");
-
-    FormData formData = new FormData.from({
-      "store": been.store,
-      "cost": been.cost,
-      "img": new UploadFileInfo(been.img, "upload.jpg"),
-      "content": been.content,
-      "imgLabel": been.imgLabel,
-      "position": been.position,
-      "longitude": been.longitude,
-      "latitude": been.latitude,
-      "district": been.district,
-    });
-    Response response = await dio.post(dio.options.baseUrl + "post/releasePost",
-        data: formData, options: dio.options);
-    Map map = jsonDecode(response.data.toString());
-    var basicBeen = new Been.fromJson(map);
-    if (basicBeen.code == 0) {
-      //发布成功，返回上一页
-      return true;
-    } else {
-      ToastUtil.showToast(basicBeen.data);
-      return false;
-    }
-  }
-
   static PublishPostProvider newInstance() => new PublishPostProvider();
 
-  void publish() async {
-//    bool success = await publishPost(new PublishBeen(
-//        _storeController.text,
-//        3.09,
-//        _image,
-//        _contentController.text,
-//        "imageLabel",
-//        "番禺大道北666号自在城市花园"));
-    bool success = await publishPost(publishBeen);
-//    if (success) {
-//      Navigator.pop(context);
-//    }
+  void publish(Function success) async {
+    print(publishBeen.toString());
+    dynamic data = await ApiUtil.getInstance().publishPost(publishBeen);
+    if (data is Map) {
+      Posts post = Posts.fromJson(data);
+      success(post);
+    } else {
+      ToastUtil.showToast("发布失败: ${data.toString()}");
+    }
   }
 
   //系统相册
@@ -133,6 +96,8 @@ class PublishPostProvider {
     print(location.longitude);
     publishBeen.longitude = location.longitude;
     publishBeen.latitude = location.latitude;
+    publishBeen.position = location.formattedAddress;
+    publishBeen.district = location.district;
     setPosition(location.formattedAddress);
   }
 
@@ -153,16 +118,14 @@ class PublishBeen {
   String position;
   double longitude = 0.0;
   double latitude = 0.0;
-  String district = "番禺区";
+  String district = "";
 
   PublishBeen(this.store, this.cost, this.img, this.content, this.imgLabel,
       this.position);
 
-  void setStore(String store) {
-    this.store = store;
+  @override
+  String toString() {
+    return "$store, $cost, $img, $content, $imgLabel, $position, $latitude, $longitude, $district";
   }
 
-  File getImg() {
-    return img;
-  }
 }

@@ -26,6 +26,7 @@ class FragmentMineProvider {
   void fetchMinePostData() async {
     Observable.fromFuture(getData()).map((map) {
       try {
+        print(map);
         _data = MinePost.fromJson(map);
         print("_data is: ${_data}");
         return true;

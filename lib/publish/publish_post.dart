@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mmkv_flutter/mmkv_flutter.dart';
+import 'package:my_mini_app/been/mine_post_been.dart';
 import 'package:my_mini_app/provider/publish_post_provider.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 
@@ -249,7 +250,9 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
 //                发布，检查参数是否齐全
                 if (checkArgumentsIsRight()) {
                   ToastUtil.showToast("可以发布");
-//                  _postProvider.publish();
+                  _publishProvider.publish((Posts post) {
+                    Navigator.pop(context, post);
+                  });
                 }
               },
               child: Text("发布",
@@ -276,6 +279,22 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
       ToastUtil.showToast("请添加一张美美的图片哦");
       return false;
     }
+    try {
+      var cost = double.parse(_costController.text);
+      if (cost is double) {
+        print(cost);
+      } else {
+        ToastUtil.showToast("输入的金额有误");
+        return false;
+      }
+    } catch (e) {
+      ToastUtil.showToast("输入的金额有误");
+      return false;
+    }
+    _publishProvider.publishBeen.store = _storeController.text;
+    _publishProvider.publishBeen.cost = double.parse(_costController.text);
+    _publishProvider.publishBeen.content = _contentController.text;
+    _publishProvider.publishBeen.position = _positionController.text;
     return true;
   }
 

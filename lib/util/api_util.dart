@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:my_mini_app/been/been.dart';
+import 'package:my_mini_app/provider/publish_post_provider.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 
 enum RequestMethod { GET, POST, PUT }
@@ -65,5 +66,33 @@ class ApiUtil {
       return error;
     }
     return "error";
+  }
+
+  //发布
+  Future<dynamic> publishPost(PublishBeen been) async {
+    _dio.options.method = "post";
+    FormData formData = new FormData.from({
+      "store": been.store,
+      "cost": been.cost,
+      "img": new UploadFileInfo(been.img, "upload.jpg"),
+      "content": been.content,
+      "imgLabel": been.imgLabel,
+      "position": been.position,
+      "longitude": been.longitude,
+      "latitude": been.latitude,
+      "district": been.district,
+    });
+    Response response = await _dio.post(_dio.options.baseUrl + "/post/releasePost",
+        data: formData, options: _dio.options);
+    print(response);
+    Map map = jsonDecode(response.data.toString());
+    var basicBeen = new Been.fromJson(map);
+    if (basicBeen.code == 0) {
+      //发布成功，返回上一页
+      return basicBeen.data;
+    } else {
+      ToastUtil.showToast(basicBeen.message);
+      return false;
+    }
   }
 }

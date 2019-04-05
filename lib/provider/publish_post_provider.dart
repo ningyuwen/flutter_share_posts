@@ -91,14 +91,14 @@ class PublishPostProvider {
   void showMyPosition(Function setPosition) async {
     AMapLocation location = await AMapLocationClient.getLocation(true);
     print(location.formattedAddress);
-    print(location.country);
-    print(location.latitude);
-    print(location.longitude);
+    print("经纬度: ${location.longitude}, ${location.latitude}");
+    String position = location.district + location.street + location.number + "靠近" + location.POIName;
+    print(position);
     publishBeen.longitude = location.longitude;
     publishBeen.latitude = location.latitude;
-    publishBeen.position = location.formattedAddress;
+    publishBeen.position = position;
     publishBeen.district = location.district;
-    setPosition(location.formattedAddress);
+    setPosition(position);
   }
 
   void getFileWritePermission() async {

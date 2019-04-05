@@ -1,5 +1,7 @@
 import 'package:amap_location/amap_location.dart';
 import 'package:flutter/material.dart';
+import 'package:my_mini_app/been/mine_post_been.dart';
+import 'package:my_mini_app/provider/publish_mine_pages_provider.dart';
 import 'package:my_mini_app/publish/publish_post.dart';
 import 'package:my_mini_app/util/fast_click.dart';
 
@@ -55,9 +57,6 @@ class MainTabBarItemView extends StatelessWidget {
 }
 
 class _MainPageState extends State<MainPageView> {
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,10 +96,7 @@ class _MainPageState extends State<MainPageView> {
             tooltip: '发布',
             onPressed: () {
               //跳转发布页面
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => new PublishPostView()));
+              jumpToPublishPage();
             },
           )
         ],
@@ -117,5 +113,14 @@ class _MainPageState extends State<MainPageView> {
   void dispose() {
     AMapLocationClient.shutdown();
     super.dispose();
+  }
+
+  void jumpToPublishPage() async {
+    Posts post = await Navigator.push(context,
+        MaterialPageRoute(builder: (context) => new PublishPostView()));
+    if (post != null) {
+      //更新我的页面
+      PublishMinePagesProvider().addPost(post);
+    }
   }
 }

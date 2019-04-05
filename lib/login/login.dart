@@ -36,7 +36,7 @@ class _LoginState extends State<LoginView> {
   void judgeHasLogin() async {
     MmkvFlutter mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
     bool isLogin = await mmkv.getBool("isLogin");
-    isLogin = true; //测试代码
+//    isLogin = true; //测试代码
     if (isLogin) {
       //跳转home page
       Navigator.pushAndRemoveUntil(

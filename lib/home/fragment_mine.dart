@@ -19,6 +19,7 @@ class MineState extends State<FragmentMineWidget>
   @override
   void initState() {
     _blocProvider.fetchMinePostData();
+    _blocProvider.listenFromPublishPageReturn();
     super.initState();
   }
 

@@ -5,7 +5,6 @@ import 'package:my_mini_app/been/mine_post_been.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/DetailPage.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
-import 'package:my_mini_app/util/snack_bar_util.dart';
 import 'package:share/share.dart';
 
 class MinePostItemView extends StatelessWidget {
@@ -33,7 +32,7 @@ class MinePostItemView extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
       child: Column(
         children: <Widget>[
-          secondColumn(_post),
+          mainColumn(_post),
           Divider(height: 2.0, color: Colors.black26),
         ],
       ),
@@ -42,7 +41,7 @@ class MinePostItemView extends StatelessWidget {
 
   Widget actionRow(Posts post) => Padding(
         padding: const EdgeInsets.only(
-            left: 15.0, bottom: 8.0, right: 15.0, top: 10.0),
+            left: 20.0, bottom: 0.0, right: 20.0, top: 0.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -54,12 +53,14 @@ class MinePostItemView extends StatelessWidget {
                     width: 34.0,
                     child: new IconButton(
                       padding: const EdgeInsets.all(0.0),
-                      icon: Icon(Icons.comment, size: 20.0, color: Colors.grey),
+                      icon:
+                          Icon(Icons.comment, size: 20.0, color: Colors.white),
                       onPressed: () {
                         jumpToDetailPage();
                       },
                     )),
-                Text(_post.comments.toString()),
+                Text(_post.comments.toString(),
+                    style: TextStyle(color: Colors.white)),
               ],
             ),
             //点赞按钮
@@ -71,7 +72,8 @@ class MinePostItemView extends StatelessWidget {
                   child:
                       new Icon(Icons.favorite, size: 20.0, color: Colors.red),
                 ),
-                Text(_post.votes.toString()),
+                Text(_post.votes.toString(),
+                    style: TextStyle(color: Colors.white)),
               ],
             ),
             //分享按钮
@@ -80,7 +82,7 @@ class MinePostItemView extends StatelessWidget {
                 width: 34.0,
                 child: new IconButton(
                   padding: const EdgeInsets.all(0.0),
-                  icon: Icon(Icons.share, size: 20.0, color: Colors.grey),
+                  icon: Icon(Icons.share, size: 20.0, color: Colors.white),
                   onPressed: () {
 //                    SnackBarUtil.show(context, "分享");
                     Share.share('${_post.content}；\n下面是拍的几张照片：'
@@ -120,7 +122,7 @@ class MinePostItemView extends StatelessWidget {
           fit: BoxFit.cover,
           width: MediaQuery.of(context).size.width,
           //屏幕宽度
-          height: 200.0,
+//          height: 200.0,
           placeholder: Center(
               child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -136,6 +138,7 @@ class MinePostItemView extends StatelessWidget {
             ],
           )),
           errorWidget: Container(
+            height: 200.0,
             color: Colors.black45,
             child: Center(
               child: Text(
@@ -192,7 +195,7 @@ class MinePostItemView extends StatelessWidget {
         ));
   }
 
-  Widget secondColumn(Posts post) {
+  Widget mainColumn(Posts post) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -214,19 +217,50 @@ class MinePostItemView extends StatelessWidget {
         ),
         //文字
         showContent(),
+        SizedBox(
+          height: 5.0,
+        ),
         //图片
         Container(
-            height: 230.0,
+            color: Colors.white,
             child: ClipRRect(
                 borderRadius: new BorderRadius.circular(8.0),
                 child: Stack(
+//                  alignment: new Alignment(0.0, 1.0),
                   children: <Widget>[
                     showPhotos(), //图片
                     showIndicator(), //指示器
+                    //点赞、评论、分享
+                    Positioned(
+                      bottom: -0.0,
+                      left: 0.0,
+                      right: 0.0,
+                      child: Container(
+                        height: 36.0,
+                        color: Colors.black54,
+                        child: actionRow(post),
+                      ),
+                    )
                   ],
                 ))),
-        //点赞、评论、分享
-        actionRow(post),
+        //地址
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 6.0),
+          child: Row(
+            children: <Widget>[
+              Image.asset("image/ic_map.png", height: 16.0),
+              Flexible(
+                  child: Container(
+                color: Color.fromARGB(255, 239, 240, 241),
+                child: Text(
+                  _post.position,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 12.0),
+                ),
+              ))
+            ],
+          ),
+        ),
       ],
     );
   }

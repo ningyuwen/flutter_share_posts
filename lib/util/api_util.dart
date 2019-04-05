@@ -18,9 +18,7 @@ class ApiUtil {
     _dio.options.baseUrl = "http://192.168.0.101:8080";
     _dio.options.method = "get";
     _dio.options.connectTimeout = 60000;
-    //此行代码非常重要，设置传输文本格式
-    _dio.options.contentType =
-        ContentType.parse("application/x-www-form-urlencoded");
+
   }
 
   static ApiUtil getInstance() {
@@ -43,6 +41,9 @@ class ApiUtil {
       default:
         _dio.options.method = "GET";
     }
+    //此行代码非常重要，设置传输文本格式
+    _dio.options.contentType =
+        ContentType.parse("application/x-www-form-urlencoded");
     print("netFetch data is: ${params.toString()}");
     try {
       Response response = await _dio.request(_dio.options.baseUrl + path,
@@ -71,6 +72,8 @@ class ApiUtil {
   //发布
   Future<dynamic> publishPost(PublishBeen been) async {
     _dio.options.method = "post";
+    _dio.options.contentType =
+        ContentType.parse("multipart/form-data");
     FormData formData = new FormData.from({
       "store": been.store,
       "cost": been.cost,

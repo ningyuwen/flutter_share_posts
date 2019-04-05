@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:my_mini_app/been/mine_post_been.dart';
+import 'package:my_mini_app/provider/publish_mine_pages_provider.dart';
 import 'package:my_mini_app/util/api_util.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -14,7 +15,9 @@ class FragmentMineProvider {
 
   void dispose() {
     if (!_fetcher.isClosed) {
+      print("close 了");
       _fetcher.close();
+//      PublishMinePagesProvider().dispose();
     }
   }
 
@@ -28,7 +31,7 @@ class FragmentMineProvider {
       try {
         print(map);
         _data = MinePost.fromJson(map);
-        print("_data is: ${_data}");
+        print("_data is: $_data");
         return true;
       } catch (e) {
         print("catch ${e.toString()}");
@@ -80,4 +83,13 @@ class FragmentMineProvider {
   }
 
   static FragmentMineProvider newInstance() => new FragmentMineProvider();
+
+  void listenFromPublishPageReturn() async {
+    PublishMinePagesProvider().getFetcher().listen((Posts post) {
+      print("PublishMinePagesProvider() return post is: ${post.position}");
+      _data.posts.insert(0, post);
+      _data.cost += post.cost;
+      _fetcher.sink.add(_data);
+    });
+  }
 }

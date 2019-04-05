@@ -1,10 +1,11 @@
+//import 'package:amap_location/amap_location.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'login/login.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:my_mini_app/home/main_page.dart';
 import 'package:flutter/rendering.dart';
-
+import 'package:my_mini_app/home/main_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:amap_location/amap_location.dart';
+import 'login/login.dart';
 
 class SimpleBlocDelegate extends BlocDelegate {
   @override
@@ -22,11 +23,19 @@ class SimpleBlocDelegate extends BlocDelegate {
 void main() {
 //  debugPaintSizeEnabled = true;
 //  debugDumpRenderTree();
+
+  startLocationService();
+
   BlocSupervisor().delegate = SimpleBlocDelegate();
   runApp(MaterialApp(
     home: TestLogin(),
     title: "Flutter Dem a hhh Page",
   ));
+}
+
+void startLocationService() async {
+  AMapLocationClient.setApiKey("4c6f8a60ec44f308a05d60c65ce721a2");
+  await AMapLocationClient.startup(new AMapLocationOption( desiredAccuracy:CLLocationAccuracy.kCLLocationAccuracyHundredMeters  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -52,7 +61,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
-
   @override
   void initState() {
     super.initState();
@@ -76,9 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
         context,
         new MaterialPageRoute(builder: (context) => new MainPage()),
       );
-    } else {
-
-    }
+    } else {}
   }
 
   void _incrementCounter() {

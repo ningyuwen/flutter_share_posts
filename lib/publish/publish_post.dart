@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:mmkv_flutter/mmkv_flutter.dart';
 import 'package:my_mini_app/provider/publish_post_provider.dart';
 import 'package:my_mini_app/util/toast_util.dart';
-//import 'package:location/location.dart';
 
 class PublishPostView extends StatelessWidget {
   @override
@@ -50,7 +49,11 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
       SystemChannels.textInput.invokeMethod('TextInput.hide');
       _unFocusTextField();
     });
-    _publishProvider.getPosition();
+    _publishProvider.getPosition((String position) {
+      _positionController.text = position;
+      _positionController.selection = TextSelection(
+          baseOffset: _positionController.text.length, extentOffset: _positionController.text.length);
+    });
     super.initState();
   }
 
@@ -105,8 +108,7 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
             textInputAction: TextInputAction.next,
             decoration: const InputDecoration(
                 //此处获取地理位置
-//              hintText: _positionStr
-                ),
+                hintText: "正在定位中..."),
             focusNode: _positionFocus,
             onFieldSubmitted: (term) {
               _fieldFocusChange(context, _positionFocus, _contentFocus);

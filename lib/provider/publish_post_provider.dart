@@ -1,15 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:amap_location/amap_location.dart';
 import 'package:dio/dio.dart';
-//import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
-//import 'package:location/location.dart';
 import 'package:my_mini_app/been/been.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 import 'package:rxdart/rxdart.dart';
-//import 'package:geolocator/models/location_accuracy.dart';
-import 'package:flutter/services.dart';
+import 'package:simple_permissions/simple_permissions.dart';
+//import '';
 
 class PublishPostProvider {
   final _fetcher = new PublishSubject<File>();
@@ -27,9 +26,9 @@ class PublishPostProvider {
   //发布
   Future<bool> publishPost(PublishBeen been) async {
     Dio dio = new Dio();
-//  dio.options.baseUrl = "http://192.168.0.102:8080/";
+  dio.options.baseUrl = "http://192.168.0.101:8080/";
 //  dio.options.baseUrl = "http://47.112.12.104:8080/wam/";
-    dio.options.baseUrl = "http://172.26.52.30:8080/";
+//    dio.options.baseUrl = "http://172.26.52.30:8080/";
     dio.options.method = "post";
     dio.options.connectTimeout = 60000;
     //此行代码非常重要，设置传输文本格式
@@ -107,36 +106,41 @@ class PublishPostProvider {
     _fetcher.sink.add(null);
   }
 
-  void getPosition() async {
-//    LocationData currentLocation;
-//    String error = "error";
-//
-//    var location = new Location();
-//
-//// Platform messages may fail, so we use a try/catch PlatformException.
-//    try {
-//      currentLocation = await location.getLocation();
-//      print("weizhi: ${currentLocation.latitude}");
-//      print("weizhi: ${currentLocation.longitude}");
-//    } on PlatformException catch (e) {
-//      if (e.code == 'PERMISSION_DENIED') {
-//        error = 'Permission denied';
-//      }
-//      currentLocation = null;
-//    }
+  void getPosition(Function setPosition) async {
+    getFileWritePermission();
 
-//    var location = new Location();
-//    print("location start");
-//    location.onLocationChanged().listen((LocationData currentLocation) {
-//      print(currentLocation.latitude);
-//      print(currentLocation.longitude);
-//    });
+    bool hasPermission =
+        await SimplePermissions.checkPermission(Permission.AlwaysLocation);
+    if (hasPermission) {
+      showMyPosition(setPosition);
+    } else {
+      PermissionStatus status =
+          await SimplePermissions.requestPermission(Permission.AlwaysLocation);
+      if (status == PermissionStatus.authorized) {
+        ToastUtil.showToast("您打开了位置权限");
+        showMyPosition(setPosition);
+      } else {
+        ToastUtil.showToast("您关闭了位置权限");
+      }
+    }
+  }
 
-//    List<Placemark> placemark = await Geolocator()
-//        .placemarkFromCoordinates(currentLocation.latitude, currentLocation.longitude);
-//    placemark.forEach((Placemark mark) {
-//      print("mark is: ${mark.name}");
-//    });
+  void showMyPosition(Function setPosition) async {
+    AMapLocation location = await AMapLocationClient.getLocation(true);
+    print(location.formattedAddress);
+    print(location.country);
+    print(location.latitude);
+    print(location.longitude);
+    publishBeen.longitude = location.longitude;
+    publishBeen.latitude = location.latitude;
+    setPosition(location.formattedAddress);
+  }
+
+  void getFileWritePermission() async {
+    bool hasPermission = await SimplePermissions.checkPermission(Permission.WriteExternalStorage);
+    if (!hasPermission) {
+      await SimplePermissions.requestPermission(Permission.WriteExternalStorage);
+    }
   }
 }
 

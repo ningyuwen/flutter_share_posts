@@ -1,3 +1,4 @@
+import 'package:amap_location/amap_location.dart';
 import 'package:flutter/material.dart';
 import 'package:my_mini_app/publish/publish_post.dart';
 import 'package:my_mini_app/util/fast_click.dart';
@@ -54,6 +55,9 @@ class MainTabBarItemView extends StatelessWidget {
 }
 
 class _MainPageState extends State<MainPageView> {
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,5 +111,11 @@ class _MainPageState extends State<MainPageView> {
         }).toList(),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    AMapLocationClient.shutdown();
+    super.dispose();
   }
 }

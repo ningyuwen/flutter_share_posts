@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_mini_app/provider/auth_provider.dart';
 import 'package:my_mini_app/util/auth_util.dart';
-import 'package:my_mini_app/util/snack_bar_util.dart';
 
 class SettingPage extends StatelessWidget {
   @override
@@ -12,6 +11,7 @@ class SettingPage extends StatelessWidget {
   Widget _appBar() {
     return AppBar(
       centerTitle: true,
+      title: Text("设置"),
       backgroundColor: Color.fromARGB(255, 51, 51, 51),
     );
   }

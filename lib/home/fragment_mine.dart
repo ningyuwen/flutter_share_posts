@@ -5,21 +5,47 @@ import 'package:my_mini_app/been/mine_post_been.dart';
 import 'package:my_mini_app/home/mine_posts_item.dart';
 import 'package:my_mini_app/provider/fragment_mine_provider.dart';
 
-class FragmentMineWidget extends StatefulWidget {
+class ConsumePage extends StatelessWidget {
+  final int _userId;
+
+  ConsumePage(this._userId);
+
   @override
-  State<StatefulWidget> createState() {
-    return MineState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: _appBar(),
+      body: _FragmentMinePage(_userId),
+    );
+  }
+
+  Widget _appBar() {
+    return AppBar(
+      centerTitle: true,
+      title: Text("消费账单"),
+      backgroundColor: Color.fromARGB(255, 51, 51, 51),
+    );
   }
 }
 
-class MineState extends State<FragmentMineWidget>
+class _FragmentMinePage extends StatefulWidget {
+  final int _userId;
+
+  _FragmentMinePage(this._userId);
+
+  @override
+  State<StatefulWidget> createState() {
+    return _MineState();
+  }
+}
+
+class _MineState extends State<_FragmentMinePage>
     with AutomaticKeepAliveClientMixin {
   FragmentMineProvider _blocProvider = new FragmentMineProvider();
 
   @override
   void initState() {
     print("FragmentMineWidget initState()");
-    _blocProvider.fetchMinePostData();
+    _blocProvider.fetchMinePostData(widget._userId);
     _blocProvider.listenFromPublishPageReturn();
     super.initState();
   }
@@ -71,12 +97,12 @@ class MineState extends State<FragmentMineWidget>
           new ObjectKey(data.posts[index - 1].id),
           data.posts[index - 1],
         );
-//        return Text("sfa");
       },
     );
   }
 
   Widget _userInfo(MinePost data) {
+    print("url is: ${data.headUrl}");
     return SizedBox(
       height: 150.0,
       width: MediaQuery.of(context).size.width,

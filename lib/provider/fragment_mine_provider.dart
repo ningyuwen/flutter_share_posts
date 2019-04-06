@@ -25,8 +25,8 @@ class FragmentMineProvider {
     return super.toString();
   }
 
-  void fetchMinePostData() async {
-    Observable.fromFuture(getData()).map((map) {
+  void fetchMinePostData(int userId) async {
+    Observable.fromFuture(getData(userId)).map((map) {
       try {
 //        print(map);
         _data = MinePost.fromJson(map);
@@ -45,9 +45,12 @@ class FragmentMineProvider {
   }
 
   //从后台获取数据
-  Future<dynamic> getData() async {
-    dynamic map = await ApiUtil.getInstance()
-        .netFetch("/post/getMyPosts", RequestMethod.GET, null, null);
+  Future<dynamic> getData(int userId) async {
+    dynamic map = await ApiUtil.getInstance().netFetch(
+        userId == -1 ? "/post/getMyPosts" : "/post/getPostsByUser",
+        RequestMethod.GET,
+        userId == -1 ? null : {"id": userId},
+        null);
     return map;
   }
 

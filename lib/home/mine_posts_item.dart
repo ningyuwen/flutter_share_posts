@@ -122,7 +122,7 @@ class MinePostItemView extends StatelessWidget {
           fit: BoxFit.cover,
           width: MediaQuery.of(context).size.width,
           //屏幕宽度
-//          height: 200.0,
+          height: 230.0,
           placeholder: Center(
               child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

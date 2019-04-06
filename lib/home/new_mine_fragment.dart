@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:my_mini_app/been/login_been.dart';
+import 'package:my_mini_app/home/fragment_mine.dart';
 import 'package:my_mini_app/login/login.dart';
 import 'package:my_mini_app/provider/auth_provider.dart';
 import 'package:my_mini_app/setting/setting_page.dart';
@@ -215,7 +216,11 @@ class _NewMineState extends State<NewMineFragment> {
   Widget _minePublishWidget() {
     return GestureDetector(
       onTap: () {
-        SnackBarUtil.show(context, "点击我发布的");
+//        SnackBarUtil.show(context, "点击我发布的");
+        Navigator.push(
+            context,
+            new MaterialPageRoute(
+                builder: (context) => new ConsumePage(-1)));
       },
       child: Container(
           height: 40.0,

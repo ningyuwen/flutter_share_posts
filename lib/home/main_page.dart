@@ -103,7 +103,7 @@ class _MainPageState extends State<MainPageView>
       appBar: AppBar(
         title: Text(
           "Q晒单",
-          style: TextStyle(fontSize: 18.0, color: Colors.white),
+//          style: TextStyle(fontSize: 18.0, color: Colors.white),
         ),
         backgroundColor: const Color.fromARGB(255, 51, 51, 51),
         centerTitle: true,

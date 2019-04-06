@@ -4,6 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/DetailPage.dart';
+import 'package:my_mini_app/home/fragment_mine.dart';
 import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/fast_click.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
@@ -54,7 +55,11 @@ class PostItemView extends StatelessWidget {
                   ),
                 ),
                 onTap: () {
-                  SnackBarUtil.show(context, "点击头像");
+//                  SnackBarUtil.show(context, "点击头像");
+                  Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                          builder: (context) => new ConsumePage(_post.userId)));
                 },
               ),
               rightColumn(_post),

@@ -283,6 +283,10 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
       var cost = double.parse(_costController.text);
       if (cost is double) {
         print(cost);
+        if (0 == cost) {
+          ToastUtil.showToast("消费金额不能为0");
+          return false;
+        }
       } else {
         ToastUtil.showToast("输入的金额有误");
         return false;

@@ -18,10 +18,12 @@ class NewMineFragment extends StatefulWidget {
 
 class _NewMineState extends State<NewMineFragment> {
   PublishSubject<bool> _fetcher;
+  Future<LoginBeen> _loginFuture;
 
   @override
   void initState() {
     _fetcher = AuthProvider().getFetcher();
+    _loginFuture = AuthUtil.getUserInfo();
     super.initState();
   }
 
@@ -114,7 +116,7 @@ class _NewMineState extends State<NewMineFragment> {
 
   Widget _userInfo() {
     return StreamBuilder(
-        stream: AuthUtil.getUserInfo().asStream(),
+        stream: _loginFuture.asStream(),
         builder: (context, AsyncSnapshot<LoginBeen> snapshot) {
           if (snapshot.hasData) {
             return SizedBox(

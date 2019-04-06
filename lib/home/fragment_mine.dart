@@ -102,7 +102,7 @@ class _MineState extends State<_FragmentMinePage>
   }
 
   Widget _userInfo(MinePost data) {
-    print("url is: ${data.headUrl}");
+//    print("url is: ${data.headUrl}");
     return SizedBox(
       height: 150.0,
       width: MediaQuery.of(context).size.width,

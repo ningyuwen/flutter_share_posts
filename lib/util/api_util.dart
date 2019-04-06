@@ -44,7 +44,7 @@ class ApiUtil {
     //此行代码非常重要，设置传输文本格式
     _dio.options.contentType =
         ContentType.parse("application/x-www-form-urlencoded");
-    print("netFetch data is: ${params.toString()}");
+//    print("netFetch data is: ${params.toString()}");
     try {
       Response response = await _dio.request(_dio.options.baseUrl + path,
           data: params, options: _dio.options);
@@ -87,7 +87,7 @@ class ApiUtil {
     });
     Response response = await _dio.post(_dio.options.baseUrl + "/post/releasePost",
         data: formData, options: _dio.options);
-    print(response);
+//    print(response);
     Map map = jsonDecode(response.data.toString());
     var basicBeen = new Been.fromJson(map);
     if (basicBeen.code == 0) {

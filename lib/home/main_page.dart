@@ -4,6 +4,7 @@ import 'package:my_mini_app/been/mine_post_been.dart';
 import 'package:my_mini_app/provider/publish_mine_pages_provider.dart';
 import 'package:my_mini_app/publish/publish_post.dart';
 import 'package:my_mini_app/util/fast_click.dart';
+import 'package:my_mini_app/util/toast_util.dart';
 
 import 'fragment_friend.dart';
 
@@ -32,7 +33,7 @@ class Choice {
 
 const List<Choice> choices = const <Choice>[
   const Choice(title: '附近的人', icon: Icons.directions_car, type: 1),
-  const Choice(title: '好友', icon: Icons.directions_bike, type: 2),
+  const Choice(title: '关注', icon: Icons.directions_bike, type: 2),
   const Choice(title: '我的', icon: Icons.directions_boat, type: 3),
 ];
 
@@ -56,7 +57,22 @@ class MainTabBarItemView extends StatelessWidget {
   }
 }
 
-class _MainPageState extends State<MainPageView> {
+class _MainPageState extends State<MainPageView> with AutomaticKeepAliveClientMixin {
+  int _currentIndex = 0;
+  FragmentAround _fragmentAround;
+  FragmentFriend _fragmentFriend;
+  FragmentMine _fragmentMine;
+
+
+  @override
+  void initState() {
+    print("_MainPageState initState() 了了了");
+    _fragmentAround = new FragmentAround();
+    _fragmentFriend = new FragmentFriend();
+    _fragmentMine = new FragmentMine();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,21 +86,19 @@ class _MainPageState extends State<MainPageView> {
                 style: TextStyle(fontSize: 18.0, color: Colors.white),
               ),
               onPressed: () {
-                if (FastClick.isFastClick()) {
-//                  ToastUtil.showToast("返回顶部s");
-                }
+                if (FastClick.isFastClick()) {}
               },
             )),
-        bottom: TabBar(
-          isScrollable: true,
-          indicatorColor: Colors.blue,
-          tabs: choices.map((Choice choice) {
-            return Tab(
-              text: choice.title,
-            );
-          }).toList(),
-        ),
-        backgroundColor: Color.fromARGB(255, 51, 51, 51),
+//        bottom: TabBar(
+//          isScrollable: true,
+//          indicatorColor: Colors.blue,
+//          tabs: choices.map((Choice choice) {
+//            return Tab(
+//              text: choice.title,
+//            );
+//          }).toList(),
+//        ),
+        backgroundColor: const Color.fromARGB(255, 51, 51, 51),
         centerTitle: true,
         automaticallyImplyLeading: false,
         actions: <Widget>[
@@ -101,11 +115,43 @@ class _MainPageState extends State<MainPageView> {
           )
         ],
       ),
-      body: TabBarView(
-        children: choices.map((Choice choice) {
-          return MainTabBarItemView(choice: choice);
-        }).toList(),
-      ),
+//      body: TabBarView(
+//        children: choices.map((Choice choice) {
+//          return MainTabBarItemView(choice: choice);
+//        }).toList(),
+//      ),
+      body: _showBodyWidget(),
+      bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: (int index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: const Color.fromARGB(255, 51, 51, 51),
+          items: [
+            BottomNavigationBarItem(
+                backgroundColor: Colors.white,
+                icon: Icon(Icons.home,
+                    color: _currentIndex == 0 ? Colors.blue : Colors.white),
+                title: new Text("附近",
+                    style: new TextStyle(color: Colors.white, fontSize: 14.0))),
+            BottomNavigationBarItem(
+                backgroundColor: Colors.white,
+                icon: Icon(Icons.print,
+                    color: _currentIndex == 1 ? Colors.blue : Colors.white),
+                title: new Text("关注",
+                    style: new TextStyle(color: Colors.white, fontSize: 14.0))),
+            BottomNavigationBarItem(
+                backgroundColor: Colors.white,
+                icon: Icon(
+                  Icons.print,
+                  color: _currentIndex == 2 ? Colors.blue : Colors.white,
+                ),
+                title: new Text("我的",
+                    style: new TextStyle(color: Colors.white, fontSize: 14.0))),
+          ]),
     );
   }
 
@@ -123,4 +169,40 @@ class _MainPageState extends State<MainPageView> {
       PublishMinePagesProvider().addPost(post);
     }
   }
+
+  Widget _showBodyWidget() {
+    return Stack(
+      children: List<Widget>.generate(3, (int index) {
+        return IgnorePointer(
+          ignoring: index != _currentIndex,
+          child: Opacity(
+            opacity: _currentIndex == index ? 1.0 : 0.0,
+            child: Navigator(
+              onGenerateRoute: (RouteSettings settings) {
+                return new MaterialPageRoute(
+                  builder: (_) => _page(index),
+                  settings: settings,
+                );
+              },
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget _page(int index) {
+    switch(index) {
+      case 0:
+        return _fragmentAround;
+      case 1:
+        return _fragmentFriend;
+      case 2:
+        return _fragmentMine;
+    }
+    return _fragmentAround;
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 }

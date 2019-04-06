@@ -18,6 +18,7 @@ class MineState extends State<FragmentMineWidget>
 
   @override
   void initState() {
+    print("FragmentMineWidget initState()");
     _blocProvider.fetchMinePostData();
     _blocProvider.listenFromPublishPageReturn();
     super.initState();
@@ -26,6 +27,7 @@ class MineState extends State<FragmentMineWidget>
   @override
   void dispose() {
     _blocProvider.dispose();
+    print("FragmentMineWidget close 了了了");
     super.dispose();
   }
 

@@ -15,7 +15,6 @@ class FragmentMineProvider {
 
   void dispose() {
     if (!_fetcher.isClosed) {
-      print("close 了");
       _fetcher.close();
 //      PublishMinePagesProvider().dispose();
     }
@@ -29,16 +28,16 @@ class FragmentMineProvider {
   void fetchMinePostData() async {
     Observable.fromFuture(getData()).map((map) {
       try {
-        print(map);
+//        print(map);
         _data = MinePost.fromJson(map);
-        print("_data is: $_data");
+//        print("_data is: $_data");
         return true;
       } catch (e) {
         print("catch ${e.toString()}");
         return false;
       }
     }).listen((success) {
-      print("success is: $success");
+//      print("success is: $success");
       if (success) {
         _fetcher.sink.add(_data);
       }

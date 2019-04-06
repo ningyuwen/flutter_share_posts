@@ -3,10 +3,11 @@ import 'package:flutter_qq/flutter_qq.dart';
 import 'package:mmkv_flutter/mmkv_flutter.dart';
 import 'package:my_mini_app/been/login_been.dart';
 import 'package:my_mini_app/home/main_page.dart';
+import 'package:my_mini_app/provider/auth_provider.dart';
 import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 
-class TestLogin extends StatelessWidget {
+class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LoginView();
@@ -30,7 +31,7 @@ class _LoginState extends State<LoginView> {
   @override
   void initState() {
     super.initState();
-    judgeHasLogin();
+//    judgeHasLogin();
   }
 
   void judgeHasLogin() async {
@@ -64,7 +65,7 @@ class _LoginState extends State<LoginView> {
       var qqResult = await FlutterQq.login();
       var output;
       if (qqResult.code == 0) {
-        ToastUtil.showToast("登陆成功");
+//        ToastUtil.showToast("登陆成功");
         print("json data is: ${qqResult.response["accessToken"].toString()}");
         //发送openid到服务器
         var loginMap = await ApiUtil.getInstance().netFetch(
@@ -79,10 +80,14 @@ class _LoginState extends State<LoginView> {
         _saveDataToSharedPref(loginBeen);
         print('hello this is data: ${loginBeen.username}');
         //登陆成功，跳转activity
-        Navigator.pushAndRemoveUntil(
-            context,
-            new MaterialPageRoute(builder: (context) => new MainPage()),
-            (route) => route == null);
+//        Navigator.pushAndRemoveUntil(
+//            context,
+//            new MaterialPageRoute(builder: (context) => new MainPage()),
+//            (route) => route == null);
+        //将跳转登录，改为登陆成功返回，使app可以不登录查看首页信息
+        //设置登录成功的状态
+        AuthProvider().setLoginState(true);
+        Navigator.pop(context);
       } else if (qqResult.code == 1) {
         ToastUtil.showToast("登录失败 ${qqResult.message}");
       } else {

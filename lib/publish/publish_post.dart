@@ -249,7 +249,7 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
               onPressed: () {
 //                发布，检查参数是否齐全
                 if (checkArgumentsIsRight()) {
-                  ToastUtil.showToast("可以发布");
+//                  ToastUtil.showToast("可以发布");
                   _publishProvider.publish((Posts post) {
                     Navigator.pop(context, post);
                   });

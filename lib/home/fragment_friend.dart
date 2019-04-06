@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_mini_app/home/fragment_mine.dart';
 import 'package:my_mini_app/home/home_page_fragment.dart';
+import 'package:my_mini_app/home/new_mine_fragment.dart';
 
 //好友fragment
 class FragmentFriend extends StatelessWidget {
@@ -76,6 +76,7 @@ class FragmentMine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FragmentMineWidget();
+//    return FragmentMineWidget();
+    return NewMineFragment();
   }
 }

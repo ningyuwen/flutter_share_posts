@@ -1,18 +1,20 @@
 import 'package:amap_location/amap_location.dart';
 import 'package:flutter/material.dart';
 import 'package:my_mini_app/been/mine_post_been.dart';
+import 'package:my_mini_app/login/login.dart';
 import 'package:my_mini_app/provider/publish_mine_pages_provider.dart';
 import 'package:my_mini_app/publish/publish_post.dart';
-import 'package:my_mini_app/util/fast_click.dart';
+import 'package:my_mini_app/util/auth_util.dart';
 import 'package:my_mini_app/util/toast_util.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:simple_permissions/simple_permissions.dart';
 
 import 'fragment_friend.dart';
 
 class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: choices.length, initialIndex: 0, child: MainPageView());
+    return MainPageView();
   }
 }
 
@@ -31,11 +33,11 @@ class Choice {
   final int type; //控制显示类型，附近的人、好友、我的
 }
 
-const List<Choice> choices = const <Choice>[
-  const Choice(title: '附近的人', icon: Icons.directions_car, type: 1),
-  const Choice(title: '关注', icon: Icons.directions_bike, type: 2),
-  const Choice(title: '我的', icon: Icons.directions_boat, type: 3),
-];
+//const List<Choice> choices = const <Choice>[
+//  const Choice(title: '附近的人', icon: Icons.directions_car, type: 1),
+//  const Choice(title: '关注', icon: Icons.directions_bike, type: 2),
+//  const Choice(title: '我的', icon: Icons.directions_boat, type: 3),
+//];
 
 class MainTabBarItemView extends StatelessWidget {
   const MainTabBarItemView({Key key, this.choice}) : super(key: key);
@@ -43,7 +45,10 @@ class MainTabBarItemView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle textStyle = Theme.of(context).textTheme.display1;
+    final TextStyle textStyle = Theme
+        .of(context)
+        .textTheme
+        .display1;
     switch (choice.type) {
       case 1:
         return FragmentAround();
@@ -57,12 +62,13 @@ class MainTabBarItemView extends StatelessWidget {
   }
 }
 
-class _MainPageState extends State<MainPageView> with AutomaticKeepAliveClientMixin {
+class _MainPageState extends State<MainPageView>
+    with AutomaticKeepAliveClientMixin {
   int _currentIndex = 0;
   FragmentAround _fragmentAround;
   FragmentFriend _fragmentFriend;
   FragmentMine _fragmentMine;
-
+  List<Widget> _screens = [];
 
   @override
   void initState() {
@@ -70,34 +76,35 @@ class _MainPageState extends State<MainPageView> with AutomaticKeepAliveClientMi
     _fragmentAround = new FragmentAround();
     _fragmentFriend = new FragmentFriend();
     _fragmentMine = new FragmentMine();
+    _screens.add(_fragmentAround);
+    _screens.add(_fragmentFriend);
+    _screens.add(_fragmentMine);
+    _getFileWritePermission();
     super.initState();
+  }
+
+  void _getFileWritePermission() async {
+    bool hasPermission = await SimplePermissions.checkPermission(
+        Permission.WriteExternalStorage);
+    if (!hasPermission) {
+      PermissionStatus status = await SimplePermissions.requestPermission(
+          Permission.WriteExternalStorage);
+      if (status == PermissionStatus.authorized) {
+//        ToastUtil.showToast("您打开了位置权限");
+      } else {
+//        ToastUtil.showToast("您关闭了位置权限");
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: SizedBox(
-            width: 700.0,
-            height: 100.0,
-            child: FlatButton(
-              child: Text(
-                "Q晒单",
-                style: TextStyle(fontSize: 18.0, color: Colors.white),
-              ),
-              onPressed: () {
-                if (FastClick.isFastClick()) {}
-              },
-            )),
-//        bottom: TabBar(
-//          isScrollable: true,
-//          indicatorColor: Colors.blue,
-//          tabs: choices.map((Choice choice) {
-//            return Tab(
-//              text: choice.title,
-//            );
-//          }).toList(),
-//        ),
+        title: Text(
+          "Q晒单",
+          style: TextStyle(fontSize: 18.0, color: Colors.white),
+        ),
         backgroundColor: const Color.fromARGB(255, 51, 51, 51),
         centerTitle: true,
         automaticallyImplyLeading: false,
@@ -110,16 +117,11 @@ class _MainPageState extends State<MainPageView> with AutomaticKeepAliveClientMi
             tooltip: '发布',
             onPressed: () {
               //跳转发布页面
-              jumpToPublishPage();
+              _jumpToPublishPage();
             },
           )
         ],
       ),
-//      body: TabBarView(
-//        children: choices.map((Choice choice) {
-//          return MainTabBarItemView(choice: choice);
-//        }).toList(),
-//      ),
       body: _showBodyWidget(),
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentIndex,
@@ -139,14 +141,14 @@ class _MainPageState extends State<MainPageView> with AutomaticKeepAliveClientMi
                     style: new TextStyle(color: Colors.white, fontSize: 14.0))),
             BottomNavigationBarItem(
                 backgroundColor: Colors.white,
-                icon: Icon(Icons.print,
+                icon: Icon(Icons.tag_faces,
                     color: _currentIndex == 1 ? Colors.blue : Colors.white),
                 title: new Text("关注",
                     style: new TextStyle(color: Colors.white, fontSize: 14.0))),
             BottomNavigationBarItem(
                 backgroundColor: Colors.white,
                 icon: Icon(
-                  Icons.print,
+                  Icons.assignment_ind,
                   color: _currentIndex == 2 ? Colors.blue : Colors.white,
                 ),
                 title: new Text("我的",
@@ -161,7 +163,41 @@ class _MainPageState extends State<MainPageView> with AutomaticKeepAliveClientMi
     super.dispose();
   }
 
-  void jumpToPublishPage() async {
+  void _jumpToPublishPage() async {
+    Observable.fromFuture(AuthUtil.isLogin()).listen((bool isLogin) {
+      if (isLogin) {
+        _jump();
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+//                  title: new Text("跳转发布"),
+                  content: new Text("发布点评需要您先登录，是否需要进行登录？"),
+                  actions: <Widget>[
+                    new FlatButton(
+                      child: new Text("取消"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    new FlatButton(
+                      child: new Text("登录"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.push(
+                            context,
+                            new MaterialPageRoute(
+                                builder: (context) => new LoginPage()));
+                      },
+                    )
+                  ]);
+            });
+      }
+    });
+  }
+
+  void _jump() async {
     Posts post = await Navigator.push(context,
         MaterialPageRoute(builder: (context) => new PublishPostView()));
     if (post != null) {
@@ -171,28 +207,15 @@ class _MainPageState extends State<MainPageView> with AutomaticKeepAliveClientMi
   }
 
   Widget _showBodyWidget() {
-    return Stack(
-      children: List<Widget>.generate(3, (int index) {
-        return IgnorePointer(
-          ignoring: index != _currentIndex,
-          child: Opacity(
-            opacity: _currentIndex == index ? 1.0 : 0.0,
-            child: Navigator(
-              onGenerateRoute: (RouteSettings settings) {
-                return new MaterialPageRoute(
-                  builder: (_) => _page(index),
-                  settings: settings,
-                );
-              },
-            ),
-          ),
-        );
-      }),
+    return IndexedStack(
+      index: _currentIndex,
+      children: _screens,
     );
   }
 
   Widget _page(int index) {
-    switch(index) {
+    ToastUtil.showToast(context.widget.toString());
+    switch (index) {
       case 0:
         return _fragmentAround;
       case 1:

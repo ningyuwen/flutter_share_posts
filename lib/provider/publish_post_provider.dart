@@ -70,22 +70,7 @@ class PublishPostProvider {
   }
 
   void getPosition(Function setPosition) async {
-    getFileWritePermission();
-
-    bool hasPermission =
-        await SimplePermissions.checkPermission(Permission.AlwaysLocation);
-    if (hasPermission) {
-      showMyPosition(setPosition);
-    } else {
-      PermissionStatus status =
-          await SimplePermissions.requestPermission(Permission.AlwaysLocation);
-      if (status == PermissionStatus.authorized) {
-        ToastUtil.showToast("您打开了位置权限");
-        showMyPosition(setPosition);
-      } else {
-        ToastUtil.showToast("您关闭了位置权限");
-      }
-    }
+    getLocationPermission(setPosition);
   }
 
   void showMyPosition(Function setPosition) async {
@@ -101,10 +86,20 @@ class PublishPostProvider {
     setPosition(position);
   }
 
-  void getFileWritePermission() async {
-    bool hasPermission = await SimplePermissions.checkPermission(Permission.WriteExternalStorage);
-    if (!hasPermission) {
-      await SimplePermissions.requestPermission(Permission.WriteExternalStorage);
+  void getLocationPermission(Function setPosition) async {
+    bool hasPermission =
+    await SimplePermissions.checkPermission(Permission.AlwaysLocation);
+    if (hasPermission) {
+      showMyPosition(setPosition);
+    } else {
+      PermissionStatus status =
+      await SimplePermissions.requestPermission(Permission.AlwaysLocation);
+      if (status == PermissionStatus.authorized) {
+//        ToastUtil.showToast("您打开了位置权限");
+        showMyPosition(setPosition);
+      } else {
+//        ToastUtil.showToast("您关闭了位置权限");
+      }
     }
   }
 }

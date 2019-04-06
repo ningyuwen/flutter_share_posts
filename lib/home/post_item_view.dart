@@ -8,6 +8,7 @@ import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/fast_click.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
+import 'package:my_mini_app/util/toast_util.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:share/share.dart';
 
@@ -35,27 +36,27 @@ class PostItemView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              ClipOval(
-                child: CachedNetworkImage(
-                  width: 44,
-                  height: 44,
-                  fit: BoxFit.cover,
-                  imageUrl: _post.head_url,
-                ),
-              ),
-//              GestureDetector(
-//                child: ClipOval(
-//                  child: CachedNetworkImage(
-//                    width: 44,
-//                    height: 44,
-//                    fit: BoxFit.cover,
-//                    imageUrl: _post.head_url,
-//                  ),
+//              ClipOval(
+//                child: CachedNetworkImage(
+//                  width: 44,
+//                  height: 44,
+//                  fit: BoxFit.cover,
+//                  imageUrl: _post.head_url,
 //                ),
-//                onTap: () {
-//                  SnackBarUtil.show(context, "点击头像");
-//                },
 //              ),
+              GestureDetector(
+                child: ClipOval(
+                  child: CachedNetworkImage(
+                    width: 44,
+                    height: 44,
+                    fit: BoxFit.cover,
+                    imageUrl: _post.head_url,
+                  ),
+                ),
+                onTap: () {
+                  SnackBarUtil.show(context, "点击头像");
+                },
+              ),
               rightColumn(_post),
             ],
           ),
@@ -80,10 +81,11 @@ class PostItemView extends StatelessWidget {
                       padding: const EdgeInsets.all(0.0),
                       icon: Icon(Icons.comment, size: 20.0, color: Colors.grey),
                       onPressed: () {
-                        SnackBarUtil.show(context, "点击详情");
+//                        SnackBarUtil.show(context, "点击详情");
                         PostDetailArgument postDetailArgument =
                             new PostDetailArgument(
                                 post.id, 113.347868, 23.007985);
+                        ToastUtil.showToast(context.widget.toString());
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -207,56 +209,15 @@ class PostItemView extends StatelessWidget {
   }
 
   Widget _rendRow(BuildContext context, int index) {
-    return CachedNetworkImage(
-        imageUrl: _post.imgUrls[index],
-        fit: BoxFit.cover,
-        width: MediaQuery.of(context).size.width,
-        //屏幕宽度
-        height: 200.0,
-        placeholder: Center(
-          child: Text("图片加载中..."),
-        ),
-//          placeholder: Center(
-//              child: Column(
-//            mainAxisAlignment: MainAxisAlignment.center,
-//            children: <Widget>[
-//              CircularProgressIndicator(
-//                backgroundColor: Colors.amber,
-//                strokeWidth: 2.0,
-//              ),
-//              SizedBox(
-//                height: 15.0,
-//              ),
-//              Text("图片加载中...")
-//            ],
-//          )),
-        errorWidget: Container(
-          color: Colors.black45,
-          child: Center(
-            child: Text(
-              "无法查看图片，请稍后重试...",
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        ));
-
-//    return GestureDetector(
-//      onTap: () {
-//        Navigator.push(
-//            context,
-//            MaterialPageRoute(
-//                builder: (context) =>
-//                    new PhotoViewUtil(key, _post.imgUrls[index])));
-//      },
-//      child: CachedNetworkImage(
-//          imageUrl: _post.imgUrls[index],
-//          fit: BoxFit.cover,
-//          width: MediaQuery.of(context).size.width,
-//          //屏幕宽度
-//          height: 200.0,
-//          placeholder: Center(
-//            child: Text("图片加载中..."),
-//          ),
+//    return CachedNetworkImage(
+//        imageUrl: _post.imgUrls[index],
+//        fit: BoxFit.cover,
+//        width: MediaQuery.of(context).size.width,
+//        //屏幕宽度
+//        height: 200.0,
+//        placeholder: Center(
+//          child: Text("图片加载中..."),
+//        ),
 ////          placeholder: Center(
 ////              child: Column(
 ////            mainAxisAlignment: MainAxisAlignment.center,
@@ -271,16 +232,58 @@ class PostItemView extends StatelessWidget {
 ////              Text("图片加载中...")
 ////            ],
 ////          )),
-//          errorWidget: Container(
-//            color: Colors.black45,
-//            child: Center(
-//              child: Text(
-//                "无法查看图片，请稍后重试...",
-//                style: TextStyle(color: Colors.white),
-//              ),
+//        errorWidget: Container(
+//          color: Colors.black45,
+//          child: Center(
+//            child: Text(
+//              "无法查看图片，请稍后重试...",
+//              style: TextStyle(color: Colors.white),
 //            ),
+//          ),
+//        ));
+
+    return GestureDetector(
+      onTap: () {
+        ToastUtil.showToast(context.widget.toString());
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    new PhotoViewUtil(key, _post.imgUrls[index])));
+      },
+      child: CachedNetworkImage(
+          imageUrl: _post.imgUrls[index],
+          fit: BoxFit.cover,
+          width: MediaQuery.of(context).size.width,
+          //屏幕宽度
+          height: 200.0,
+          placeholder: Center(
+            child: Text("图片加载中..."),
+          ),
+//          placeholder: Center(
+//              child: Column(
+//            mainAxisAlignment: MainAxisAlignment.center,
+//            children: <Widget>[
+//              CircularProgressIndicator(
+//                backgroundColor: Colors.amber,
+//                strokeWidth: 2.0,
+//              ),
+//              SizedBox(
+//                height: 15.0,
+//              ),
+//              Text("图片加载中...")
+//            ],
 //          )),
-//    );
+          errorWidget: Container(
+            color: Colors.black45,
+            child: Center(
+              child: Text(
+                "无法查看图片，请稍后重试...",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          )),
+    );
   }
 
   Widget showContent() {

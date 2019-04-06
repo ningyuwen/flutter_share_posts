@@ -8,6 +8,8 @@ class LoginBeen {
   var headUrl;
   var sex;
 
+  LoginBeen(this.openid, this.username, this.headUrl, this.sex);
+
   LoginBeen.fromJson(Map<String, dynamic> json) :
         openid = json['openid'],
         username = json['username'],

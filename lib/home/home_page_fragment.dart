@@ -5,6 +5,8 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_easyrefresh/material_footer.dart';
 import 'package:flutter_easyrefresh/phoenix_header.dart';
 import 'package:my_mini_app/been/post_around_been.dart';
+import 'package:my_mini_app/been/post_detail_argument.dart';
+import 'package:my_mini_app/detail/DetailPage.dart';
 import 'package:my_mini_app/home/post_item_view.dart';
 import 'package:my_mini_app/provider/fragment_friend_provider.dart';
 
@@ -62,32 +64,32 @@ class FriendState extends State<FragmentFriendAndAround>
             itemCount: data.length,
             physics: const AlwaysScrollableScrollPhysics(),
             itemBuilder: (context, index) {
-              return IgnorePointer(
-                ignoring: true,
-                child: PostInfoItem(
-                  key: new ObjectKey(data[index].id),
-                  data: data[index],
-                ),
-              );
-
-//              return GestureDetector(
+//              return IgnorePointer(
+//                ignoring: true,
 //                child: PostInfoItem(
 //                  key: new ObjectKey(data[index].id),
 //                  data: data[index],
 //                ),
-//                onTap: () {
-//                  //进入详情页
-//                  PostDetailArgument postDetailArgument =
-//                      new PostDetailArgument(
-//                          data[index].id, 113.347868, 23.007985);
-//                  print("进入详情页");
-//                  Navigator.push(
-//                      context,
-//                      MaterialPageRoute(
-//                          builder: (context) =>
-//                              new DetailPagefulWidget(postDetailArgument)));
-//                },
 //              );
+
+              return GestureDetector(
+                child: PostInfoItem(
+                  key: new ObjectKey(data[index].id),
+                  data: data[index],
+                ),
+                onTap: () {
+                  //进入详情页
+                  PostDetailArgument postDetailArgument =
+                      new PostDetailArgument(
+                          data[index].id, 113.347868, 23.007985);
+                  print("进入详情页");
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              new DetailPagefulWidget(postDetailArgument)));
+                },
+              );
             },
             controller: _scrollController,
           ),

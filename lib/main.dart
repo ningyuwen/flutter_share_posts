@@ -1,10 +1,10 @@
 //import 'package:amap_location/amap_location.dart';
+import 'package:amap_location/amap_location.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:my_mini_app/home/main_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:amap_location/amap_location.dart';
+
 import 'login/login.dart';
 
 class SimpleBlocDelegate extends BlocDelegate {
@@ -28,14 +28,15 @@ void main() {
 
   BlocSupervisor().delegate = SimpleBlocDelegate();
   runApp(MaterialApp(
-    home: TestLogin(),
+    home: MainPage(),
     title: "Flutter Dem a hhh Page",
   ));
 }
 
 void startLocationService() async {
   AMapLocationClient.setApiKey("4c6f8a60ec44f308a05d60c65ce721a2");
-  await AMapLocationClient.startup(new AMapLocationOption( desiredAccuracy:CLLocationAccuracy.kCLLocationAccuracyHundredMeters  ));
+  await AMapLocationClient.startup(new AMapLocationOption(
+      desiredAccuracy: CLLocationAccuracy.kCLLocationAccuracyHundredMeters));
 }
 
 class MyApp extends StatelessWidget {
@@ -74,23 +75,23 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void judgeHasLogin() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    bool isLogin = preferences.getBool("isLogin");
-    //测试代码
-    if (isLogin) {
-      //跳转home page
-      Navigator.pop(context);
-      Navigator.push(
-        context,
-        new MaterialPageRoute(builder: (context) => new MainPage()),
-      );
-    } else {}
+//    SharedPreferences preferences = await SharedPreferences.getInstance();
+//    bool isLogin = preferences.getBool("isLogin");
+//    //测试代码
+//    if (isLogin) {
+//      //跳转home page
+//      Navigator.pop(context);
+//      Navigator.push(
+//        context,
+//        new MaterialPageRoute(builder: (context) => new MainPage()),
+//      );
+//    } else {}
   }
 
   void _incrementCounter() {
     Navigator.push(
       context,
-      new MaterialPageRoute(builder: (context) => new TestLogin()),
+      new MaterialPageRoute(builder: (context) => new LoginPage()),
     );
   }
 

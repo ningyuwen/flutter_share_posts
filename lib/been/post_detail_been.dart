@@ -22,6 +22,7 @@ class PostDetail {
   String district;
   String distance;
   bool isVote;
+  bool isFriend;
   List<DetailComment> mCommentList;
 
   PostDetail({
@@ -43,6 +44,7 @@ class PostDetail {
     this.district = "",
     this.distance = "",
     this.isVote = false,
+    this.isFriend = false,
     this.mCommentList,
   });
 
@@ -77,6 +79,7 @@ class PostDetail {
         district: json['district'],
         distance: json['distance'],
         isVote: json['isVote'],
+        isFriend: json['isFriend'],
         mCommentList: detailComments);
   }
 
@@ -99,6 +102,7 @@ class PostDetail {
         'district': district,
         'distance': distance,
         'isVote': isVote,
+        'isFriend': isFriend,
         'mCommentList': mCommentList,
       };
 }

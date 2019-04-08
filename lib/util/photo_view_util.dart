@@ -18,9 +18,9 @@ class PhotoViewState extends State<PhotoViewUtil> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-//      onTap: () {
-////        Navigator.pop(context);
-//      },
+      onTap: () {
+        Navigator.pop(context);
+      },
 //      onVerticalDragEnd: (DragEndDetails details) {
 ////        Navigator.pop(context);
 //      },

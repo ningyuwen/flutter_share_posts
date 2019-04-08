@@ -1,172 +1,177 @@
 import 'dart:convert';
 
-import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:mmkv_flutter/mmkv_flutter.dart';
 import 'package:my_mini_app/been/detail_comment.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/been/post_detail_been.dart';
-import 'package:my_mini_app/provider/base_event.dart';
-import 'package:my_mini_app/provider/base_state.dart';
 import 'package:my_mini_app/util/api_util.dart';
+import 'package:my_mini_app/util/toast_util.dart';
+import 'package:rxdart/rxdart.dart';
 
-//enum BlocEvent { start, loading, loaded, error }
+class DetailPageProvider {
+  final String _EMPTY = "_empty_";
 
-class DetailPageEventLoading extends BaseEvent {
-  PostDetailArgument postDetailArgument;
+  final _fetcher = new PublishSubject<PostDetail>();
 
-  DetailPageEventLoading(this.postDetailArgument);
-}
+  PostDetail _data = new PostDetail();
 
-class DetailPageEventLoaded extends BaseEvent {}
+  stream() => _fetcher.stream;
 
-class DetailPageEventPostComment extends BaseEvent {
-  int postId;
-  String content;
+  final _userFriendFetcher = new PublishSubject<bool>();
 
-  DetailPageEventPostComment(this.postId, this.content);
-}
+//  bool _isUserFriend = false;
 
-class DetailPageStateLoading extends BaseState {}
+  userFriendStream() => _userFriendFetcher.stream;
 
-class DetailPageStateLoaded extends BaseState {
-  PostDetail postDetail;
-
-  DetailPageStateLoaded(this.postDetail);
-
-  DetailPageStateLoaded copyWith({
-    PostDetail detail,
-  }) {
-    return DetailPageStateLoaded(
-        detail ?? this.postDetail
-    );
+  void dispose() {
+    if (!_fetcher.isClosed) {
+      _fetcher.close();
+      _userFriendFetcher.close();
+    }
   }
 
   @override
   String toString() {
     return super.toString();
   }
-}
 
-class DetailPageProvider extends Bloc<BaseEvent, BaseState> {
-  @override
-  BaseState get initialState => DetailPageStateLoading();
+  Widget streamBuilder<T>({
+    T initialData,
+    Function success,
+    Function error,
+    Function empty,
+    Function loading,
+    Function finished,
+  }) {
+    return StreamBuilder(
+        stream: stream(),
+        initialData: initialData,
+        builder: (context, AsyncSnapshot<T> snapshot) {
+          if (finished != null) {
+            finished();
+          }
+          if (snapshot.hasData) {
+            if (success != null) return success(snapshot.data);
+          } else if (snapshot.hasError) {
+            final errorStr = snapshot.error;
+            if (errorStr == _EMPTY) {
+              if (empty != null) return empty();
+            } else {
+              if (error != null) return error(errorStr);
+            }
+          } else {
+            if (loading != null) return loading();
+          }
+        });
+  }
 
-//  @override
-//  Stream<BaseState> mapEventToState(BaseEvent event) async* {
-//    print("mapEventToState() event is: $event");
-//    if (event is DetailPageEventLoading) {
-//      //先读取缓存
-//      MmkvFlutter mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
-//      // 读取缓存数据
-//      String localData = await mmkv
-//          .getString("/post/getPostDetails+${event.postDetailArgument.postId}");
-//      if ("" != localData) {
-//        //有缓存数据
-//        print("localData has data is: $localData");
-//        yield DetailPageStateLoaded(PostDetail.fromJson(jsonDecode(localData)));
-//      }
-//
-//      dynamic map = await ApiUtil.getInstance().netFetch(
-//          "/post/getPostDetails",
-//          RequestMethod.GET,
-//          {
-//            "id": event.postDetailArgument.postId,
-//            "longitude": event.postDetailArgument.longitude,
-//            "latitude": event.postDetailArgument.latitude
-//          },
-//          null);
-//      if (map is Map) {
-//        String remoteData = jsonEncode(map);
-//        if (remoteData != localData) {
-//          print("不相同");
-//          mmkv.setString(
-//              "/post/getPostDetails+${event.postDetailArgument.postId}",
-//              remoteData);
-//          yield DetailPageStateLoaded(PostDetail.fromJson(map));
-//        } else {
-//          print("相同");
-//        }
-//      }
-//    } else if (event is DetailPageEventPostComment) {
-//      //发布评论
-//      if (currentState is DetailPageStateLoaded) {
-//        DetailComment comment = await postComment(event);
-//        MmkvFlutter mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
-//        comment.headUrl = await mmkv.getString("headUrl");
-//        comment.username = await mmkv.getString("username");
-//        PostDetail detail = (currentState as DetailPageStateLoaded).postDetail;
-//        detail.mCommentList.insert(0, comment);
-//        print("评论成功: ${comment.content}");
-////        currentState = state;
-////        return;
-//
-////        (currentState as DetailPageStateLoaded).props.add(comment);
-//        yield DetailPageStateLoaded(detail);
-//      }
-//    }
-//  }
+  static DetailPageProvider newInstance() => new DetailPageProvider();
 
-  Future<DetailComment> postComment(DetailPageEventPostComment event) async {
+  void getDetailData(PostDetailArgument postDetailArgument) async {
+    //先读取缓存
+    MmkvFlutter mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
+    // 读取缓存数据
+    String localData = await mmkv
+        .getString("/post/getPostDetails+${postDetailArgument.postId}");
+    if ("" != localData) {
+      //有缓存数据
+//      print("localData has data is: $localData");
+      _data = PostDetail.fromJson(jsonDecode(localData));
+      _fetcher.sink.add(_data);
+      print("isFriend 1: ${_data.isFriend}");
+      _userFriendFetcher.sink.add(_data.isFriend);
+      print("全局刷新");
+    } else {
+      print("没有缓存数据");
+      _userFriendFetcher.sink.add(false);
+    }
+
     dynamic map = await ApiUtil.getInstance().netFetch(
-        "/comment/comment",
-        RequestMethod.POST,
-        {"postId": event.postId, "content": event.content},
+        "/post/getPostDetails",
+        RequestMethod.GET,
+        {
+          "id": postDetailArgument.postId,
+          "longitude": postDetailArgument.longitude,
+          "latitude": postDetailArgument.latitude
+        },
         null);
+//    print("详情页面数据：$map");
+    if (map is Map) {
+      String remoteData = jsonEncode(map);
+      if (remoteData != localData) {
+        print("不相同");
+        mmkv.setString(
+            "/post/getPostDetails+${postDetailArgument.postId}", remoteData);
+        _data = PostDetail.fromJson(map);
+        _fetcher.sink.add(_data);
+        print("isFriend 2: ${_data.isFriend}");
+        _userFriendFetcher.sink.add(_data.isFriend);
+        print("全局刷新");
+      } else {
+        print("相同");
+        _userFriendFetcher.sink.add(_data.isFriend);
+      }
+    }
+  }
+
+  Future<DetailComment> _postCommentToRemote(int postId, String content) async {
+    dynamic map = await ApiUtil.getInstance().netFetch("/comment/comment",
+        RequestMethod.POST, {"postId": postId, "content": content}, null);
     return DetailComment.fromJson(map);
   }
 
-  @override
-  Stream<BaseState> mapEventToState(BaseState currentState, BaseEvent event) async* {
-    print("mapEventToState() event is: $event");
-    if (event is DetailPageEventLoading) {
-      //先读取缓存
-      MmkvFlutter mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
-      // 读取缓存数据
-      String localData = await mmkv
-          .getString("/post/getPostDetails+${event.postDetailArgument.postId}");
-      if ("" != localData) {
-        //有缓存数据
-        print("localData has data is: $localData");
-        yield DetailPageStateLoaded(PostDetail.fromJson(jsonDecode(localData)));
-      }
+  void postComment(int postId, String content) async {
+    DetailComment comment = await _postCommentToRemote(postId, content);
+    MmkvFlutter mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
+    comment.headUrl = await mmkv.getString("headUrl");
+    comment.username = await mmkv.getString("username");
+    _data.mCommentList.insert(0, comment);
+    print("评论成功: ${comment.content}");
+    _fetcher.sink.add(_data);
+  }
 
-      dynamic map = await ApiUtil.getInstance().netFetch(
-          "/post/getPostDetails",
-          RequestMethod.GET,
-          {
-            "id": event.postDetailArgument.postId,
-            "longitude": event.postDetailArgument.longitude,
-            "latitude": event.postDetailArgument.latitude
-          },
-          null);
-      if (map is Map) {
-        String remoteData = jsonEncode(map);
-        if (remoteData != localData) {
-          print("不相同");
-          mmkv.setString(
-              "/post/getPostDetails+${event.postDetailArgument.postId}",
-              remoteData);
-          yield DetailPageStateLoaded(PostDetail.fromJson(map));
+  void postUserFriend(bool isFriend) {
+    if (isFriend) {
+      //取消关注
+      Observable.fromFuture(_postCancelUserFriend()).listen((success) {
+        if (success) {
+          _data.isFriend = false;
+          _userFriendFetcher.sink.add(_data.isFriend);
         } else {
-          print("相同");
+          ToastUtil.showToast("取消关注失败，请稍后重试...");
         }
-      }
-    } else if (event is DetailPageEventPostComment) {
-      //发布评论
-      if (currentState is DetailPageStateLoaded) {
-        DetailComment comment = await postComment(event);
-        MmkvFlutter mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
-        comment.headUrl = await mmkv.getString("headUrl");
-        comment.username = await mmkv.getString("username");
-        PostDetail detail = currentState.postDetail;
-        detail.mCommentList.insert(0, comment);
-        print("评论成功: ${comment.content}");
-//        currentState = state;
-//        return;
-
-//        (currentState as DetailPageStateLoaded).props.add(comment);
-        yield DetailPageStateLoaded(detail);
-      }
+      });
+    } else {
+      //关注
+      Observable.fromFuture(_postUserFriend()).listen((success) {
+        if (success) {
+          _data.isFriend = true;
+          _userFriendFetcher.sink.add(_data.isFriend);
+        } else {
+          ToastUtil.showToast("关注失败，请稍后重试...");
+        }
+      });
     }
+  }
+  
+  Future<bool> _postUserFriend() async {
+    dynamic map = await ApiUtil.getInstance().netFetch("/user/userFriend", RequestMethod.POST, {
+      "targetUserId": _data.userId
+    }, null);
+    if ("" == map) {
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> _postCancelUserFriend() async {
+    dynamic map = await ApiUtil.getInstance().netFetch("/user/cancelUserFriend", RequestMethod.POST, {
+      "targetUserId": _data.userId
+    }, null);
+    if ("" == map) {
+      return true;
+    }
+    return false;
   }
 }

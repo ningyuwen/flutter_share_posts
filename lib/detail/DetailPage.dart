@@ -8,8 +8,10 @@ import 'package:my_mini_app/been/post_detail_been.dart';
 import 'package:my_mini_app/provider/base_state.dart';
 import 'package:my_mini_app/provider/detail_page_provider.dart';
 import 'package:my_mini_app/provider/text_field_provider.dart';
+import 'package:my_mini_app/util/fast_click.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
+import 'package:my_mini_app/util/toast_util.dart';
 
 class DetailPagefulWidget extends StatefulWidget {
   final PostDetailArgument _postDetailArgument;
@@ -19,18 +21,17 @@ class DetailPagefulWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     print("createState()");
-    return new DetailPageState();
+    return new _DetailPageState();
   }
 }
 
-class DetailPageState extends State<DetailPagefulWidget> {
-  DetailPageProvider _detailPageProvider = DetailPageProvider();
+class _DetailPageState extends State<DetailPagefulWidget> {
+  DetailPageProvider _detailPageProvider = DetailPageProvider.newInstance();
 
   @override
   void initState() {
     print("DetailPageState initState()");
-    _detailPageProvider
-        .dispatch(DetailPageEventLoading(widget._postDetailArgument));
+    _detailPageProvider.getDetailData(widget._postDetailArgument);
     super.initState();
   }
 
@@ -42,11 +43,11 @@ class DetailPageState extends State<DetailPagefulWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return DetailPageWidget(widget._postDetailArgument, _detailPageProvider);
+    return _DetailPageWidget(widget._postDetailArgument, _detailPageProvider);
   }
 }
 
-class DetailPageWidget extends StatelessWidget {
+class _DetailPageWidget extends StatelessWidget {
   bool isAdded = false;
 
   final DetailPageProvider _detailPageProvider;
@@ -57,7 +58,7 @@ class DetailPageWidget extends StatelessWidget {
 
   BuildContext context;
 
-  DetailPageWidget(this._postDetailArgument, this._detailPageProvider);
+  _DetailPageWidget(this._postDetailArgument, this._detailPageProvider);
 
   @override
   Widget build(BuildContext context) {
@@ -66,24 +67,27 @@ class DetailPageWidget extends StatelessWidget {
       isAdded = true;
     }
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
         title: Text("详情"),
-        backgroundColor: Color.fromARGB(255, 51, 51, 51),
+        backgroundColor: const Color.fromARGB(255, 51, 51, 51),
         centerTitle: true,
       ),
-      body: BlocBuilder(
-          bloc: _detailPageProvider,
-          builder: (BuildContext context, BaseState state) {
-            print("state is : $state");
-            if (state is DetailPageStateLoaded) {
-              return _detailPage(state.postDetail);
-            }
-            if (state is DetailPageStateLoading) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          }),
+      body: _detailPageProvider.streamBuilder(
+        success: (PostDetail data) {
+          return _detailPage(data);
+        },
+        loading: () {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+        error: (String error) {
+          return Center(
+            child: Text("加载出现错误: $error"),
+          );
+        },
+      ),
       bottomSheet: BottomSheet(
           onClosing: () {},
           builder: (BuildContext context) {
@@ -160,7 +164,8 @@ class DetailPageWidget extends StatelessWidget {
       padding: EdgeInsets.all(10.0),
       child: Text(
         _postDetail.content,
-        style: TextStyle(fontSize: 18.0),
+        style:
+            TextStyle(fontSize: 18.0, color: Color.fromARGB(255, 69, 69, 69)),
       ),
     );
   }
@@ -243,19 +248,32 @@ class DetailPageWidget extends StatelessWidget {
               ),
               Text(
                 _postDetail.releaseTime,
-                style: TextStyle(fontSize: 14.0),
+                style: TextStyle(
+                    fontSize: 14.0, color: Color.fromARGB(255, 180, 180, 180)),
               )
             ],
           ),
+          //关注
           Expanded(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.keyboard_arrow_down),
+                RaisedButton(
+                  color: const Color.fromARGB(255, 247, 247, 247),
+                  child: _userFriendWidget(_detailPageProvider, _postDetail.isFriend),
                   onPressed: () {
-                    SnackBarUtil.show(context, "点击箭头");
+                    //关注
+                    if (FastClick.isFastClick()) {
+                      ToastUtil.showToast("点击关注");
+                      return;
+                    }
+                    _detailPageProvider.postUserFriend(_postDetail.isFriend);
                   },
+                  elevation: 1.0,
+                  highlightColor: const Color.fromARGB(255, 250, 250, 250),
+                  shape: const RoundedRectangleBorder(
+                      side: BorderSide.none,
+                      borderRadius: BorderRadius.all(Radius.circular(4))),
                 ),
               ],
             ),
@@ -316,7 +334,8 @@ class DetailPageWidget extends StatelessWidget {
               Text(item._comment.username),
               Text(
                 item._comment.time,
-                style: TextStyle(fontSize: 12.0),
+                style: TextStyle(
+                    fontSize: 12.0, color: Color.fromARGB(255, 180, 180, 180)),
               ),
             ],
           ),
@@ -343,6 +362,71 @@ class DetailPageWidget extends StatelessWidget {
       height: 80.0,
     );
   }
+}
+
+class _userFriendWidget extends StatefulWidget {
+  final DetailPageProvider _detailPageProvider;
+  final bool _isFriend;
+  
+  _userFriendWidget(this._detailPageProvider, this._isFriend);
+  
+  @override
+  State<StatefulWidget> createState() {
+    return _userFriendState();
+  }
+  
+}
+
+class _userFriendState extends State<_userFriendWidget> {
+  
+  @override
+  Widget build(BuildContext context) {
+    return _userFriendWidget();
+  }
+
+  Widget _userFriendWidget() {
+    return StreamBuilder(
+      initialData: widget._isFriend,
+      stream: widget._detailPageProvider.userFriendStream(),
+      builder: (context, AsyncSnapshot<bool> snapshot) {
+        print("_userFriendWidget() ${snapshot.data}");
+        if (snapshot.hasData) {
+          if (!snapshot.data) {
+            return Row(
+              children: <Widget>[
+                Icon(
+                  Icons.add,
+                  color: const Color.fromARGB(255, 51, 132, 245),
+                ),
+                Text(
+                  "关注",
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 51, 132, 245),
+                      fontWeight: FontWeight.bold),
+                )
+              ],
+            );
+          } else {
+            return Text(
+              "已关注",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 154, 154, 154)),
+            );
+          }
+        } else {
+          return Container(
+            width: 24.0,
+            height: 24.0,
+            child: CircularProgressIndicator(
+              strokeWidth: 1.0,
+            ),
+          );
+        }
+      },
+    );
+  }
+  
 }
 
 abstract class ListItem {}
@@ -436,9 +520,8 @@ class SendCommentState extends State<SendCommentStatefulWidget>
                   return GestureDetector(
                     onTap: () {
                       if (_sendMsgTextField.text != "") {
-                        widget.detailPageProvider.dispatch(
-                            DetailPageEventPostComment(widget.postId,
-                                _sendMsgTextField.text.toString()));
+                        widget.detailPageProvider.postComment(
+                            widget.postId, _sendMsgTextField.text.toString());
                         FocusScope.of(context).requestFocus(new FocusNode());
                         SystemChannels.textInput.invokeMethod('TextInput.hide');
                       }
@@ -462,10 +545,6 @@ class SendCommentState extends State<SendCommentStatefulWidget>
     } else if (state is DetailPageTextFieldNotInput) {
       return Colors.grey;
     }
-//    if (_sendMsgTextField.text == "") {
-//      return Colors.grey;
-//    } else {
-//      return Colors.blue;
-//    }
+    return Colors.grey;
   }
 }

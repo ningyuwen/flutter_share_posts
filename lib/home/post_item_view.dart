@@ -90,7 +90,7 @@ class PostItemView extends StatelessWidget {
                         PostDetailArgument postDetailArgument =
                             new PostDetailArgument(
                                 post.id, 113.347868, 23.007985);
-                        ToastUtil.showToast(context.widget.toString());
+//                        ToastUtil.showToast(context.widget.toString());
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -249,7 +249,7 @@ class PostItemView extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        ToastUtil.showToast(context.widget.toString());
+//        ToastUtil.showToast(context.widget.toString());
         Navigator.push(
             context,
             MaterialPageRoute(

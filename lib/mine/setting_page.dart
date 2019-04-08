@@ -36,7 +36,28 @@ class SettingPage extends StatelessWidget {
                       fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
-                  _logout();
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                            content: new Text("您确定退出登录吗？"),
+                            actions: <Widget>[
+                              new FlatButton(
+                                child: new Text("取消"),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              new FlatButton(
+                                child: new Text("确定"),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  _logout();
+                                  Navigator.of(context).pop();
+                                },
+                              )
+                            ]);
+                      });
                 }),
           )
         ],

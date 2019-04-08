@@ -7,7 +7,6 @@ import 'package:my_mini_app/mine/my_user_friend_page.dart';
 import 'package:my_mini_app/mine/setting_page.dart';
 import 'package:my_mini_app/provider/auth_provider.dart';
 import 'package:my_mini_app/util/auth_util.dart';
-import 'package:my_mini_app/util/snack_bar_util.dart';
 import 'package:rxdart/rxdart.dart';
 
 class NewMineFragment extends StatefulWidget {
@@ -181,10 +180,12 @@ class _NewMineState extends State<NewMineFragment> {
               const SizedBox(
                 width: 10.0,
               ),
-              Text(
-                "我关注的人",
-                style: TextStyle(fontSize: 18.0, color: Colors.black87),
-              ),
+              Expanded(
+                child: const Text(
+                  "我关注的人",
+                  style: TextStyle(fontSize: 18.0, color: Colors.black87),
+                ),
+              )
             ],
           )),
     );
@@ -211,10 +212,12 @@ class _NewMineState extends State<NewMineFragment> {
               const SizedBox(
                 width: 10.0,
               ),
-              Text(
-                "设置",
-                style: TextStyle(fontSize: 18.0, color: Colors.black87),
-              ),
+              Expanded(
+                child: const Text(
+                  "设置",
+                  style: TextStyle(fontSize: 18.0, color: Colors.black87),
+                ),
+              )
             ],
           )),
     );
@@ -242,10 +245,12 @@ class _NewMineState extends State<NewMineFragment> {
               const SizedBox(
                 width: 10.0,
               ),
-              Text(
-                "我发布的",
-                style: TextStyle(fontSize: 18.0, color: Colors.black87),
-              ),
+              Expanded(
+                child: const Text(
+                  "我发布的",
+                  style: TextStyle(fontSize: 18.0, color: Colors.black87),
+                ),
+              )
             ],
           )),
     );

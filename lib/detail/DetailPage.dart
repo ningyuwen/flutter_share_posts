@@ -264,7 +264,7 @@ class _DetailPageWidget extends StatelessWidget {
                   onPressed: () {
                     //关注
                     if (FastClick.isFastClick()) {
-                      ToastUtil.showToast("点击关注");
+//                      ToastUtil.showToast("点击关注");
                       return;
                     }
                     _detailPageProvider.postUserFriend(_postDetail.isFriend);

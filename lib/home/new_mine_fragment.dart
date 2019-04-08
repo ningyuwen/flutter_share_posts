@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:my_mini_app/been/login_been.dart';
 import 'package:my_mini_app/home/fragment_mine.dart';
 import 'package:my_mini_app/login/login.dart';
+import 'package:my_mini_app/mine/my_user_friend_page.dart';
+import 'package:my_mini_app/mine/setting_page.dart';
 import 'package:my_mini_app/provider/auth_provider.dart';
-import 'package:my_mini_app/setting/setting_page.dart';
 import 'package:my_mini_app/util/auth_util.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
 import 'package:rxdart/rxdart.dart';
@@ -159,7 +160,11 @@ class _NewMineState extends State<NewMineFragment> {
   Widget _myAttentionUsers() {
     return GestureDetector(
       onTap: () {
-        SnackBarUtil.show(context, "点击我关注的人");
+//        SnackBarUtil.show(context, "点击我关注的人");
+        Navigator.push(
+            context,
+            new MaterialPageRoute(
+                builder: (context) => new MyUserFriendPage()));
       },
       child: Container(
           height: 40.0,
@@ -219,10 +224,8 @@ class _NewMineState extends State<NewMineFragment> {
     return GestureDetector(
       onTap: () {
 //        SnackBarUtil.show(context, "点击我发布的");
-        Navigator.push(
-            context,
-            new MaterialPageRoute(
-                builder: (context) => new ConsumePage(-1)));
+        Navigator.push(context,
+            new MaterialPageRoute(builder: (context) => new ConsumePage(-1)));
       },
       child: Container(
           height: 40.0,

@@ -5,6 +5,7 @@ import 'package:my_mini_app/been/login_been.dart';
 import 'package:my_mini_app/home/main_page.dart';
 import 'package:my_mini_app/provider/auth_provider.dart';
 import 'package:my_mini_app/util/api_util.dart';
+import 'package:my_mini_app/util/auth_util.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 
 class LoginPage extends StatelessWidget {
@@ -77,6 +78,7 @@ class _LoginState extends State<LoginView> {
             },
             null);
         LoginBeen loginBeen = new LoginBeen.fromJson(loginMap);
+        AuthUtil.userInfo = loginBeen;
         _saveDataToSharedPref(loginBeen);
         print('hello this is data: ${loginBeen.username}');
         //登陆成功，跳转activity
@@ -103,6 +105,7 @@ class _LoginState extends State<LoginView> {
 
   void _saveDataToSharedPref(LoginBeen loginBeen) async {
     MmkvFlutter mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
+    await mmkv.setInt("userId", loginBeen.userId);
     await mmkv.setString("openid", loginBeen.openid);
     await mmkv.setString("username", loginBeen.username);
     await mmkv.setString("headUrl", loginBeen.headUrl);

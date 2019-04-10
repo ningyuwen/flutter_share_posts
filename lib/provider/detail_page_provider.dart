@@ -28,6 +28,7 @@ class DetailPageProvider {
     if (!_fetcher.isClosed) {
       _fetcher.close();
       _userFriendFetcher.close();
+      _saveDataToLocal();
     }
   }
 
@@ -118,7 +119,11 @@ class DetailPageProvider {
   Future<DetailComment> _postCommentToRemote(int postId, String content) async {
     dynamic map = await ApiUtil.getInstance().netFetch("/comment/comment",
         RequestMethod.POST, {"postId": postId, "content": content}, null);
-    return DetailComment.fromJson(map);
+    print("_postCommentToRemote() map is: $map");
+    DetailComment comment =
+        DetailComment.fromJson(map); //为了适配，后台返回字段不一致的问题，commentId和id
+    comment.commentId = map["id"];
+    return comment;
   }
 
   void postComment(int postId, String content) async {
@@ -127,7 +132,7 @@ class DetailPageProvider {
     comment.headUrl = await mmkv.getString("headUrl");
     comment.username = await mmkv.getString("username");
     _data.mCommentList.insert(0, comment);
-    print("评论成功: ${comment.content}");
+    print("评论成功: ${comment.content} commentId is: ${comment.commentId}");
     _fetcher.sink.add(_data);
   }
 
@@ -154,11 +159,10 @@ class DetailPageProvider {
       });
     }
   }
-  
+
   Future<bool> _postUserFriend() async {
-    dynamic map = await ApiUtil.getInstance().netFetch("/user/userFriend", RequestMethod.POST, {
-      "targetUserId": _data.userId
-    }, null);
+    dynamic map = await ApiUtil.getInstance().netFetch("/user/userFriend",
+        RequestMethod.POST, {"targetUserId": _data.userId}, null);
     if ("" == map) {
       return true;
     }
@@ -166,12 +170,39 @@ class DetailPageProvider {
   }
 
   Future<bool> _postCancelUserFriend() async {
-    dynamic map = await ApiUtil.getInstance().netFetch("/user/cancelUserFriend", RequestMethod.POST, {
-      "targetUserId": _data.userId
-    }, null);
+    dynamic map = await ApiUtil.getInstance().netFetch("/user/cancelUserFriend",
+        RequestMethod.POST, {"targetUserId": _data.userId}, null);
     if ("" == map) {
       return true;
     }
     return false;
+  }
+
+  void deleteComment(DetailComment comment) {
+    Observable.fromFuture(_deleteComment(comment.commentId)).listen((success) {
+      if (success) {
+        //删除成功，刷新页面
+        _data.comments--;
+        _data.mCommentList.remove(comment);
+        _fetcher.sink.add(_data);
+      } else {
+        ToastUtil.showToast("删除失败，请稍后重试");
+      }
+    });
+  }
+
+  Future<bool> _deleteComment(int commentId) async {
+    dynamic map = await ApiUtil.getInstance().netFetch("/comment/deleteComment",
+        RequestMethod.POST, {"commentId": commentId}, null);
+    if ("" == map) {
+      return true;
+    }
+    return false;
+  }
+
+  void _saveDataToLocal() async {
+//    MmkvFlutter mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
+//    mmkv.setString(
+//        "/post/getPostDetails+${_data.id}", jsonEncode(_data.toJson()));
   }
 }

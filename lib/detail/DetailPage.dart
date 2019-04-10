@@ -8,6 +8,7 @@ import 'package:my_mini_app/been/post_detail_been.dart';
 import 'package:my_mini_app/provider/base_state.dart';
 import 'package:my_mini_app/provider/detail_page_provider.dart';
 import 'package:my_mini_app/provider/text_field_provider.dart';
+import 'package:my_mini_app/util/auth_util.dart';
 import 'package:my_mini_app/util/fast_click.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
@@ -260,7 +261,8 @@ class _DetailPageWidget extends StatelessWidget {
               children: <Widget>[
                 RaisedButton(
                   color: const Color.fromARGB(255, 247, 247, 247),
-                  child: _userFriendWidget(_detailPageProvider, _postDetail.isFriend),
+                  child: _UserFriendWidget(
+                      _detailPageProvider, _postDetail.isFriend),
                   onPressed: () {
                     //关注
                     if (FastClick.isFastClick()) {
@@ -343,16 +345,17 @@ class _DetailPageWidget extends StatelessWidget {
           trailing: GestureDetector(
             child: Icon(Icons.more_vert),
             onTap: () {
-              SnackBarUtil.show(context, "点击更多");
+              print("点击更多");
+              _showDeleteDialog(item);
             },
           ),
-          onTap: () {
-            SnackBarUtil.show(context, "点击评论条目");
+          onLongPress: () {
+            _showDeleteDialog(item);
           },
         ),
         Divider(
-          height: 3.0,
-        )
+          height: 1.0,
+        ),
       ],
     );
   }
@@ -362,23 +365,55 @@ class _DetailPageWidget extends StatelessWidget {
       height: 80.0,
     );
   }
+
+  String _dialogText(DetailComment comment) {
+    if (AuthUtil.userInfo == null) {
+      return "当前未登录，无法操作";
+    }
+    if (comment.userId == AuthUtil.userInfo.userId) {
+      return "删除";
+    }
+    return "举报";
+  }
+
+  void _deleteComment(CommentsItem item) {
+    if (_dialogText(item._comment) == "删除") {
+      print("AlertDialog() commentId is: ${item._comment.commentId}");
+      _detailPageProvider
+          .deleteComment(item._comment);
+    }
+    Navigator.pop(context);
+  }
+
+  void _showDeleteDialog(CommentsItem item) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              contentPadding: EdgeInsets.all(0.0),
+              content: ListTile(
+                title: Text(_dialogText(item._comment)),
+                onTap: () {
+                  _deleteComment(item);
+                },
+              ));
+        });
+  }
 }
 
-class _userFriendWidget extends StatefulWidget {
+class _UserFriendWidget extends StatefulWidget {
   final DetailPageProvider _detailPageProvider;
   final bool _isFriend;
-  
-  _userFriendWidget(this._detailPageProvider, this._isFriend);
-  
+
+  _UserFriendWidget(this._detailPageProvider, this._isFriend);
+
   @override
   State<StatefulWidget> createState() {
-    return _userFriendState();
+    return _UserFriendState();
   }
-  
 }
 
-class _userFriendState extends State<_userFriendWidget> {
-  
+class _UserFriendState extends State<_UserFriendWidget> {
   @override
   Widget build(BuildContext context) {
     return _userFriendWidget();
@@ -426,7 +461,6 @@ class _userFriendState extends State<_userFriendWidget> {
       },
     );
   }
-  
 }
 
 abstract class ListItem {}
@@ -495,7 +529,7 @@ class SendCommentState extends State<SendCommentStatefulWidget>
     super.build(context);
     return Container(
       padding: EdgeInsets.only(left: 10.0, right: 10.0),
-      color: Colors.black12,
+//      color: Colors.black12,
       height: 60.0,
       child: Center(
         child: Row(

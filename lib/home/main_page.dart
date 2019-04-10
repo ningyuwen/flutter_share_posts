@@ -202,7 +202,7 @@ class _MainPageState extends State<MainPageView>
         MaterialPageRoute(builder: (context) => new PublishPostView()));
     if (post != null) {
       //更新我的页面
-      PublishMinePagesProvider().addPost(post);
+//      PublishMinePagesProvider().addPost(post);
     }
   }
 

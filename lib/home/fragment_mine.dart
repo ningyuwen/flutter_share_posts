@@ -46,7 +46,7 @@ class _MineState extends State<_FragmentMinePage>
   void initState() {
     print("FragmentMineWidget initState()");
     _blocProvider.fetchMinePostData(widget._userId);
-    _blocProvider.listenFromPublishPageReturn();
+//    _blocProvider.listenFromPublishPageReturn();
     super.initState();
   }
 

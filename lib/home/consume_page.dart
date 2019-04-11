@@ -85,7 +85,10 @@ class _MineState extends State<_FragmentMinePage>
   }
 
   Widget _mineWidget(MinePost data) {
-    return ListView.builder(
+    return ListView.separated(
+      separatorBuilder: (context, index) => Divider(
+        height: 0.0,
+      ),
       itemCount: _setItemCount(data),
       physics: const AlwaysScrollableScrollPhysics(),
       itemBuilder: (context, index) {
@@ -119,7 +122,7 @@ class _MineState extends State<_FragmentMinePage>
       height: 150.0,
       width: MediaQuery.of(context).size.width,
       child: Padding(
-        padding: EdgeInsets.fromLTRB(10.0, 15.0, 10.0, 6.0),
+        padding: EdgeInsets.fromLTRB(10.0, 15.0, 10.0, 5.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -141,10 +144,6 @@ class _MineState extends State<_FragmentMinePage>
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[Text("消费："), Text("¥${data.cost}")],
             ),
-            Divider(
-              height: 2.0,
-              color: Colors.black26,
-            )
           ],
         ),
       ),

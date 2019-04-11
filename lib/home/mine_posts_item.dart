@@ -19,7 +19,7 @@ class MinePostItemView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     this.context = context;
-    return GestureDetector(
+    return InkWell(
       child: bodyData(),
       onTap: () {
         jumpToDetailPage();
@@ -30,12 +30,7 @@ class MinePostItemView extends StatelessWidget {
   Widget bodyData() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
-      child: Column(
-        children: <Widget>[
-          mainColumn(_post),
-          Divider(height: 0.0),
-        ],
-      ),
+      child: mainColumn(_post)
     );
   }
 

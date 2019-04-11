@@ -14,7 +14,9 @@ class AuthUtil {
     String userName = await mmkv.getString("username");
     String headUrl = await mmkv.getString("headUrl");
     bool sex = await mmkv.getBool("sex");
-    userInfo = new LoginBeen(userId, openId, userName, headUrl, sex);
+    bool isLogin = await mmkv.getBool("isLogin");
+    print("addLoginBeen() login is: ${isLogin}");
+    userInfo = new LoginBeen(userId, openId, userName, headUrl, sex, isLogin);
   }
 
   static Future<bool> isLogin() async {
@@ -31,7 +33,8 @@ class AuthUtil {
     String userName = await mmkv.getString("username");
     String headUrl = await mmkv.getString("headUrl");
     bool sex = await mmkv.getBool("sex");
-    return new LoginBeen(userId, openId, userName, headUrl, sex);
+    bool isLogin = await mmkv.getBool("isLogin");
+    return new LoginBeen(userId, openId, userName, headUrl, sex, isLogin);
   }
 
   static Future<void> logout() async {

@@ -66,7 +66,9 @@ class SettingPage extends StatelessWidget {
   }
 
   void _logout() async {
-    await AuthUtil.logout();
-    AuthProvider().setLoginState(false);
+//    await AuthUtil.logout();
+//    AuthUtil.userInfo.isLogin = false;
+    AuthProvider().logout();
+//    AuthProvider().addLoginBeen(AuthUtil.userInfo);
   }
 }

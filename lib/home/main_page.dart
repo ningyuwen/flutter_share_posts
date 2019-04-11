@@ -1,12 +1,10 @@
 import 'package:amap_location/amap_location.dart';
 import 'package:flutter/material.dart';
 import 'package:my_mini_app/been/mine_post_been.dart';
-import 'package:my_mini_app/login/login.dart';
-import 'package:my_mini_app/provider/publish_mine_pages_provider.dart';
+import 'package:my_mini_app/provider/auth_provider.dart';
 import 'package:my_mini_app/publish/publish_post.dart';
-import 'package:my_mini_app/util/auth_util.dart';
+import 'package:my_mini_app/util/BasicConfig.dart';
 import 'package:my_mini_app/util/toast_util.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:simple_permissions/simple_permissions.dart';
 
 import 'fragment_friend.dart';
@@ -14,6 +12,7 @@ import 'fragment_friend.dart';
 class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    BasicConfig.instance.setContext(context);
     return MainPageView();
   }
 }
@@ -45,10 +44,7 @@ class MainTabBarItemView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle textStyle = Theme
-        .of(context)
-        .textTheme
-        .display1;
+    final TextStyle textStyle = Theme.of(context).textTheme.display1;
     switch (choice.type) {
       case 1:
         return FragmentAround();
@@ -164,37 +160,11 @@ class _MainPageState extends State<MainPageView>
   }
 
   void _jumpToPublishPage() async {
-    Observable.fromFuture(AuthUtil.isLogin()).listen((bool isLogin) {
-      if (isLogin) {
-        _jump();
-      } else {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-//                  title: new Text("跳转发布"),
-                  content: new Text("发布点评需要您先登录，是否需要进行登录？"),
-                  actions: <Widget>[
-                    new FlatButton(
-                      child: new Text("取消"),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    new FlatButton(
-                      child: new Text("登录"),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        Navigator.push(
-                            context,
-                            new MaterialPageRoute(
-                                builder: (context) => new LoginPage()));
-                      },
-                    )
-                  ]);
-            });
-      }
-    });
+    if (AuthProvider().userInfo.isLogin) {
+      _jump();
+    } else {
+      AuthProvider().showLoginDialog("发布点评需要您先登录，是否需要进行登录？");
+    }
   }
 
   void _jump() async {

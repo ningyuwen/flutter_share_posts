@@ -42,7 +42,7 @@ class _MyUserFriendState extends State<_MyUserFriendPage> {
     return _provider.streamBuilder<List<MyUserFriendsBeen>>(
         success: (List<MyUserFriendsBeen> data) {
           return Padding(
-            padding: EdgeInsets.only(top: 10.0),
+            padding: EdgeInsets.only(top: 5.0),
             child: ListView.builder(
                 itemCount: data.length,
                 physics: const AlwaysScrollableScrollPhysics(),

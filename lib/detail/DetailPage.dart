@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_mini_app/been/detail_comment.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/been/post_detail_been.dart';
+import 'package:my_mini_app/provider/auth_provider.dart';
 import 'package:my_mini_app/provider/base_state.dart';
 import 'package:my_mini_app/provider/detail_page_provider.dart';
 import 'package:my_mini_app/provider/text_field_provider.dart';
@@ -266,7 +267,6 @@ class _DetailPageWidget extends StatelessWidget {
                   onPressed: () {
                     //关注
                     if (FastClick.isFastClick()) {
-//                      ToastUtil.showToast("点击关注");
                       return;
                     }
                     _detailPageProvider.postUserFriend(_postDetail.isFriend);
@@ -317,15 +317,19 @@ class _DetailPageWidget extends StatelessWidget {
   }
 
   Widget showCommentsItem(CommentsItem item) {
+    print("头像url is: ${item._comment.headUrl}");
     return Column(
       children: <Widget>[
         ListTile(
           leading: GestureDetector(
-            child: CircleAvatar(
-                radius: 20.0,
-                backgroundImage: NetworkImage(
-                  item._comment.headUrl,
-                )),
+            child: ClipOval(
+              child: CachedNetworkImage(
+                width: 40,
+                height: 40,
+                fit: BoxFit.cover,
+                imageUrl: item._comment.headUrl,
+              ),
+            ),
             onTap: () {
               SnackBarUtil.show(context, "点击头像");
             },
@@ -367,10 +371,10 @@ class _DetailPageWidget extends StatelessWidget {
   }
 
   String _dialogText(DetailComment comment) {
-    if (AuthUtil.userInfo == null) {
+    if (AuthProvider().userInfo == null) {
       return "当前未登录，无法操作";
     }
-    if (comment.userId == AuthUtil.userInfo.userId) {
+    if (comment.userId == AuthProvider().userInfo.userId) {
       return "删除";
     }
     return "举报";
@@ -529,7 +533,6 @@ class SendCommentState extends State<SendCommentStatefulWidget>
     super.build(context);
     return Container(
       padding: EdgeInsets.only(left: 10.0, right: 10.0),
-//      color: Colors.black12,
       height: 60.0,
       child: Center(
         child: Row(
@@ -554,10 +557,15 @@ class SendCommentState extends State<SendCommentStatefulWidget>
                   return GestureDetector(
                     onTap: () {
                       if (_sendMsgTextField.text != "") {
-                        widget.detailPageProvider.postComment(
-                            widget.postId, _sendMsgTextField.text.toString());
-                        FocusScope.of(context).requestFocus(new FocusNode());
-                        SystemChannels.textInput.invokeMethod('TextInput.hide');
+                        if (!AuthProvider().isLogin()) {
+                          AuthProvider().showLoginDialog("发表评论需要您先登录，是否需要进行登录？");
+                        } else {
+                          widget.detailPageProvider.postComment(
+                              widget.postId, _sendMsgTextField.text.toString());
+                          FocusScope.of(context).requestFocus(new FocusNode());
+                          SystemChannels.textInput.invokeMethod(
+                              'TextInput.hide');
+                        }
                       }
                     },
                     child: Icon(

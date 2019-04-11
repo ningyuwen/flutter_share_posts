@@ -78,22 +78,15 @@ class _LoginState extends State<LoginView> {
             },
             null);
         LoginBeen loginBeen = new LoginBeen.fromJson(loginMap);
-        AuthUtil.userInfo = loginBeen;
+        loginBeen.isLogin = true;
+        AuthProvider().addLoginBeen(loginBeen);
         _saveDataToSharedPref(loginBeen);
         print('hello this is data: ${loginBeen.username}');
-        //登陆成功，跳转activity
-//        Navigator.pushAndRemoveUntil(
-//            context,
-//            new MaterialPageRoute(builder: (context) => new MainPage()),
-//            (route) => route == null);
-        //将跳转登录，改为登陆成功返回，使app可以不登录查看首页信息
-        //设置登录成功的状态
-        AuthProvider().setLoginState(true);
         Navigator.pop(context);
       } else if (qqResult.code == 1) {
         ToastUtil.showToast("登录失败 ${qqResult.message}");
       } else {
-        ToastUtil.showToast("用户取消");
+//        ToastUtil.showToast("用户取消");
       }
       setState(() {
         hasQQ = output;

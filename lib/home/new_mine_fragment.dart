@@ -17,13 +17,11 @@ class NewMineFragment extends StatefulWidget {
 }
 
 class _NewMineState extends State<NewMineFragment> {
-  PublishSubject<bool> _fetcher;
-  Future<LoginBeen> _loginFuture;
+  PublishSubject<LoginBeen> _fetcher;
 
   @override
   void initState() {
     _fetcher = AuthProvider().getFetcher();
-    _loginFuture = AuthUtil.getUserInfo();
     super.initState();
   }
 
@@ -31,10 +29,11 @@ class _NewMineState extends State<NewMineFragment> {
   Widget build(BuildContext context) {
     return StreamBuilder(
         stream: _fetcher.stream,
-        builder: (context, AsyncSnapshot<bool> snapshot) {
+        builder: (context, AsyncSnapshot<LoginBeen> snapshot) {
+          print("登录了 ${snapshot.data}");
           if (snapshot.hasData) {
-            if (snapshot.data) {
-              return _loginWidget();
+            if (snapshot.data.isLogin) {
+              return _loginWidget(snapshot.data);
             } else {
               return _notLoginWidget();
             }
@@ -88,7 +87,7 @@ class _NewMineState extends State<NewMineFragment> {
             )));
   }
 
-  Widget _loginWidget() {
+  Widget _loginWidget(LoginBeen loginBeen) {
     return SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: new Container(
@@ -98,7 +97,7 @@ class _NewMineState extends State<NewMineFragment> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _userInfo(),
+              _userInfo(loginBeen),
               _myAttentionUsers(),
               Divider(
                 color: Colors.black26,
@@ -114,52 +113,47 @@ class _NewMineState extends State<NewMineFragment> {
         ));
   }
 
-  Widget _userInfo() {
-    return StreamBuilder(
-        stream: _loginFuture.asStream(),
-        builder: (context, AsyncSnapshot<LoginBeen> snapshot) {
-          if (snapshot.hasData) {
-            return SizedBox(
-              height: 120.0,
-              width: MediaQuery.of(context).size.width,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 6.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    ClipOval(
-                      child: CachedNetworkImage(
-                        width: 60,
-                        height: 60,
-                        fit: BoxFit.cover,
-                        imageUrl: snapshot.data.headUrl,
-                      ),
-                    ),
-                    Text(
-                      "${snapshot.data.username}",
-                      style: TextStyle(fontSize: 16.0, color: Colors.black54),
-                    ),
-                    Divider(
-                      height: 2.0,
-                      color: Colors.black26,
-                    )
-                  ],
+  Widget _userInfo(LoginBeen loginBeen) {
+    if (loginBeen.isLogin) {
+      return SizedBox(
+        height: 120.0,
+        width: MediaQuery.of(context).size.width,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 6.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              ClipOval(
+                child: CachedNetworkImage(
+                  width: 60,
+                  height: 60,
+                  fit: BoxFit.cover,
+                  imageUrl: loginBeen.headUrl,
                 ),
               ),
-            );
-          } else {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        });
+              Text(
+                "${loginBeen.username}",
+                style: TextStyle(fontSize: 16.0, color: Colors.black54),
+              ),
+              Divider(
+                height: 2.0,
+                color: Colors.black26,
+              )
+            ],
+          ),
+        ),
+      );
+    } else {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
   }
 
   //我关注的人
   Widget _myAttentionUsers() {
     return GestureDetector(
       onTap: () {
-//        SnackBarUtil.show(context, "点击我关注的人");
         Navigator.push(
             context,
             new MaterialPageRoute(

@@ -5,6 +5,7 @@ import 'package:mmkv_flutter/mmkv_flutter.dart';
 import 'package:my_mini_app/been/detail_comment.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/been/post_detail_been.dart';
+import 'package:my_mini_app/provider/auth_provider.dart';
 import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 import 'package:rxdart/rxdart.dart';
@@ -77,7 +78,7 @@ class DetailPageProvider {
         .getString("/post/getPostDetails+${postDetailArgument.postId}");
     if ("" != localData) {
       //有缓存数据
-//      print("localData has data is: $localData");
+      print("localData has data is: $localData");
       _data = PostDetail.fromJson(jsonDecode(localData));
       _fetcher.sink.add(_data);
       print("isFriend 1: ${_data.isFriend}");
@@ -137,6 +138,10 @@ class DetailPageProvider {
   }
 
   void postUserFriend(bool isFriend) {
+    if (!AuthProvider().isLogin()) {
+      AuthProvider().showLoginDialog("添加关注需要您先登录，是否需要进行登录？");
+      return;
+    }
     if (isFriend) {
       //取消关注
       Observable.fromFuture(_postCancelUserFriend()).listen((success) {

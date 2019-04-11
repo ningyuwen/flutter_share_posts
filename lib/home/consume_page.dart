@@ -46,7 +46,6 @@ class _MineState extends State<_FragmentMinePage>
   void initState() {
     print("FragmentMineWidget initState()");
     _blocProvider.fetchMinePostData(widget._userId);
-//    _blocProvider.listenFromPublishPageReturn();
     super.initState();
   }
 
@@ -63,6 +62,7 @@ class _MineState extends State<_FragmentMinePage>
   @override
   Widget build(BuildContext context) {
     return _blocProvider.streamBuilder<MinePost>(success: (MinePost data) {
+      print("data data data length is: ${data.posts.length}");
       return _mineWidget(data);
     }, error: (msg) {
       return Container(
@@ -87,11 +87,24 @@ class _MineState extends State<_FragmentMinePage>
 
   Widget _mineWidget(MinePost data) {
     return ListView.builder(
-      itemCount: data.posts.length + 1,
+      itemCount: _setItemCount(data),
       physics: const AlwaysScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         if (index == 0) {
           return _userInfo(data);
+        }
+        if (data.posts.length == 0) {
+          return Container(
+            height: 200.0,
+            padding: EdgeInsets.all(20.0),
+            child: Center(
+              child: Text(
+                "您当前暂未发布任何点评信息，发布之后可以再来查看哦",
+                style: TextStyle(fontSize: 16.0, color: Colors.black54),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
         }
         return MinePostItemView(
           new ObjectKey(data.posts[index - 1].id),
@@ -135,5 +148,13 @@ class _MineState extends State<_FragmentMinePage>
         ),
       ),
     );
+  }
+
+  int _setItemCount(MinePost data) {
+    if (data.posts.length == 0) {
+      return data.posts.length + 2;
+    } else {
+      return data.posts.length + 1;
+    }
   }
 }

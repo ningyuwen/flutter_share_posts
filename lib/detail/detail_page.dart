@@ -9,11 +9,10 @@ import 'package:my_mini_app/provider/auth_provider.dart';
 import 'package:my_mini_app/provider/base_state.dart';
 import 'package:my_mini_app/provider/detail_page_provider.dart';
 import 'package:my_mini_app/provider/text_field_provider.dart';
-import 'package:my_mini_app/util/auth_util.dart';
 import 'package:my_mini_app/util/fast_click.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
-import 'package:my_mini_app/util/toast_util.dart';
+import 'package:my_mini_app/home/consume_page.dart';
 
 class DetailPagefulWidget extends StatefulWidget {
   final PostDetailArgument _postDetailArgument;
@@ -235,7 +234,10 @@ class _DetailPageWidget extends StatelessWidget {
                   _postDetail.headUrl,
                 )),
             onTap: () {
-              SnackBarUtil.show(context, "点击头像");
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (context) => new ConsumePage(_postDetail.userId)));
             },
           ),
           SizedBox(
@@ -383,8 +385,7 @@ class _DetailPageWidget extends StatelessWidget {
   void _deleteComment(CommentsItem item) {
     if (_dialogText(item._comment) == "删除") {
       print("AlertDialog() commentId is: ${item._comment.commentId}");
-      _detailPageProvider
-          .deleteComment(item._comment);
+      _detailPageProvider.deleteComment(item._comment);
     }
     Navigator.pop(context);
   }
@@ -428,7 +429,6 @@ class _UserFriendState extends State<_UserFriendWidget> {
       initialData: widget._isFriend,
       stream: widget._detailPageProvider.userFriendStream(),
       builder: (context, AsyncSnapshot<bool> snapshot) {
-        print("_userFriendWidget() ${snapshot.data}");
         if (snapshot.hasData) {
           if (!snapshot.data) {
             return Row(
@@ -558,13 +558,14 @@ class SendCommentState extends State<SendCommentStatefulWidget>
                     onTap: () {
                       if (_sendMsgTextField.text != "") {
                         if (!AuthProvider().isLogin()) {
-                          AuthProvider().showLoginDialog("发表评论需要您先登录，是否需要进行登录？");
+                          AuthProvider()
+                              .showLoginDialog("发表评论需要您先登录，是否需要进行登录？");
                         } else {
                           widget.detailPageProvider.postComment(
                               widget.postId, _sendMsgTextField.text.toString());
                           FocusScope.of(context).requestFocus(new FocusNode());
-                          SystemChannels.textInput.invokeMethod(
-                              'TextInput.hide');
+                          SystemChannels.textInput
+                              .invokeMethod('TextInput.hide');
                         }
                       }
                     },

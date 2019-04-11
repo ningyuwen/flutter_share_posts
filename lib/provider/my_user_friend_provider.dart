@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mmkv_flutter/mmkv_flutter.dart';
 import 'package:my_mini_app/been/my_user_friend_been.dart';
 import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/toast_util.dart';

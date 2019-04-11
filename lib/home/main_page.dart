@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:my_mini_app/been/mine_post_been.dart';
 import 'package:my_mini_app/provider/auth_provider.dart';
 import 'package:my_mini_app/publish/publish_post.dart';
-import 'package:my_mini_app/util/BasicConfig.dart';
+import 'package:my_mini_app/util/basic_config.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 import 'package:simple_permissions/simple_permissions.dart';
 
@@ -44,7 +44,6 @@ class MainTabBarItemView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle textStyle = Theme.of(context).textTheme.display1;
     switch (choice.type) {
       case 1:
         return FragmentAround();

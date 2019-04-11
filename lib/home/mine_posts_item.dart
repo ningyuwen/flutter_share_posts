@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:my_mini_app/been/mine_post_been.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
-import 'package:my_mini_app/detail/DetailPage.dart';
+import 'package:my_mini_app/detail/detail_page.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:share/share.dart';
 

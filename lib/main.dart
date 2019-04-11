@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:my_mini_app/home/main_page.dart';
 import 'package:my_mini_app/provider/auth_provider.dart';
-import 'package:my_mini_app/util/auth_util.dart';
 
 import 'login/login.dart';
 

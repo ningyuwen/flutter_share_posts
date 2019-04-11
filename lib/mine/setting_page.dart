@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:my_mini_app/provider/auth_provider.dart';
-import 'package:my_mini_app/util/auth_util.dart';
 
 class SettingPage extends StatelessWidget {
   @override

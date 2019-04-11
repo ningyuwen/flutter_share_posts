@@ -1,12 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:my_mini_app/been/login_been.dart';
-import 'package:my_mini_app/home/fragment_mine.dart';
+import 'package:my_mini_app/home/consume_page.dart';
 import 'package:my_mini_app/login/login.dart';
 import 'package:my_mini_app/mine/my_user_friend_page.dart';
 import 'package:my_mini_app/mine/setting_page.dart';
 import 'package:my_mini_app/provider/auth_provider.dart';
-import 'package:my_mini_app/util/auth_util.dart';
 import 'package:rxdart/rxdart.dart';
 
 class NewMineFragment extends StatefulWidget {

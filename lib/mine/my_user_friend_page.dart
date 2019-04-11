@@ -1,10 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:my_mini_app/been/my_user_friend_been.dart';
+import 'package:my_mini_app/home/consume_page.dart';
 import 'package:my_mini_app/provider/my_user_friend_provider.dart';
 import 'package:my_mini_app/util/fast_click.dart';
-import 'package:my_mini_app/util/snack_bar_util.dart';
-import 'package:my_mini_app/util/toast_util.dart';
 
 class MyUserFriendPage extends StatelessWidget {
   @override
@@ -41,36 +40,43 @@ class _MyUserFriendState extends State<_MyUserFriendPage> {
   Widget build(BuildContext context) {
     return _provider.streamBuilder<List<MyUserFriendsBeen>>(
         success: (List<MyUserFriendsBeen> data) {
-          return Padding(
-            padding: EdgeInsets.only(top: 5.0),
-            child: ListView.builder(
-                itemCount: data.length,
-                physics: const AlwaysScrollableScrollPhysics(),
-                itemBuilder: (BuildContext context, int index) {
-                  return Column(
-                    children: <Widget>[
-                      GestureDetector(
-                        onTap: () {
-                          SnackBarUtil.show(context, "点击");
-                        },
-                        child: _itemOfList(data[index], index),
-                      ),
-                      Divider(),
-                    ],
-                  );
-                }),
-          );
-        },
-        loading: () {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        },
-        error: (error) {
-          return Center(
-            child: Text(error),
-          );
-        });
+      return Padding(
+        padding: EdgeInsets.only(top: 5.0),
+        child: ListView.separated(
+            separatorBuilder: (context, index) => Divider(
+                  height: 0.0,
+                ),
+            itemCount: data.length,
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemBuilder: (BuildContext context, int index) {
+              return InkWell(
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      child: _itemOfList(data[index], index),
+                      height: 60.0,
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                          builder: (context) =>
+                              new ConsumePage(data[index].userId)));
+                },
+              );
+            }),
+      );
+    }, loading: () {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }, error: (error) {
+      return Center(
+        child: Text(error),
+      );
+    });
   }
 
   Widget _itemOfList(MyUserFriendsBeen data, index) {
@@ -101,7 +107,6 @@ class _MyUserFriendState extends State<_MyUserFriendPage> {
                 onPressed: () {
                   //关注
                   if (FastClick.isFastClick()) {
-//                    ToastUtil.showToast("点击关注");
                     return;
                   }
                   _provider.postUserFriend(index, data.isFriend);
@@ -122,12 +127,10 @@ class _MyUserFriendState extends State<_MyUserFriendPage> {
   }
 
   Widget _userFriendWidget(bool isFriend, MyUserFriendsBeen data) {
-    print("_userFriendWidget()");
     return StreamBuilder<bool>(
       initialData: isFriend,
       stream: data.publishSubject.stream,
       builder: (context, AsyncSnapshot<bool> snapshot) {
-        print("_userFriendWidget() ${snapshot.data} index: $data");
         if (snapshot.hasData) {
           if (!snapshot.data) {
             return Row(

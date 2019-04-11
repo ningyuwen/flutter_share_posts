@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mmkv_flutter/mmkv_flutter.dart';
 import 'package:my_mini_app/been/login_been.dart';
 import 'package:my_mini_app/login/login.dart';
-import 'package:my_mini_app/util/BasicConfig.dart';
-import 'package:my_mini_app/util/auth_util.dart';
+import 'package:my_mini_app/util/basic_config.dart';
 import 'package:rxdart/rxdart.dart';
 
 class AuthProvider {
@@ -67,26 +66,24 @@ class AuthProvider {
     showDialog(
         context: BasicConfig.instance.getContext(),
         builder: (BuildContext context) {
-          return AlertDialog(
-              content: new Text(text),
-              actions: <Widget>[
-                new FlatButton(
-                  child: new Text("取消"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                new FlatButton(
-                  child: new Text("登录"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.push(
-                        context,
-                        new MaterialPageRoute(
-                            builder: (context) => new LoginPage()));
-                  },
-                )
-              ]);
+          return AlertDialog(content: new Text(text), actions: <Widget>[
+            new FlatButton(
+              child: new Text("取消"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            new FlatButton(
+              child: new Text("登录"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                        builder: (context) => new LoginPage()));
+              },
+            )
+          ]);
         });
   }
 }

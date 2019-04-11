@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 class MinePost {
@@ -8,14 +7,13 @@ class MinePost {
   double cost;
   List<Posts> posts;
 
-  MinePost(
-      {this.userId, this.username, this.headUrl, this.cost, this.posts});
+  MinePost({this.userId, this.username, this.headUrl, this.cost, this.posts});
 
   MinePost.fromJson(Map<String, dynamic> json) {
     userId = json['userId'];
     username = json['username'];
     headUrl = json['headUrl'];
-    cost = json['cost'];
+    cost = json['cost'] == 0 ? 0.0 : json['cost'];
     if (json['posts'] != null) {
       posts = new List<Posts>();
       json['posts'].forEach((v) {
@@ -55,19 +53,19 @@ class Posts {
 
   Posts(
       {this.id,
-        this.userId,
-        this.content,
-        this.imgUrls,
-        this.position,
-        this.longitude,
-        this.latitude,
-        this.store,
-        this.imgLabel,
-        this.releaseTime,
-        this.cost,
-        this.votes,
-        this.comments,
-        this.district});
+      this.userId,
+      this.content,
+      this.imgUrls,
+      this.position,
+      this.longitude,
+      this.latitude,
+      this.store,
+      this.imgLabel,
+      this.releaseTime,
+      this.cost,
+      this.votes,
+      this.comments,
+      this.district});
 
   Posts.fromJson(Map<String, dynamic> json) {
     List<String> imageUrls = new List();

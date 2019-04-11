@@ -15,7 +15,6 @@ class MyUserFriendPage extends StatelessWidget {
     return AppBar(
       centerTitle: true,
       title: Text("我关注的人"),
-      backgroundColor: Color.fromARGB(255, 51, 51, 51),
     );
   }
 }

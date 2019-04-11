@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_mini_app/been/detail_comment.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/been/post_detail_been.dart';
+import 'package:my_mini_app/home/consume_page.dart';
 import 'package:my_mini_app/provider/auth_provider.dart';
 import 'package:my_mini_app/provider/base_state.dart';
 import 'package:my_mini_app/provider/detail_page_provider.dart';
@@ -12,7 +13,6 @@ import 'package:my_mini_app/provider/text_field_provider.dart';
 import 'package:my_mini_app/util/fast_click.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
-import 'package:my_mini_app/home/consume_page.dart';
 
 class DetailPagefulWidget extends StatefulWidget {
   final PostDetailArgument _postDetailArgument;
@@ -68,10 +68,8 @@ class _DetailPageWidget extends StatelessWidget {
       isAdded = true;
     }
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
         title: Text("详情"),
-        backgroundColor: const Color.fromARGB(255, 51, 51, 51),
         centerTitle: true,
       ),
       body: _detailPageProvider.streamBuilder(
@@ -121,7 +119,6 @@ class _DetailPageWidget extends StatelessWidget {
     final ScrollController scrollController = new ScrollController();
     scrollController.addListener(() {
       FocusScope.of(context).requestFocus(new FocusNode());
-//      SystemChannels.textInput.invokeMethod('TextInput.hide');
     });
     return ListView.builder(
         controller: scrollController,
@@ -165,8 +162,8 @@ class _DetailPageWidget extends StatelessWidget {
       padding: EdgeInsets.all(10.0),
       child: Text(
         _postDetail.content,
-        style:
-            TextStyle(fontSize: 18.0, color: Color.fromARGB(255, 69, 69, 69)),
+        style: TextStyle(
+            fontSize: 17.0, color: Theme.of(context).textTheme.body1.color),
       ),
     );
   }
@@ -185,38 +182,39 @@ class _DetailPageWidget extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
             child: CachedNetworkImage(
-                placeholder: SizedBox(
-                  height: 220.0,
-                  child: Center(
-                      child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      CircularProgressIndicator(
-                        backgroundColor: Colors.amber,
-                        strokeWidth: 2.0,
-                      ),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      Text("图片加载中...")
-                    ],
-                  )),
-                ),
-                imageUrl: item._imgUrl,
-                fit: BoxFit.cover,
-                width: MediaQuery.of(context).size.width,
+//                placeholder: SizedBox(
+//                  height: 220.0,
+//                  child: Center(
+//                      child: Column(
+//                    mainAxisAlignment: MainAxisAlignment.center,
+//                    children: <Widget>[
+//                      CircularProgressIndicator(
+//                        backgroundColor: Colors.amber,
+//                        strokeWidth: 2.0,
+//                      ),
+//                      SizedBox(
+//                        height: 15.0,
+//                      ),
+//                      Text("图片加载中...")
+//                    ],
+//                  )),
+//                ),
+              imageUrl: item._imgUrl,
+              fit: BoxFit.cover,
+              width: MediaQuery.of(context).size.width,
 //                height: 300.0,
-                //屏幕宽度
-                errorWidget: Container(
-                  color: Colors.black45,
-                  height: 200.0,
-                  child: Center(
-                    child: Text(
-                      "无法查看图片，请稍后重试...",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                )),
+              //屏幕宽度
+//                errorWidget: Container(
+//                  color: Colors.black45,
+//                  height: 200.0,
+//                  child: Center(
+//                    child: Text(
+//                      "无法查看图片，请稍后重试...",
+//                      style: TextStyle(color: Colors.white),
+//                    ),
+//                  ),
+//                )
+            ),
           ),
         ));
   }
@@ -237,7 +235,8 @@ class _DetailPageWidget extends StatelessWidget {
               Navigator.push(
                   context,
                   new MaterialPageRoute(
-                      builder: (context) => new ConsumePage(_postDetail.userId)));
+                      builder: (context) =>
+                          new ConsumePage(_postDetail.userId)));
             },
           ),
           SizedBox(
@@ -248,12 +247,13 @@ class _DetailPageWidget extends StatelessWidget {
             children: <Widget>[
               Text(
                 _postDetail.username,
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.title,
               ),
               Text(
                 _postDetail.releaseTime,
                 style: TextStyle(
-                    fontSize: 14.0, color: Color.fromARGB(255, 180, 180, 180)),
+                    fontSize: 14.0,
+                    color: Theme.of(context).textTheme.subtitle.color),
               )
             ],
           ),
@@ -263,7 +263,7 @@ class _DetailPageWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 RaisedButton(
-                  color: const Color.fromARGB(255, 247, 247, 247),
+//                  color: const Color.fromARGB(255, 247, 247, 247),
                   child: _UserFriendWidget(
                       _detailPageProvider, _postDetail.isFriend),
                   onPressed: () {
@@ -303,10 +303,10 @@ class _DetailPageWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Image.asset("image/ic_map.png", height: 24.0),
+          Image.asset("image/ic_map.png", height: 20.0),
           Flexible(
               child: Container(
-            color: Color.fromARGB(255, 239, 240, 241),
+            color: Theme.of(context).highlightColor,
             child: Text(
               _postDetail.location,
               overflow: TextOverflow.ellipsis,
@@ -339,15 +339,24 @@ class _DetailPageWidget extends StatelessWidget {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text(item._comment.username),
+              Text(
+                item._comment.username,
+                style:
+                    TextStyle(color: Theme.of(context).textTheme.title.color),
+              ),
               Text(
                 item._comment.time,
                 style: TextStyle(
-                    fontSize: 12.0, color: Color.fromARGB(255, 180, 180, 180)),
+                    fontSize: 12.0,
+                    color: Theme.of(context).textTheme.subtitle.color),
               ),
             ],
           ),
-          subtitle: Text(item._comment.content),
+          subtitle: Text(
+            item._comment.content,
+            style: TextStyle(
+                fontSize: 14.0, color: Theme.of(context).textTheme.body1.color),
+          ),
           trailing: GestureDetector(
             child: Icon(Icons.more_vert),
             onTap: () {
@@ -360,7 +369,7 @@ class _DetailPageWidget extends StatelessWidget {
           },
         ),
         Divider(
-          height: 1.0,
+          height: 0.0,
         ),
       ],
     );
@@ -397,7 +406,10 @@ class _DetailPageWidget extends StatelessWidget {
           return AlertDialog(
               contentPadding: EdgeInsets.all(0.0),
               content: ListTile(
-                title: Text(_dialogText(item._comment)),
+                title: Text(
+                  _dialogText(item._comment),
+                  style: Theme.of(context).textTheme.title,
+                ),
                 onTap: () {
                   _deleteComment(item);
                 },
@@ -435,12 +447,12 @@ class _UserFriendState extends State<_UserFriendWidget> {
               children: <Widget>[
                 Icon(
                   Icons.add,
-                  color: const Color.fromARGB(255, 51, 132, 245),
+//                  color: const Color.fromARGB(255, 51, 132, 245),
                 ),
                 Text(
                   "关注",
                   style: TextStyle(
-                      color: const Color.fromARGB(255, 51, 132, 245),
+//                      color: const Color.fromARGB(255, 51, 132, 245),
                       fontWeight: FontWeight.bold),
                 )
               ],
@@ -449,8 +461,9 @@ class _UserFriendState extends State<_UserFriendWidget> {
             return Text(
               "已关注",
               style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 154, 154, 154)),
+                fontWeight: FontWeight.bold,
+//                  color: Color.fromARGB(255, 154, 154, 154)
+              ),
             );
           }
         } else {

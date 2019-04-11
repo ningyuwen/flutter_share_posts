@@ -22,7 +22,6 @@ class ConsumePage extends StatelessWidget {
     return AppBar(
       centerTitle: true,
       title: Text("消费账单"),
-      backgroundColor: Color.fromARGB(255, 51, 51, 51),
     );
   }
 }
@@ -100,7 +99,7 @@ class _MineState extends State<_FragmentMinePage>
             child: Center(
               child: Text(
                 "您当前暂未发布任何点评信息，发布之后可以再来查看哦",
-                style: TextStyle(fontSize: 16.0, color: Colors.black54),
+                style: TextStyle(fontSize: 16.0),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -134,7 +133,9 @@ class _MineState extends State<_FragmentMinePage>
             ),
             Text(
               "${data.username}",
-              style: TextStyle(fontSize: 16.0, color: Colors.black54),
+              style: TextStyle(
+                fontSize: 16.0,
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,

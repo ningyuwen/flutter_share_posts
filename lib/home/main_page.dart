@@ -98,16 +98,17 @@ class _MainPageState extends State<MainPageView>
       appBar: AppBar(
         title: Text(
           "Q晒单",
-//          style: TextStyle(fontSize: 18.0, color: Colors.white),
+//          style: TextStyle(color: Theme.of(context).primaryColor),
         ),
-        backgroundColor: const Color.fromARGB(255, 51, 51, 51),
+//        backgroundColor: DynamicTheme.of(context).data.primaryColor,
+//        backgroundColor: Theme.of(context).backgroundColor,
         centerTitle: true,
         automaticallyImplyLeading: false,
         actions: <Widget>[
           IconButton(
-            icon: Padding(
-              padding: EdgeInsets.all(6.0),
-              child: Image.asset("image/iv_main_add.png"),
+            icon: Icon(
+              Icons.add,
+              color: Theme.of(context).primaryColor,
             ),
             tooltip: '发布',
             onPressed: () {
@@ -125,29 +126,26 @@ class _MainPageState extends State<MainPageView>
               _currentIndex = index;
             });
           },
+          backgroundColor: Theme.of(context).appBarTheme.color,
           type: BottomNavigationBarType.fixed,
-          backgroundColor: const Color.fromARGB(255, 51, 51, 51),
           items: [
             BottomNavigationBarItem(
-                backgroundColor: Colors.white,
                 icon: Icon(Icons.home,
-                    color: _currentIndex == 0 ? Colors.blue : Colors.white),
-                title: new Text("附近",
-                    style: new TextStyle(color: Colors.white, fontSize: 14.0))),
+                    color: _currentIndex == 0 ? Colors.blue : Colors.grey),
+                title:
+                    new Text("附近", style: Theme.of(context).textTheme.button)),
             BottomNavigationBarItem(
-                backgroundColor: Colors.white,
                 icon: Icon(Icons.tag_faces,
-                    color: _currentIndex == 1 ? Colors.blue : Colors.white),
-                title: new Text("关注",
-                    style: new TextStyle(color: Colors.white, fontSize: 14.0))),
+                    color: _currentIndex == 1 ? Colors.blue : Colors.grey),
+                title:
+                    new Text("关注", style: Theme.of(context).textTheme.button)),
             BottomNavigationBarItem(
-                backgroundColor: Colors.white,
                 icon: Icon(
                   Icons.assignment_ind,
-                  color: _currentIndex == 2 ? Colors.blue : Colors.white,
+                  color: _currentIndex == 2 ? Colors.blue : Colors.grey,
                 ),
-                title: new Text("我的",
-                    style: new TextStyle(color: Colors.white, fontSize: 14.0))),
+                title:
+                    new Text("我的", style: Theme.of(context).textTheme.button)),
           ]),
     );
   }

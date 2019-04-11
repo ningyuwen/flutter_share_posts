@@ -5,20 +5,20 @@ import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/detail_page.dart';
 import 'package:my_mini_app/home/consume_page.dart';
+import 'package:my_mini_app/provider/auth_provider.dart';
 import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/fast_click.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
-import 'package:my_mini_app/util/toast_util.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:share/share.dart';
 
-class PostItemView extends StatelessWidget {
+class PostItemWidget extends StatelessWidget {
   Posts _post;
   BuildContext context;
   var currentPageValue = 0.0; //当前页面编号
 
-  PostItemView(Key key, Posts post) {
+  PostItemWidget(Key key, Posts post) {
     this._post = post;
   }
 
@@ -29,45 +29,31 @@ class PostItemView extends StatelessWidget {
   }
 
   Widget bodyData() {
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-//              ClipOval(
-//                child: CachedNetworkImage(
-//                  width: 44,
-//                  height: 44,
-//                  fit: BoxFit.cover,
-//                  imageUrl: _post.head_url,
-//                ),
-//              ),
-              GestureDetector(
-                child: ClipOval(
-                  child: CachedNetworkImage(
-                    width: 44,
-                    height: 44,
-                    fit: BoxFit.cover,
-                    imageUrl: _post.head_url,
-                  ),
-                ),
-                onTap: () {
-//                  SnackBarUtil.show(context, "点击头像");
-                  Navigator.push(
-                      context,
-                      new MaterialPageRoute(
-                          builder: (context) => new ConsumePage(_post.userId)));
-                },
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          GestureDetector(
+            child: ClipOval(
+              child: CachedNetworkImage(
+                width: 44,
+                height: 44,
+                fit: BoxFit.cover,
+                imageUrl: _post.head_url,
               ),
-              rightColumn(_post),
-            ],
+            ),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (context) => new ConsumePage(_post.userId)));
+            },
           ),
-        ),
-        Divider(height: 2.0, color: Colors.black26),
-      ],
+          rightColumn(_post),
+        ],
+      ),
     );
   }
 
@@ -86,11 +72,9 @@ class PostItemView extends StatelessWidget {
                       padding: const EdgeInsets.all(0.0),
                       icon: Icon(Icons.comment, size: 20.0, color: Colors.grey),
                       onPressed: () {
-//                        SnackBarUtil.show(context, "点击详情");
                         PostDetailArgument postDetailArgument =
                             new PostDetailArgument(
                                 post.id, 113.347868, 23.007985);
-//                        ToastUtil.showToast(context.widget.toString());
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -143,16 +127,16 @@ class PostItemView extends StatelessWidget {
                   maxLines: 1,
                   text: TextSpan(children: [
                     TextSpan(
-                      text: "${post.username}  ",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                        text: "${post.username}  ",
+                        style: Theme.of(context).textTheme.title
+                        ),
                     TextSpan(
                         text: "${post.releaseTime}",
-                        style: TextStyle(color: Colors.grey, fontSize: 12.0))
+                        style: TextStyle(
+                            fontSize: 12.0,
+                            color: Theme.of(context).textTheme.subtitle.color)
+//                        style: TextStyle(color: Colors.grey, fontSize: 12.0)
+                        )
                   ]),
                 ),
               ),
@@ -174,14 +158,22 @@ class PostItemView extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(16.0, 8.0, 0.0, 8.0),
                 child: Row(
                   children: <Widget>[
-                    Image.asset("image/ic_map.png", height: 16.0),
+                    Image.asset(
+                      "image/ic_map.png",
+                      height: 20.0,
+                      width: 20.0,
+                    ),
                     Flexible(
                         child: Container(
-                      color: Color.fromARGB(255, 239, 240, 241),
+                      color: Theme.of(context).highlightColor,
                       child: Text(
                         _post.position,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 12.0),
+                        style: TextStyle(
+                          fontSize: 12.0,
+//                            color: Color.fromARGB(255, 97, 97, 97)
+//                        color: Theme.of(context).primaryColorDark
+                        ),
                       ),
                     ))
                   ],
@@ -257,14 +249,14 @@ class PostItemView extends StatelessWidget {
                     new PhotoViewUtil(key, _post.imgUrls[index])));
       },
       child: CachedNetworkImage(
-          imageUrl: _post.imgUrls[index],
-          fit: BoxFit.cover,
-          width: MediaQuery.of(context).size.width,
-          //屏幕宽度
-          height: 200.0,
-          placeholder: Center(
-            child: Text("图片加载中..."),
-          ),
+        imageUrl: _post.imgUrls[index],
+        fit: BoxFit.cover,
+        width: MediaQuery.of(context).size.width,
+        //屏幕宽度
+        height: 200.0,
+//          placeholder: Center(
+//            child: Text("图片加载中..."),
+//          ),
 //          placeholder: Center(
 //              child: Column(
 //            mainAxisAlignment: MainAxisAlignment.center,
@@ -279,15 +271,17 @@ class PostItemView extends StatelessWidget {
 //              Text("图片加载中...")
 //            ],
 //          )),
-          errorWidget: Container(
-            color: Colors.black45,
-            child: Center(
-              child: Text(
-                "无法查看图片，请稍后重试...",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          )),
+
+//          errorWidget: Container(
+//            color: Colors.black45,
+//            child: Center(
+//              child: Text(
+//                "无法查看图片，请稍后重试...",
+//                style: TextStyle(color: Colors.white),
+//              ),
+//            ),
+//          )
+      ),
     );
   }
 
@@ -302,7 +296,7 @@ class PostItemView extends StatelessWidget {
       child: Text(
         _post.content,
         style: TextStyle(
-          color: Colors.black,
+//          color: Color.fromARGB(255, 70, 70, 70),
           fontWeight: FontWeight.normal,
           fontSize: 15.0,
         ),
@@ -324,21 +318,14 @@ class PostItemView extends StatelessWidget {
           width: 30.0,
           decoration: BoxDecoration(
             borderRadius: new BorderRadius.circular(5.0),
-            color: Colors.black54,
+//            color: Colors.black54,
           ),
           child: Center(
             child: Text("共${_post.imgUrls.length}张",
                 style: TextStyle(
                   fontSize: 10.0,
-                  color: Colors.white,
+//                  color: Colors.white,
                 )),
-
-//            child: Text(
-//              "${currentPageValue.toInt() + 1}/${_post.imgUrls.length}",
-//              style: TextStyle(
-//                color: Colors.white,
-//              ),
-//            ),
           ),
         ));
   }
@@ -356,7 +343,6 @@ class _LikeWidget extends StatefulWidget {
 }
 
 class _LikeState extends State<_LikeWidget> {
-
   @override
   void dispose() {
     super.dispose();
@@ -393,6 +379,10 @@ class _LikeState extends State<_LikeWidget> {
 
   void clickVoteIcon() {
     if (FastClick.isFastClick()) {
+      return;
+    }
+    if (!AuthProvider().isLogin()) {
+      AuthProvider().showLoginDialog("点赞需要您先登录，是否需要进行登录？");
       return;
     }
     if (widget._post.isVote) {

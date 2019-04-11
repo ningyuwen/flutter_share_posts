@@ -53,7 +53,8 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
     _publishProvider.getPosition((String position) {
       _positionController.text = position;
       _positionController.selection = TextSelection(
-          baseOffset: _positionController.text.length, extentOffset: _positionController.text.length);
+          baseOffset: _positionController.text.length,
+          extentOffset: _positionController.text.length);
     });
     super.initState();
   }
@@ -104,7 +105,7 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
           TextFormField(
             controller: _positionController,
             maxLines: 1,
-            style: TextStyle(fontSize: 12.0, color: Colors.black),
+            style: TextStyle(fontSize: 12.0),
             keyboardType: TextInputType.multiline,
             textInputAction: TextInputAction.next,
             decoration: const InputDecoration(
@@ -122,7 +123,6 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
             maxLines: 7,
             maxLength: 150,
             style: TextStyle(
-                color: Colors.black,
                 fontSize: 18.0,
                 fontWeight: FontWeight.normal),
             decoration: const InputDecoration(
@@ -240,23 +240,22 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
   Widget _appBar() {
     return AppBar(
       centerTitle: true,
-      backgroundColor: Color.fromARGB(255, 51, 51, 51),
+      title: Text("发布"),
       actions: <Widget>[
         ButtonTheme(
           minWidth: 60.0,
-          child: RaisedButton(
-              color: Color.fromARGB(255, 51, 51, 51),
-              onPressed: () {
+          child: IconButton(
+            onPressed: () {
 //                发布，检查参数是否齐全
-                if (checkArgumentsIsRight()) {
-//                  ToastUtil.showToast("可以发布");
-                  _publishProvider.publish((Posts post) {
-                    Navigator.pop(context, post);
-                  });
-                }
-              },
-              child: Text("发布",
-                  style: TextStyle(color: Colors.white, fontSize: 16.0))),
+              if (checkArgumentsIsRight()) {
+                _publishProvider.publish((Posts post) {
+                  Navigator.pop(context, post);
+                });
+              }
+            },
+            tooltip: "发布",
+            icon: Icon(Icons.publish),
+          ),
         ),
       ],
     );

@@ -11,7 +11,6 @@ class SettingPage extends StatelessWidget {
     return AppBar(
       centerTitle: true,
       title: Text("设置"),
-      backgroundColor: Color.fromARGB(255, 51, 51, 51),
     );
   }
 
@@ -26,12 +25,10 @@ class SettingPage extends StatelessWidget {
             width: 200.0,
             height: 50.0,
             child: RaisedButton(
-                color: Colors.blue,
                 child: Text(
                   "退出登录",
                   style: TextStyle(
                       fontSize: 20.0,
-                      color: Colors.white,
                       fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {

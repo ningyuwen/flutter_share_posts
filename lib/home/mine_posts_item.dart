@@ -33,7 +33,7 @@ class MinePostItemView extends StatelessWidget {
       child: Column(
         children: <Widget>[
           mainColumn(_post),
-          Divider(height: 2.0, color: Colors.black26),
+          Divider(height: 0.0),
         ],
       ),
     );
@@ -118,35 +118,37 @@ class MinePostItemView extends StatelessWidget {
                     new PhotoViewUtil(key, _post.imgUrls[index])));
       },
       child: CachedNetworkImage(
-          imageUrl: _post.imgUrls[index],
-          fit: BoxFit.cover,
-          width: MediaQuery.of(context).size.width,
-          //屏幕宽度
-          height: 230.0,
-          placeholder: Center(
-              child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              CircularProgressIndicator(
-                backgroundColor: Colors.amber,
-                strokeWidth: 2.0,
-              ),
-              SizedBox(
-                height: 15.0,
-              ),
-              Text("图片加载中...")
-            ],
-          )),
-          errorWidget: Container(
-            height: 200.0,
-            color: Colors.black45,
-            child: Center(
-              child: Text(
-                "无法查看图片，请稍后重试...",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          )),
+//        color: Theme.of(context).primaryColor,
+        imageUrl: _post.imgUrls[index],
+        fit: BoxFit.cover,
+        width: MediaQuery.of(context).size.width,
+        //屏幕宽度
+        height: 230.0,
+//          placeholder: Center(
+//              child: Column(
+//            mainAxisAlignment: MainAxisAlignment.center,
+//            children: <Widget>[
+//              CircularProgressIndicator(
+//                backgroundColor: Colors.amber,
+//                strokeWidth: 2.0,
+//              ),
+//              SizedBox(
+//                height: 15.0,
+//              ),
+//              Text("图片加载中...")
+//            ],
+//          )),
+//          errorWidget: Container(
+//            height: 200.0,
+//            color: Colors.black45,
+//            child: Center(
+//              child: Text(
+//                "无法查看图片，请稍后重试...",
+//                style: TextStyle(color: Colors.white),
+//              ),
+//            ),
+//          )
+      ),
     );
   }
 
@@ -161,8 +163,7 @@ class MinePostItemView extends StatelessWidget {
       child: Text(
         _post.content,
         style: TextStyle(
-          color: Colors.black,
-          fontWeight: FontWeight.normal,
+          color: Theme.of(context).textTheme.body1.color,
           fontSize: 15.0,
         ),
         maxLines: 4,
@@ -204,14 +205,14 @@ class MinePostItemView extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text("${post.store}",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                  )),
+              Text(
+                "${post.store}",
+                style: Theme.of(context).textTheme.title,
+              ),
               Text("${post.releaseTime}",
-                  style: TextStyle(color: Colors.grey, fontSize: 12.0))
+                  style: TextStyle(
+                      fontSize: 12.0,
+                      color: Theme.of(context).textTheme.subtitle.color))
             ],
           ),
         ),
@@ -248,10 +249,10 @@ class MinePostItemView extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 6.0),
           child: Row(
             children: <Widget>[
-              Image.asset("image/ic_map.png", height: 16.0),
+              Image.asset("image/ic_map.png", height: 20.0),
               Flexible(
                   child: Container(
-                color: Color.fromARGB(255, 239, 240, 241),
+                color: Theme.of(context).highlightColor,
                 child: Text(
                   _post.position,
                   overflow: TextOverflow.ellipsis,

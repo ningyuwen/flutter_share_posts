@@ -60,19 +60,14 @@ class FriendState extends State<FragmentFriendAndAround>
             key: _footerKey,
           ),
           key: _easyRefreshKey,
-          child: ListView.builder(
+          child: ListView.separated(
+            separatorBuilder: (context, index) => Divider(
+              height: 0.0,
+            ),
             itemCount: data.length,
-            physics: const AlwaysScrollableScrollPhysics(),
             itemBuilder: (context, index) {
-//              return IgnorePointer(
-//                ignoring: true,
-//                child: PostInfoItem(
-//                  key: new ObjectKey(data[index].id),
-//                  data: data[index],
-//                ),
-//              );
-
-              return GestureDetector(
+              return InkWell(
+//                highlightColor: Colors.white,
                 child: PostInfoItem(
                   key: new ObjectKey(data[index].id),
                   data: data[index],
@@ -80,14 +75,14 @@ class FriendState extends State<FragmentFriendAndAround>
                 onTap: () {
                   //进入详情页
                   PostDetailArgument postDetailArgument =
-                      new PostDetailArgument(
-                          data[index].id, 113.347868, 23.007985);
+                  new PostDetailArgument(
+                      data[index].id, 113.347868, 23.007985);
                   print("进入详情页");
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              new DetailPagefulWidget(postDetailArgument)));
+                          new DetailPagefulWidget(postDetailArgument)));
                 },
               );
             },
@@ -148,6 +143,6 @@ class PostInfoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PostItemView(key, data);
+    return PostItemWidget(key, data);
   }
 }

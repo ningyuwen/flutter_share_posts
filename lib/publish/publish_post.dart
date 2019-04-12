@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:mmkv_flutter/mmkv_flutter.dart';
 import 'package:my_mini_app/been/mine_post_been.dart';
 import 'package:my_mini_app/provider/publish_post_provider.dart';
@@ -81,8 +82,9 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
             controller: _storeController,
             maxLines: 1,
             textInputAction: TextInputAction.next,
+            style: TextStyle(color: Theme.of(context).hintColor),
             decoration: const InputDecoration(
-              hintText: '请输入店名',
+              hintText: '请输入店铺名称',
             ),
             focusNode: _storeFocus,
             onFieldSubmitted: (term) {
@@ -94,6 +96,7 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
             maxLines: 1,
             keyboardType: TextInputType.number,
             textInputAction: TextInputAction.next,
+            style: TextStyle(color: Theme.of(context).hintColor),
             decoration: const InputDecoration(
               hintText: '请输入消费金额',
             ),
@@ -105,7 +108,8 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
           TextFormField(
             controller: _positionController,
             maxLines: 1,
-            style: TextStyle(fontSize: 12.0),
+            style:
+                TextStyle(fontSize: 12.0, color: Theme.of(context).hintColor),
             keyboardType: TextInputType.multiline,
             textInputAction: TextInputAction.next,
             decoration: const InputDecoration(
@@ -124,9 +128,9 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
             maxLength: 150,
             style: TextStyle(
                 fontSize: 18.0,
-                fontWeight: FontWeight.normal),
+                fontWeight: FontWeight.normal,
+                color: Theme.of(context).hintColor),
             decoration: const InputDecoration(
-//              border: InputBorder.none,
               hintText: '什么样的消费体验？',
             ),
             focusNode: _contentFocus,
@@ -248,7 +252,17 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
             onPressed: () {
 //                发布，检查参数是否齐全
               if (checkArgumentsIsRight()) {
+                //显示dialog
+
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return SpinKitCircle(
+                        color: Theme.of(context).accentColor,
+                      );
+                    });
                 _publishProvider.publish((Posts post) {
+                  Navigator.pop(context);
                   Navigator.pop(context, post);
                 });
               }
@@ -306,6 +320,14 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
     _contentFocus.unfocus();
     _storeFocus.unfocus();
     _costFocus.unfocus();
+  }
+
+  Color _getTextFieldColor() {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      return Colors.white;
+    } else {
+      return Colors.black87;
+    }
   }
 }
 

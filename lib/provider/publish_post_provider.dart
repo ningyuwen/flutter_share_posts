@@ -34,7 +34,7 @@ class PublishPostProvider {
       Posts post = Posts.fromJson(data);
       success(post);
     } else {
-      ToastUtil.showToast("发布失败: ${data.toString()}");
+//      ToastUtil.showToast("发布失败: ${data.toString()}");
     }
   }
 

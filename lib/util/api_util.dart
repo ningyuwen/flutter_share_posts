@@ -74,10 +74,11 @@ class ApiUtil {
     _dio.options.method = "post";
     _dio.options.contentType =
         ContentType.parse("multipart/form-data");
+//    _dio.options.headers["Content-Type"] = "multipart/form-data";
     FormData formData = new FormData.from({
       "store": been.store,
       "cost": been.cost,
-      "img": new UploadFileInfo(been.img, "upload.jpg"),
+      "img": new UploadFileInfo(been.img, "upload"),
       "content": been.content,
       "imgLabel": been.imgLabel,
       "position": been.position,
@@ -85,16 +86,18 @@ class ApiUtil {
       "latitude": been.latitude,
       "district": been.district,
     });
+    print("content type is: ${_dio.options.contentType}");
     Response response = await _dio.post(_dio.options.baseUrl + "/post/releasePost",
         data: formData, options: _dio.options);
-//    print(response);
+    print(response);
     Map map = jsonDecode(response.data.toString());
     var basicBeen = new Been.fromJson(map);
     if (basicBeen.code == 0) {
       //发布成功，返回上一页
+      ToastUtil.showToast("发布成功");
       return basicBeen.data;
     } else {
-      ToastUtil.showToast(basicBeen.message);
+      ToastUtil.showToast(basicBeen.data);
       return false;
     }
   }

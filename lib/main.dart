@@ -149,6 +149,7 @@ class _MyAppStateWidget extends StatelessWidget {
           ),
 
           //color
+//          accentColor: Colors.purple,
           primaryColor: const Color.fromARGB(255, 129, 129, 129),
           primaryColorBrightness: Brightness.light,
           backgroundColor: Colors.white,

@@ -218,11 +218,9 @@ class MinePostItemView extends StatelessWidget {
         ),
         //图片
         Container(
-            color: Colors.white,
             child: ClipRRect(
                 borderRadius: new BorderRadius.circular(8.0),
                 child: Stack(
-//                  alignment: new Alignment(0.0, 1.0),
                   children: <Widget>[
                     showPhotos(), //图片
                     showIndicator(), //指示器

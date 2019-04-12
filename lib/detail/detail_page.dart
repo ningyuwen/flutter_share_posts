@@ -226,11 +226,19 @@ class _DetailPageWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           GestureDetector(
-            child: CircleAvatar(
-                radius: 22.0,
-                backgroundImage: NetworkImage(
-                  _postDetail.headUrl,
-                )),
+//            child: CircleAvatar(
+//                radius: 22.0,
+//                backgroundImage: NetworkImage(
+//                  _postDetail.headUrl,
+//                )),
+            child: ClipOval(
+              child: CachedNetworkImage(
+                width: 44,
+                height: 44,
+                fit: BoxFit.cover,
+                imageUrl: _postDetail.headUrl,
+              ),
+            ),
             onTap: () {
               Navigator.push(
                   context,

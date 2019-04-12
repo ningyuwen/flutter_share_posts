@@ -128,8 +128,7 @@ class PostItemWidget extends StatelessWidget {
                   text: TextSpan(children: [
                     TextSpan(
                         text: "${post.username}  ",
-                        style: Theme.of(context).textTheme.title
-                        ),
+                        style: Theme.of(context).textTheme.title),
                     TextSpan(
                         text: "${post.releaseTime}",
                         style: TextStyle(
@@ -318,13 +317,13 @@ class PostItemWidget extends StatelessWidget {
           width: 30.0,
           decoration: BoxDecoration(
             borderRadius: new BorderRadius.circular(5.0),
-//            color: Colors.black54,
+            color: Colors.black54,
           ),
           child: Center(
             child: Text("共${_post.imgUrls.length}张",
                 style: TextStyle(
                   fontSize: 10.0,
-//                  color: Colors.white,
+                  color: Colors.white,
                 )),
           ),
         ));

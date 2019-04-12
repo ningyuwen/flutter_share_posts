@@ -9,6 +9,7 @@ class AuthProvider {
   AuthProvider._internal() {
     print("AuthProvider 已经创建了");
     _getUserInfo().asStream().listen((LoginBeen been) {
+      print("AuthProvider 添加新的登录账户");
       addLoginBeen(been);
     });
   }
@@ -22,6 +23,8 @@ class AuthProvider {
   LoginBeen userInfo = new LoginBeen(0, 0, "", "", 0, false);
 
   final _fetcher = new PublishSubject<LoginBeen>();
+
+  stream() => _fetcher.stream;
 
   PublishSubject<LoginBeen> getFetcher() {
     return _fetcher;

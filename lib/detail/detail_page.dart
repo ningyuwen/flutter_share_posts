@@ -12,6 +12,7 @@ import 'package:my_mini_app/provider/detail_page_provider.dart';
 import 'package:my_mini_app/provider/text_field_provider.dart';
 import 'package:my_mini_app/util/fast_click.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
+import 'package:my_mini_app/util/progress_dialog.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
 
 class DetailPagefulWidget extends StatefulWidget {
@@ -74,7 +75,24 @@ class _DetailPageWidget extends StatelessWidget {
       ),
       body: _detailPageProvider.streamBuilder(
         success: (PostDetail data) {
-          return _detailPage(data);
+          return Stack(
+            children: <Widget>[
+              _detailPage(data),
+              Positioned(
+                bottom: 0.0,
+                child: SendCommentStatefulWidget(
+                    _postDetailArgument.postId, _detailPageProvider),
+              ),
+              Positioned(
+                  bottom: 51.0,
+                  child: Container(
+                    height: 1.0,
+                    width: MediaQuery.of(context).size.width,
+                    color: Theme.of(context).dividerColor,
+                  )),
+            ],
+          );
+//          return _detailPage(data);
         },
         loading: () {
           return Center(
@@ -87,12 +105,15 @@ class _DetailPageWidget extends StatelessWidget {
           );
         },
       ),
-      bottomSheet: BottomSheet(
-          onClosing: () {},
-          builder: (BuildContext context) {
-            return SendCommentStatefulWidget(
-                _postDetailArgument.postId, _detailPageProvider);
-          }),
+//      bottomNavigationBar: SendCommentStatefulWidget(
+//                _postDetailArgument.postId, _detailPageProvider),
+
+//      bottomSheet: BottomSheet(
+//          onClosing: () {},
+//          builder: (BuildContext context) {
+//            return SendCommentStatefulWidget(
+//                _postDetailArgument.postId, _detailPageProvider);
+//          }),
     );
   }
 
@@ -553,49 +574,59 @@ class SendCommentState extends State<SendCommentStatefulWidget>
   Widget build(BuildContext context) {
     super.build(context);
     return Container(
-      padding: EdgeInsets.only(left: 10.0, right: 10.0),
-      height: 60.0,
+      color: Theme.of(context).backgroundColor,
+      padding: EdgeInsets.only(left: 12.0, right: 14.0),
+      height: 52.0,
       child: Center(
         child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Container(
-              width: MediaQuery.of(context).size.width - 56.0,
+              width: MediaQuery.of(context).size.width - 60.0,
               child: TextFormField(
+                style: Theme.of(context).textTheme.body1,
                 controller: _sendMsgTextField,
                 maxLines: 1,
                 keyboardType: TextInputType.text,
                 key: _orderFormKey,
                 decoration: const InputDecoration(
-                  hintText: '发布回复点评',
+                  hintText: '请输入评论',
+                  border: InputBorder.none,
                 ),
               ),
+            ),
+            SizedBox(
+              width: 5.0,
             ),
             BlocBuilder(
                 bloc: _bloc,
                 builder: (BuildContext context, BaseState state) {
                   return GestureDetector(
-                    onTap: () {
-                      if (_sendMsgTextField.text != "") {
-                        if (!AuthProvider().isLogin()) {
-                          AuthProvider()
-                              .showLoginDialog("发表评论需要您先登录，是否需要进行登录？");
-                        } else {
-                          widget.detailPageProvider.postComment(
-                              widget.postId, _sendMsgTextField.text.toString());
-                          FocusScope.of(context).requestFocus(new FocusNode());
-                          SystemChannels.textInput
-                              .invokeMethod('TextInput.hide');
+                      onTap: () {
+                        if (_sendMsgTextField.text != "") {
+                          if (!AuthProvider().isLogin()) {
+                            AuthProvider()
+                                .showLoginDialog("发表评论需要您先登录，是否需要进行登录？");
+                          } else {
+                            ProgressDialog.showProgressDialog(context);
+                            widget.detailPageProvider.postComment(widget.postId,
+                                _sendMsgTextField.text.toString(), () {
+                              Navigator.pop(context);
+                              _sendMsgTextField.text = "";
+                                });
+                            FocusScope.of(context)
+                                .requestFocus(new FocusNode());
+                            SystemChannels.textInput
+                                .invokeMethod('TextInput.hide');
+                          }
                         }
-                      }
-                    },
-                    child: Icon(
-                      Icons.send,
-                      color: getSendBtnColor(state),
-                      size: 28.0,
-                    ),
-                  );
+                      },
+                      child: Text(
+                        "发布",
+                        style: TextStyle(
+                            fontSize: 16.0, color: getSendBtnColor(state)),
+                      ));
                 })
           ],
         ),

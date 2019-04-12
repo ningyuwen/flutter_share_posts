@@ -153,6 +153,7 @@ class _MainPageState extends State<MainPageView>
   @override
   void dispose() {
     AMapLocationClient.shutdown();
+    AuthProvider().dispose();
     super.dispose();
   }
 

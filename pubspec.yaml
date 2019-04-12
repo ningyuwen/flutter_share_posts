@@ -22,37 +22,23 @@ dependencies:
   image_picker: ^0.4.10
   fluttertoast: ^2.2.2
   share: ^0.5.3
-  #  flutter_webview_plugin: ^0.3.0+2
   dio: ^1.0.12
   shared_preferences: ^0.5.0
-  #  flutter_redux: ^0.5.2
-  device_info: ^0.3.0
   json_annotation: ^2.0.0
-  flutter_spinkit: ^3.1.0
-  #  get_version: ^0.0.6
+  flutter_spinkit: ^3.1.0 #加载动画
   photo_view: ^0.1.0
   cached_network_image: ^0.6.0
   path_provider: ^0.5.0+1
-  #  permission_handler: ^2.1.2
   rxdart: any
-  #  jaguar_retrofit: ^2.6.4
   decimal: ^0.3.2
-  #  location: ^2.0.0
-  #  geolocator: ^2.1.1
-  auto_size_text: ^0.3.0
-  flutter_local_notifications: ^0.4.4+2
-  #刷新
   flutter_easyrefresh: ^1.2.5
   simple_permissions: ^0.1.9
-  #  location: ^2.3.3
   mmkv_flutter: ^1.0.10
   flutter_bloc: ^0.8.0
   equatable: ^0.2.0
   flutter_qq: ^0.0.4
-  #  amap_location_plugin: ^0.2.0
-  #  geolocator: ^3.0.1
   amap_location: ^0.2.0
-  dynamic_theme: ^1.0.1
+  dynamic_theme: ^1.0.1 #日间、夜间主题
 
 dev_dependencies:
   flutter_test:

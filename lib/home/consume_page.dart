@@ -12,6 +12,7 @@ class ConsumePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("是否重建 ConsumePage");
     return Scaffold(
       appBar: _appBar(),
       body: _FragmentMinePage(_userId),

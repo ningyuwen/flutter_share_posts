@@ -39,34 +39,31 @@ class _MyUserFriendState extends State<_MyUserFriendPage> {
   Widget build(BuildContext context) {
     return _provider.streamBuilder<List<MyUserFriendsBeen>>(
         success: (List<MyUserFriendsBeen> data) {
-      return Padding(
-        padding: EdgeInsets.only(top: 5.0),
-        child: ListView.separated(
-            separatorBuilder: (context, index) => Divider(
-                  height: 0.0,
-                ),
-            itemCount: data.length,
-            physics: const AlwaysScrollableScrollPhysics(),
-            itemBuilder: (BuildContext context, int index) {
-              return InkWell(
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      child: _itemOfList(data[index], index),
-                      height: 60.0,
-                    ),
-                  ],
-                ),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      new MaterialPageRoute(
-                          builder: (context) =>
-                              new ConsumePage(data[index].userId)));
-                },
-              );
-            }),
-      );
+      return ListView.separated(
+          separatorBuilder: (context, index) => Divider(
+            height: 0.0,
+          ),
+          itemCount: data.length,
+          physics: const AlwaysScrollableScrollPhysics(),
+          itemBuilder: (BuildContext context, int index) {
+            return InkWell(
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    child: _itemOfList(data[index], index),
+                    height: 60.0,
+                  ),
+                ],
+              ),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                        builder: (context) =>
+                        new ConsumePage(data[index].userId)));
+              },
+            );
+          });
     }, loading: () {
       return Center(
         child: CircularProgressIndicator(),

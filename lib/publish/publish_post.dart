@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:mmkv_flutter/mmkv_flutter.dart';
 import 'package:my_mini_app/been/mine_post_been.dart';
 import 'package:my_mini_app/provider/publish_post_provider.dart';
+import 'package:my_mini_app/util/progress_dialog.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 
 class PublishPostView extends StatelessWidget {
@@ -253,14 +253,7 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
 //                发布，检查参数是否齐全
               if (checkArgumentsIsRight()) {
                 //显示dialog
-
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return SpinKitCircle(
-                        color: Theme.of(context).accentColor,
-                      );
-                    });
+                ProgressDialog.showProgressDialog(context);
                 _publishProvider.publish((Posts post) {
                   Navigator.pop(context);
                   Navigator.pop(context, post);

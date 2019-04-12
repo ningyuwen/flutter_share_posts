@@ -85,6 +85,7 @@ class _MyAppStateWidget extends StatelessWidget {
                 fontFamily: 'Basier',
               ),
           appBarTheme: ThemeData.dark().appBarTheme.copyWith(
+              elevation: 1.0,
               color: const Color.fromARGB(255, 26, 26, 26),
               iconTheme: const IconThemeData(
                   color: const Color.fromARGB(255, 153, 153, 153)),
@@ -94,8 +95,8 @@ class _MyAppStateWidget extends StatelessWidget {
                     color: const Color.fromARGB(255, 153, 153, 153)),
               )),
           dialogTheme: ThemeData.light().dialogTheme.copyWith(
-              contentTextStyle: const TextStyle(fontSize: 16.0,color: Colors.white)
-          ),
+              contentTextStyle:
+                  const TextStyle(fontSize: 16.0, color: Colors.white)),
 
           //color
           primaryColor: Color.fromARGB(255, 153, 153, 153),
@@ -130,6 +131,7 @@ class _MyAppStateWidget extends StatelessWidget {
                 fontFamily: 'Basier',
               ),
           appBarTheme: ThemeData.light().appBarTheme.copyWith(
+              elevation: 1.0,
               color: Colors.white,
               iconTheme: const IconThemeData(
                   color: const Color.fromARGB(255, 129, 129, 129)),
@@ -142,11 +144,8 @@ class _MyAppStateWidget extends StatelessWidget {
               .buttonTheme
               .copyWith(textTheme: ButtonTextTheme.accent),
           dialogTheme: ThemeData.light().dialogTheme.copyWith(
-            contentTextStyle: TextStyle(
-              color: Colors.black87,
-              fontSize: 16.0
-            )
-          ),
+              contentTextStyle:
+                  TextStyle(color: Colors.black87, fontSize: 16.0)),
 
           //color
 //          accentColor: Colors.purple,

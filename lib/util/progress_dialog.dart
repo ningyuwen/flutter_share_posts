@@ -1,14 +1,15 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-class ProgressDialog extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 70.0,
-      width: 70.0,
-      child: CircularProgressIndicator(),
-    );
+class ProgressDialog {
+  static void showProgressDialog(BuildContext context) {
+    showDialog(
+      barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return SpinKitCircle(
+            color: Theme.of(context).accentColor,
+          );
+        });
   }
 }

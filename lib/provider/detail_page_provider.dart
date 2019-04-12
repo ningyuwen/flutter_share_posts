@@ -127,7 +127,8 @@ class DetailPageProvider {
     return comment;
   }
 
-  void postComment(int postId, String content) async {
+  void postComment(int postId, String content, Function success) async {
+    print("postComment() postId is: $postId and content is: $content");
     DetailComment comment = await _postCommentToRemote(postId, content);
     MmkvFlutter mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
     comment.headUrl = await mmkv.getString("headUrl");
@@ -135,6 +136,7 @@ class DetailPageProvider {
     _data.mCommentList.insert(0, comment);
     print("评论成功: ${comment.content} commentId is: ${comment.commentId}");
     _fetcher.sink.add(_data);
+    success();
   }
 
   void postUserFriend(bool isFriend) {

@@ -11,11 +11,13 @@ class ApiUtil {
   static ApiUtil _apiUtil;
   static Dio _dio; //dio
 
+  final String SERVER_URL = "http://172.26.52.30:8080"; //windows
+//  final String SERVER_URL = "http://47.112.12.104:8080/adu";  //线上服务器
+//  final String SERVER_URL = "http://192.168.0.101:8080";  //mac
+
   ApiUtil() {
     _dio = new Dio();
-    _dio.options.baseUrl = "http://172.26.52.30:8080";
-//    _dio.options.baseUrl = "http://47.112.12.104:8080/adu";
-//    _dio.options.baseUrl = "http://192.168.0.101:8080";
+    _dio.options.baseUrl = SERVER_URL;
     _dio.options.method = "get";
     _dio.options.connectTimeout = 60000;
 
@@ -49,7 +51,7 @@ class ApiUtil {
       Response response = await _dio.request(_dio.options.baseUrl + path,
           data: params, options: _dio.options);
       if (response.statusCode == 200) {
-         print(response.data.toString());
+//         print(response.data.toString());
         Map map = jsonDecode(response.data.toString());
         var been = new Been.fromJson(map);
         if (been.code == 0) {
@@ -71,14 +73,16 @@ class ApiUtil {
 
   //发布
   Future<dynamic> publishPost(PublishBeen been) async {
-    _dio.options.method = "post";
-    _dio.options.contentType =
+    Dio dio = new Dio();
+    dio.options.baseUrl = SERVER_URL;
+    dio.options.method = "post";
+    dio.options.contentType =
         ContentType.parse("multipart/form-data");
-//    _dio.options.headers["Content-Type"] = "multipart/form-data";
+
     FormData formData = new FormData.from({
       "store": been.store,
       "cost": been.cost,
-      "img": new UploadFileInfo(been.img, "upload"),
+      "img": new UploadFileInfo(been.img, "upload", contentType: ContentType.parse("multipart/form-data")),
       "content": been.content,
       "imgLabel": been.imgLabel,
       "position": been.position,
@@ -86,10 +90,11 @@ class ApiUtil {
       "latitude": been.latitude,
       "district": been.district,
     });
-    print("content type is: ${_dio.options.contentType}");
-    Response response = await _dio.post(_dio.options.baseUrl + "/post/releasePost",
-        data: formData, options: _dio.options);
-    print(response);
+//    print("content type is: ${formData["img"].toString()}  type is: ${dio.options.contentType}");
+
+    Response response = await dio.post(dio.options.baseUrl + "/post/releasePost",
+        data: formData, options: dio.options);
+//    print(response);
     Map map = jsonDecode(response.data.toString());
     var basicBeen = new Been.fromJson(map);
     if (basicBeen.code == 0) {

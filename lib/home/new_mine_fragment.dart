@@ -7,7 +7,6 @@ import 'package:my_mini_app/login/login.dart';
 import 'package:my_mini_app/mine/my_user_friend_page.dart';
 import 'package:my_mini_app/mine/setting_page.dart';
 import 'package:my_mini_app/provider/auth_provider.dart';
-import 'package:rxdart/rxdart.dart';
 
 class NewMineFragment extends StatefulWidget {
   @override
@@ -17,20 +16,26 @@ class NewMineFragment extends StatefulWidget {
 }
 
 class _NewMineState extends State<NewMineFragment> {
-  PublishSubject<LoginBeen> _fetcher;
+  Stream<LoginBeen> _stream;
 
   @override
   void initState() {
-    _fetcher = AuthProvider().getFetcher();
+    _stream = AuthProvider().stream();
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(NewMineFragment oldWidget) {
+    print("didUpdateWidget() ${oldWidget.hashCode}");
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        stream: _fetcher.stream,
+        stream: this._stream,
         builder: (context, AsyncSnapshot<LoginBeen> snapshot) {
-          print("登录了 ${snapshot.data}");
+          print("登录了 ${snapshot.data.headUrl}");
           if (snapshot.hasData) {
             if (snapshot.data.isLogin) {
               return _loginWidget(snapshot.data);
@@ -193,8 +198,10 @@ class _NewMineState extends State<NewMineFragment> {
   Widget _settingWidget() {
     return InkWell(
       onTap: () {
-        Navigator.push(context,
-            new MaterialPageRoute(builder: (context) => new SettingPage()));
+        Navigator.push(
+            context,
+            new MaterialPageRoute(
+                builder: (context) => new SettingPage()));
       },
       child: Container(
           height: 54.0,
@@ -308,6 +315,6 @@ class _NewMineState extends State<NewMineFragment> {
   }
 
   String _getSkinName() {
-    return Theme.of(context).brightness == Brightness.dark? "日间模式" : "夜间模式";
+    return Theme.of(context).brightness == Brightness.dark ? "日间模式" : "夜间模式";
   }
 }

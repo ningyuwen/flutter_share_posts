@@ -35,7 +35,7 @@ class _NewMineState extends State<NewMineFragment> {
     return StreamBuilder(
         stream: this._stream,
         builder: (context, AsyncSnapshot<LoginBeen> snapshot) {
-          print("登录了 ${snapshot.data.headUrl}");
+//          print("登录了 ${snapshot.data.headUrl}");
           if (snapshot.hasData) {
             if (snapshot.data.isLogin) {
               return _loginWidget(snapshot.data);

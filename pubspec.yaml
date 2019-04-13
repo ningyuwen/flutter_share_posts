@@ -39,6 +39,7 @@ dependencies:
   flutter_qq: ^0.0.4
   amap_location: ^0.2.0
   dynamic_theme: ^1.0.1 #日间、夜间主题
+  connectivity: ^0.3.2
 
 dev_dependencies:
   flutter_test:

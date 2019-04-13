@@ -29,11 +29,6 @@ void main() {
   BlocSupervisor().delegate = SimpleBlocDelegate();
 
   runApp(_MyAppStateWidget());
-
-//  runApp(MaterialApp(
-//    home: MainPage(),
-//    title: "Flutter Dem a hhh Page",
-//  ));
 }
 
 void _startLocationService() async {
@@ -51,6 +46,7 @@ class _MyAppStateWidget extends StatelessWidget {
         themedWidgetBuilder: (context, theme) {
           return new MaterialApp(
             home: MainPage(),
+            checkerboardOffscreenLayers: true,
             theme: theme,
             title: "Flutter Dem a hhh Page",
           );

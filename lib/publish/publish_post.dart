@@ -142,6 +142,7 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
             padding: EdgeInsets.only(top: 10.0),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
+              clipBehavior: Clip.hardEdge,
               child: new _PhotosListWidget(_publishProvider),
             ),
           ),
@@ -229,6 +230,7 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             ClipOval(
+              clipBehavior: Clip.hardEdge,
               child: _UserHeadWidget(),
             ),
             const SizedBox(

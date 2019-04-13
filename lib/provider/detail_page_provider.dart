@@ -9,6 +9,8 @@ import 'package:my_mini_app/provider/auth_provider.dart';
 import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:connectivity/connectivity.dart';
 
 class DetailPageProvider {
   final String _EMPTY = "_empty_";
@@ -87,6 +89,21 @@ class DetailPageProvider {
     } else {
       print("没有缓存数据");
       _userFriendFetcher.sink.add(false);
+      Observable.fromFuture(Connectivity().checkConnectivity()).map((ConnectivityResult connectivityResult) {
+        if (connectivityResult == ConnectivityResult.none) {
+          return false;
+        } else {
+          return true;
+        }
+      }).listen((hasInternet) {
+        if (!hasInternet) {
+          //无网络
+          print("无网络");
+          _fetcher.sink.addError("当前暂未打开网络，请打开网络重试...");
+        } else {
+          print("有网络");
+        }
+      });
     }
 
     dynamic map = await ApiUtil.getInstance().netFetch(
@@ -98,7 +115,6 @@ class DetailPageProvider {
           "latitude": postDetailArgument.latitude
         },
         null);
-//    print("详情页面数据：$map");
     if (map is Map) {
       String remoteData = jsonEncode(map);
       if (remoteData != localData) {

@@ -219,6 +219,7 @@ class MinePostItemView extends StatelessWidget {
         //图片
         Container(
             child: ClipRRect(
+                clipBehavior: Clip.hardEdge,
                 borderRadius: new BorderRadius.circular(8.0),
                 child: Stack(
                   children: <Widget>[

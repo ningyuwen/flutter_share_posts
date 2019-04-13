@@ -11,8 +11,8 @@ class ApiUtil {
   static ApiUtil _apiUtil;
   static Dio _dio; //dio
 
-  final String SERVER_URL = "http://172.26.52.30:8080"; //windows
-//  final String SERVER_URL = "http://47.112.12.104:8080/adu";  //线上服务器
+//  final String SERVER_URL = "http://172.26.52.30:8080"; //windows
+  final String SERVER_URL = "http://47.112.12.104:8080/adu";  //线上服务器
 //  final String SERVER_URL = "http://192.168.0.101:8080";  //mac
 
   ApiUtil() {
@@ -60,13 +60,15 @@ class ApiUtil {
           //登陆失效，重新登录
 //          SharedPreferences preferences = await SharedPreferences.getInstance();
 //          await preferences.setBool("isLogin", false);
+          ToastUtil.showToast("操作失败，请稍后重试...");
         }
       } else {
         ToastUtil.showToast(response.statusCode.toString());
       }
     } catch (error) {
       print(error);
-      return error;
+      DioError dioError = (error as DioError);
+      return dioError;
     }
     return "error";
   }

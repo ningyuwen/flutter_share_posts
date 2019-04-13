@@ -51,6 +51,12 @@ class AuthProvider {
     String headUrl = await mmkv.getString("headUrl");
     bool sex = await mmkv.getBool("sex");
     bool isLogin = await mmkv.getBool("isLogin");
+
+    //test
+//    isLogin = true;
+//    userId = 2;
+//    headUrl = "http://thirdqq.qlogo.cn/qqapp/1106940064/7AA06447831CD702186733C59695CF69/100";
+
     return new LoginBeen(userId, openId, userName, headUrl, sex, isLogin);
   }
 

@@ -135,6 +135,7 @@ class _NewMineState extends State<NewMineFragment> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               ClipOval(
+                clipBehavior: Clip.hardEdge,
                 child: CachedNetworkImage(
                   width: 60,
                   height: 60,

@@ -82,6 +82,7 @@ class _MyUserFriendState extends State<_MyUserFriendPage> {
           width: 20.0,
         ),
         ClipOval(
+          clipBehavior: Clip.hardEdge,
           child: CachedNetworkImage(
             width: 40,
             height: 40,
@@ -97,21 +98,24 @@ class _MyUserFriendState extends State<_MyUserFriendPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
-              FlatButton(
-                color: const Color.fromARGB(255, 247, 247, 247),
-                child: _userFriendWidget(true, data),
-                onPressed: () {
-                  //关注
-                  if (FastClick.isFastClick()) {
-                    return;
-                  }
-                  _provider.postUserFriend(index, data.isFriend);
-                },
-                highlightColor: const Color.fromARGB(255, 250, 250, 250),
-                shape: const RoundedRectangleBorder(
-                    side: BorderSide.none,
-                    borderRadius: BorderRadius.all(Radius.circular(4))),
-              ),
+              ButtonTheme(
+                minWidth: 79.0,
+                child: FlatButton(
+                  color: const Color.fromARGB(255, 247, 247, 247),
+                  child: _userFriendWidget(true, data),
+                  onPressed: () {
+                    //关注
+                    if (FastClick.isFastClick()) {
+                      return;
+                    }
+                    _provider.postUserFriend(index, data.isFriend);
+                  },
+                  highlightColor: const Color.fromARGB(255, 250, 250, 250),
+                  shape: const RoundedRectangleBorder(
+                      side: BorderSide.none,
+                      borderRadius: BorderRadius.all(Radius.circular(4))),
+                ),
+              )
             ],
           ),
         ),
@@ -133,6 +137,7 @@ class _MyUserFriendState extends State<_MyUserFriendPage> {
               children: <Widget>[
                 Icon(
                   Icons.add,
+                  size: 19.0,
                   color: const Color.fromARGB(255, 51, 132, 245),
                 ),
                 Text(

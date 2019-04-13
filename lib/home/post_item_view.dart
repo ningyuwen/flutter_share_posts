@@ -37,6 +37,7 @@ class PostItemWidget extends StatelessWidget {
         children: <Widget>[
           GestureDetector(
             child: ClipOval(
+              clipBehavior: Clip.hardEdge,
               child: CachedNetworkImage(
                 width: 44,
                 height: 44,
@@ -58,7 +59,7 @@ class PostItemWidget extends StatelessWidget {
   }
 
   Widget actionRow(Posts post) => Padding(
-        padding: const EdgeInsets.only(left: 8.0, bottom: 8.0, right: 50.0),
+        padding: const EdgeInsets.only(left: 8.0, bottom: 8.0, right: 20.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -73,12 +74,13 @@ class PostItemWidget extends StatelessWidget {
                       icon: Icon(Icons.comment, size: 20.0, color: Colors.grey),
                       onPressed: () {
                         PostDetailArgument postDetailArgument =
-                            new PostDetailArgument(
-                                post.id, 113.347868, 23.007985);
+                        new PostDetailArgument(
+                            post.id, 113.347868, 23.007985);
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => new DetailPagefulWidget(
+                                builder: (context) =>
+                                new DetailPagefulWidget(
                                     postDetailArgument)));
                       },
                     )),
@@ -139,22 +141,26 @@ class PostItemWidget extends StatelessWidget {
                   ]),
                 ),
               ),
-              showContent(), //文字
+              //文字
+              showContent(),
               //图片
               Container(
-                  padding: const EdgeInsets.only(left: 16.0),
-                  height: 200.0,
-                  child: ClipRRect(
-                      borderRadius: new BorderRadius.circular(8.0),
-                      child: Stack(
-                        children: <Widget>[
-                          showPhotos(), //图片
-                          showIndicator(), //指示器
-                        ],
-                      ))),
+                height: 200.0,
+                padding: const EdgeInsets.only(left: 16.0),
+                width: MediaQuery.of(context).size.width,
+                child: new Stack(
+                  children: <Widget>[
+                    Align(
+                      child: showPhotos(),
+                      alignment: FractionalOffset.topLeft,
+                    ),
+                    showIndicator()
+                  ],
+                ),
+              ),
               //地址
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16.0, 8.0, 0.0, 8.0),
+              Container(
+                padding: const EdgeInsets.fromLTRB(16.0, 10.0, 0.0, 8.0),
                 child: Row(
                   children: <Widget>[
                     Image.asset(
@@ -170,8 +176,6 @@ class PostItemWidget extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: 12.0,
-//                            color: Color.fromARGB(255, 97, 97, 97)
-//                        color: Theme.of(context).primaryColorDark
                         ),
                       ),
                     ))
@@ -186,61 +190,17 @@ class PostItemWidget extends StatelessWidget {
       );
 
   Widget showPhotos() {
-//    _photosPageController.addListener(() {
-//      //  setState(() {
-//      //    currentPageValue = _photosPageController.page;
-//      //  });
-//      print("页面发生了改变 ${_photosPageController.page}");
-//    });
-//    return PageView.builder(
-//      controller: _photosPageController,
-//      itemCount: _post.imgUrls.length,
-//      itemBuilder: (context, index) {
-//        return _rendRow(context, index);
-//      },
-//      scrollDirection: Axis.horizontal,
-//    );
     //只展示一张图片
-    return _rendRow(context, 0);
+    return ClipRRect(
+      clipBehavior: Clip.hardEdge,
+      borderRadius: new BorderRadius.circular(8.0),
+      child: _rendRow(context, 0),
+    );
   }
 
   Widget _rendRow(BuildContext context, int index) {
-//    return CachedNetworkImage(
-//        imageUrl: _post.imgUrls[index],
-//        fit: BoxFit.cover,
-//        width: MediaQuery.of(context).size.width,
-//        //屏幕宽度
-//        height: 200.0,
-//        placeholder: Center(
-//          child: Text("图片加载中..."),
-//        ),
-////          placeholder: Center(
-////              child: Column(
-////            mainAxisAlignment: MainAxisAlignment.center,
-////            children: <Widget>[
-////              CircularProgressIndicator(
-////                backgroundColor: Colors.amber,
-////                strokeWidth: 2.0,
-////              ),
-////              SizedBox(
-////                height: 15.0,
-////              ),
-////              Text("图片加载中...")
-////            ],
-////          )),
-//        errorWidget: Container(
-//          color: Colors.black45,
-//          child: Center(
-//            child: Text(
-//              "无法查看图片，请稍后重试...",
-//              style: TextStyle(color: Colors.white),
-//            ),
-//          ),
-//        ));
-
     return GestureDetector(
       onTap: () {
-//        ToastUtil.showToast(context.widget.toString());
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -248,39 +208,10 @@ class PostItemWidget extends StatelessWidget {
                     new PhotoViewUtil(key, _post.imgUrls[index])));
       },
       child: CachedNetworkImage(
-        imageUrl: _post.imgUrls[index],
-        fit: BoxFit.cover,
-        width: MediaQuery.of(context).size.width,
-        //屏幕宽度
-        height: 200.0,
-//          placeholder: Center(
-//            child: Text("图片加载中..."),
-//          ),
-//          placeholder: Center(
-//              child: Column(
-//            mainAxisAlignment: MainAxisAlignment.center,
-//            children: <Widget>[
-//              CircularProgressIndicator(
-//                backgroundColor: Colors.amber,
-//                strokeWidth: 2.0,
-//              ),
-//              SizedBox(
-//                height: 15.0,
-//              ),
-//              Text("图片加载中...")
-//            ],
-//          )),
-
-//          errorWidget: Container(
-//            color: Colors.black45,
-//            child: Center(
-//              child: Text(
-//                "无法查看图片，请稍后重试...",
-//                style: TextStyle(color: Colors.white),
-//              ),
-//            ),
-//          )
-      ),
+          imageUrl: _post.imgUrls[index],
+          fit: BoxFit.cover,
+          width: MediaQuery.of(context).size.width,
+          height: 200.0),
     );
   }
 
@@ -295,11 +226,11 @@ class PostItemWidget extends StatelessWidget {
       child: Text(
         _post.content,
         style: TextStyle(
-//          color: Color.fromARGB(255, 70, 70, 70),
           fontWeight: FontWeight.normal,
           fontSize: 15.0,
         ),
         maxLines: 4,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }

@@ -99,9 +99,21 @@ class _DetailPageWidget extends StatelessWidget {
             child: CircularProgressIndicator(),
           );
         },
-        error: (String error) {
-          return Center(
-            child: Text("加载出现错误: $error"),
+        error: (Object error) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                error.toString(),
+                style: Theme.of(context).textTheme.body1,
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: 30.0,
+              ),
+              _RotateButtonIcon(),
+            ],
           );
         },
       ),
@@ -201,6 +213,7 @@ class _DetailPageWidget extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
           child: ClipRRect(
+            clipBehavior: Clip.hardEdge,
             borderRadius: BorderRadius.circular(8.0),
             child: CachedNetworkImage(
 //                placeholder: SizedBox(
@@ -253,6 +266,7 @@ class _DetailPageWidget extends StatelessWidget {
 //                  _postDetail.headUrl,
 //                )),
             child: ClipOval(
+              clipBehavior: Clip.hardEdge,
               child: CachedNetworkImage(
                 width: 44,
                 height: 44,
@@ -354,6 +368,7 @@ class _DetailPageWidget extends StatelessWidget {
         ListTile(
           leading: GestureDetector(
             child: ClipOval(
+              clipBehavior: Clip.hardEdge,
               child: CachedNetworkImage(
                 width: 40,
                 height: 40,
@@ -444,6 +459,67 @@ class _DetailPageWidget extends StatelessWidget {
                 },
               ));
         });
+  }
+}
+
+class _RotateButtonIcon extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return new _RotateButtonState();
+  }
+}
+
+class _RotateButtonState extends State<_RotateButtonIcon>
+    with TickerProviderStateMixin {
+  AnimationController _controller;
+  Animation<double> curved; //
+
+  @override
+  void initState() {
+    _controller =
+        new AnimationController(vsync: this, duration: Duration(seconds: 2));
+    curved = new CurvedAnimation(parent: _controller, curve: const Cubic(0.20, 0.4, 0.6, 0.8));
+//    curved = new AlwaysStoppedAnimation(0.5);
+    _controller.repeat();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.stop();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RotationTransition(
+      turns: curved,
+      child: IconButton(
+        iconSize: 50.0,
+        onPressed: () {
+          //刷新
+//          _detailPageProvider.getDetailData(_postDetailArgument);
+        },
+        icon: Icon(
+          Icons.refresh,
+          color: Theme.of(context).accentColor,
+        ),
+      ),
+    );
+
+//    return Container(
+//      child: IconButton(
+//        iconSize: 50.0,
+//        onPressed: () {
+//          //刷新
+////          _detailPageProvider.getDetailData(_postDetailArgument);
+//        },
+//        icon: Icon(
+//          Icons.refresh,
+//          color: Theme.of(context).accentColor,
+//        ),
+//      ),
+//    );
   }
 }
 
@@ -614,7 +690,7 @@ class SendCommentState extends State<SendCommentStatefulWidget>
                                 _sendMsgTextField.text.toString(), () {
                               Navigator.pop(context);
                               _sendMsgTextField.text = "";
-                                });
+                            });
                             FocusScope.of(context)
                                 .requestFocus(new FocusNode());
                             SystemChannels.textInput

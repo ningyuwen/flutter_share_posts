@@ -11,10 +11,13 @@ import 'package:my_mini_app/provider/base_state.dart';
 import 'package:my_mini_app/provider/detail_page_provider.dart';
 import 'package:my_mini_app/provider/text_field_provider.dart';
 import 'package:my_mini_app/util/fast_click.dart';
+import 'package:my_mini_app/util/network_tuil.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:my_mini_app/util/progress_dialog.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
+import 'package:my_mini_app/util/toast_util.dart';
 import 'package:my_mini_app/widget/no_internet_widget.dart';
+import 'package:rxdart/rxdart.dart';
 
 class DetailPagefulWidget extends StatefulWidget {
   final PostDetailArgument _postDetailArgument;
@@ -81,7 +84,7 @@ class _DetailPageWidget extends StatelessWidget {
               _detailPage(data),
               Positioned(
                 bottom: 0.0,
-                child: SendCommentStatefulWidget(
+                child: _SendCommentStatefulWidget(
                     _postDetailArgument.postId, _detailPageProvider),
               ),
               Positioned(
@@ -527,19 +530,19 @@ class BlankItem extends ListItem {
   BlankItem();
 }
 
-class SendCommentStatefulWidget extends StatefulWidget {
+class _SendCommentStatefulWidget extends StatefulWidget {
   final int postId;
   final DetailPageProvider detailPageProvider;
 
-  SendCommentStatefulWidget(this.postId, this.detailPageProvider);
+  _SendCommentStatefulWidget(this.postId, this.detailPageProvider);
 
   @override
   State<StatefulWidget> createState() {
-    return SendCommentState();
+    return _SendCommentState();
   }
 }
 
-class SendCommentState extends State<SendCommentStatefulWidget>
+class _SendCommentState extends State<_SendCommentStatefulWidget>
     with AutomaticKeepAliveClientMixin {
   final _sendMsgTextField = TextEditingController(text: "");
   final TextFieldProvider _bloc = TextFieldProvider();
@@ -603,23 +606,14 @@ class SendCommentState extends State<SendCommentStatefulWidget>
                             AuthProvider()
                                 .showLoginDialog("发表评论需要您先登录，是否需要进行登录？");
                           } else {
-                            ProgressDialog.showProgressDialog(context);
-                            widget.detailPageProvider.postComment(widget.postId,
-                                _sendMsgTextField.text.toString(), () {
-                              Navigator.pop(context);
-                              _sendMsgTextField.text = "";
-                            });
-                            FocusScope.of(context)
-                                .requestFocus(new FocusNode());
-                            SystemChannels.textInput
-                                .invokeMethod('TextInput.hide');
+                            _checkNetworkAndComment();
                           }
                         }
                       },
                       child: Text(
                         "发布",
                         style: TextStyle(
-                            fontSize: 16.0, color: getSendBtnColor(state)),
+                            fontSize: 16.0, color: _getSendBtnColor(state)),
                       ));
                 })
           ],
@@ -628,7 +622,27 @@ class SendCommentState extends State<SendCommentStatefulWidget>
     );
   }
 
-  Color getSendBtnColor(BaseState state) {
+  void _checkNetworkAndComment() {
+    Observable.fromFuture(NetworkUtil.hasNetwork()).listen((hasNetwork) {
+      if (hasNetwork) {
+        //显示dialog
+        ProgressDialog.showProgressDialog(context);
+        widget.detailPageProvider.postComment(widget.postId,
+            _sendMsgTextField.text.toString(), () {
+              Navigator.pop(context);
+              _sendMsgTextField.text = "";
+            });
+        FocusScope.of(context)
+            .requestFocus(new FocusNode());
+        SystemChannels.textInput
+            .invokeMethod('TextInput.hide');
+      } else {
+        ToastUtil.showToast(NetworkUtil.NO_NETWORK);
+      }
+    });
+  }
+
+  Color _getSendBtnColor(BaseState state) {
     if (state is DetailPageTextFieldInput) {
       return Colors.blue;
     } else if (state is DetailPageTextFieldNotInput) {

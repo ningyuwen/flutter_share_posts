@@ -136,26 +136,35 @@ class DetailPageProvider {
     }
   }
 
-  Future<DetailComment> _postCommentToRemote(int postId, String content) async {
+  Future<dynamic> _postCommentToRemote(int postId, String content) async {
     dynamic map = await ApiUtil.getInstance().netFetch("/comment/comment",
         RequestMethod.POST, {"postId": postId, "content": content}, null);
     print("_postCommentToRemote() map is: $map");
-    DetailComment comment =
-        DetailComment.fromJson(map); //为了适配，后台返回字段不一致的问题，commentId和id
-    comment.commentId = map["id"];
-    return comment;
+    return map;
   }
 
   void postComment(int postId, String content, Function success) async {
     print("postComment() postId is: $postId and content is: $content");
-    DetailComment comment = await _postCommentToRemote(postId, content);
-    MmkvFlutter mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
-    comment.headUrl = await mmkv.getString("headUrl");
-    comment.username = await mmkv.getString("username");
-    _data.mCommentList.insert(0, comment);
-    print("评论成功: ${comment.content} commentId is: ${comment.commentId}");
-    _fetcher.sink.add(_data);
-    success();
+    Observable.fromFuture(_postCommentToRemote(postId, content)).map((dynamic map) {
+      if (map is Map) {
+        DetailComment comment =
+        DetailComment.fromJson(map); //为了适配，后台返回字段不一致的问题，commentId和id
+        comment.commentId = map["id"];
+
+        comment.headUrl = AuthProvider().userInfo.headUrl;
+        comment.username = AuthProvider().userInfo.username;
+        _data.mCommentList.insert(0, comment);
+        return true;
+      } else {
+        ToastUtil.showToast(map);
+        return false;
+      }
+    }).listen((bool isSuccess) {
+      if (isSuccess) {
+        _fetcher.sink.add(_data);
+        success();
+      }
+    });
   }
 
   void postUserFriend(bool isFriend) {
@@ -169,8 +178,6 @@ class DetailPageProvider {
         if (success) {
           _data.isFriend = false;
           _userFriendFetcher.sink.add(_data.isFriend);
-        } else {
-          ToastUtil.showToast("取消关注失败，请稍后重试...");
         }
       });
     } else {
@@ -179,8 +186,6 @@ class DetailPageProvider {
         if (success) {
           _data.isFriend = true;
           _userFriendFetcher.sink.add(_data.isFriend);
-        } else {
-          ToastUtil.showToast("关注失败，请稍后重试...");
         }
       });
     }
@@ -191,6 +196,8 @@ class DetailPageProvider {
         RequestMethod.POST, {"targetUserId": _data.userId}, null);
     if ("" == map) {
       return true;
+    } else {
+      ToastUtil.showToast(map);
     }
     return false;
   }
@@ -200,6 +207,8 @@ class DetailPageProvider {
         RequestMethod.POST, {"targetUserId": _data.userId}, null);
     if ("" == map) {
       return true;
+    } else {
+      ToastUtil.showToast(map);
     }
     return false;
   }
@@ -211,8 +220,6 @@ class DetailPageProvider {
         _data.comments--;
         _data.mCommentList.remove(comment);
         _fetcher.sink.add(_data);
-      } else {
-        ToastUtil.showToast("删除失败，请稍后重试");
       }
     });
   }
@@ -222,6 +229,8 @@ class DetailPageProvider {
         RequestMethod.POST, {"commentId": commentId}, null);
     if ("" == map) {
       return true;
+    } else {
+      ToastUtil.showToast(map);
     }
     return false;
   }

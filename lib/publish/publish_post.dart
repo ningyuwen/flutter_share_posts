@@ -6,8 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:mmkv_flutter/mmkv_flutter.dart';
 import 'package:my_mini_app/been/mine_post_been.dart';
 import 'package:my_mini_app/provider/publish_post_provider.dart';
+import 'package:my_mini_app/util/network_tuil.dart';
 import 'package:my_mini_app/util/progress_dialog.dart';
 import 'package:my_mini_app/util/toast_util.dart';
+import 'package:rxdart/rxdart.dart';
 
 class PublishPostView extends StatelessWidget {
   @override
@@ -253,13 +255,9 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
           child: IconButton(
             onPressed: () {
 //                发布，检查参数是否齐全
-              if (checkArgumentsIsRight()) {
-                //显示dialog
-                ProgressDialog.showProgressDialog(context);
-                _publishProvider.publish((Posts post) {
-                  Navigator.pop(context);
-                  Navigator.pop(context, post);
-                });
+              if (_checkArgumentsIsRight()) {
+                //检查网络
+                _checkNetworkAndPublish();
               }
             },
             tooltip: "发布",
@@ -270,7 +268,7 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
     );
   }
 
-  bool checkArgumentsIsRight() {
+  bool _checkArgumentsIsRight() {
     if (_storeController.text == "") {
       ToastUtil.showToast("请输入店铺名称");
       return false;
@@ -317,12 +315,19 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
     _costFocus.unfocus();
   }
 
-  Color _getTextFieldColor() {
-    if (Theme.of(context).brightness == Brightness.dark) {
-      return Colors.white;
-    } else {
-      return Colors.black87;
-    }
+  void _checkNetworkAndPublish() {
+    Observable.fromFuture(NetworkUtil.hasNetwork()).listen((hasNetwork) {
+      if (hasNetwork) {
+        //显示dialog
+        ProgressDialog.showProgressDialog(context);
+        _publishProvider.publish((Posts post) {
+          Navigator.pop(context);
+          Navigator.pop(context, post);
+        });
+      } else {
+        ToastUtil.showToast(NetworkUtil.NO_NETWORK);
+      }
+    });
   }
 }
 

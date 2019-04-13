@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:my_mini_app/been/mine_post_been.dart';
 import 'package:my_mini_app/home/mine_posts_item.dart';
 import 'package:my_mini_app/provider/fragment_mine_provider.dart';
+import 'package:my_mini_app/widget/no_internet_widget.dart';
 
 class ConsumePage extends StatelessWidget {
   final int _userId;
@@ -65,11 +66,9 @@ class _MineState extends State<_FragmentMinePage>
       print("data data data length is: ${data.posts.length}");
       return _mineWidget(data);
     }, error: (msg) {
-      return Container(
-        child: Center(
-          child: Text(msg),
-        ),
-      );
+      return NoInternetWidget(msg, () {
+        _blocProvider.fetchMinePostData(widget._userId);
+      });
     }, empty: () {
       return Container(
         child: Center(

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mmkv_flutter/mmkv_flutter.dart';
 import 'package:my_mini_app/been/my_user_friend_been.dart';
 import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/toast_util.dart';
@@ -62,21 +61,21 @@ class MyUserFriendProvider {
     Observable.fromFuture(_getMyUserFriends()).listen((success) {
       if (success) {
         _fetcher.sink.add(_data);
-      } else {
-        _fetcher.sink.addError("暂无关注的人");
       }
     });
   }
 
   Future<bool> _getMyUserFriends() async {
-    dynamic list = await ApiUtil.getInstance()
+    dynamic data = await ApiUtil.getInstance()
         .netFetch("/user/myUserFriends", RequestMethod.GET, {}, null);
-    if (list is List) {
-      list.forEach((dynamic map) {
+    if (data is List) {
+      data.forEach((dynamic map) {
         _data.add(MyUserFriendsBeen.fromJson(map));
       });
       return true;
     } else {
+      //错误
+      _fetcher.sink.addError(data);
       return false;
     }
   }
@@ -86,7 +85,8 @@ class MyUserFriendProvider {
   void postUserFriend(int index, bool isFriend) {
     if (isFriend) {
       //取消关注
-      Observable.fromFuture(_postCancelUserFriend(_data[index].userId)).listen((success) {
+      Observable.fromFuture(_postCancelUserFriend(_data[index].userId))
+          .listen((success) {
         if (success) {
           _data[index].isFriend = false;
           _data[index].publishSubject.sink.add(_data[index].isFriend);
@@ -96,7 +96,8 @@ class MyUserFriendProvider {
       });
     } else {
       //关注
-      Observable.fromFuture(_postUserFriend(_data[index].userId)).listen((success) {
+      Observable.fromFuture(_postUserFriend(_data[index].userId))
+          .listen((success) {
         if (success) {
           _data[index].isFriend = true;
           _data[index].publishSubject.sink.add(_data[index].isFriend);
@@ -108,9 +109,8 @@ class MyUserFriendProvider {
   }
 
   Future<bool> _postUserFriend(int userId) async {
-    dynamic map = await ApiUtil.getInstance().netFetch("/user/userFriend", RequestMethod.POST, {
-      "targetUserId": userId
-    }, null);
+    dynamic map = await ApiUtil.getInstance().netFetch(
+        "/user/userFriend", RequestMethod.POST, {"targetUserId": userId}, null);
     if ("" == map) {
       return true;
     }
@@ -118,9 +118,8 @@ class MyUserFriendProvider {
   }
 
   Future<bool> _postCancelUserFriend(int userId) async {
-    dynamic map = await ApiUtil.getInstance().netFetch("/user/cancelUserFriend", RequestMethod.POST, {
-      "targetUserId": userId
-    }, null);
+    dynamic map = await ApiUtil.getInstance().netFetch("/user/cancelUserFriend",
+        RequestMethod.POST, {"targetUserId": userId}, null);
     if ("" == map) {
       return true;
     }

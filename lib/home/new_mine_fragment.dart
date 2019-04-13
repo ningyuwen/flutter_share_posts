@@ -26,7 +26,7 @@ class _NewMineState extends State<NewMineFragment> {
 
   @override
   void didUpdateWidget(NewMineFragment oldWidget) {
-    print("didUpdateWidget() ${oldWidget.hashCode}");
+//    print("didUpdateWidget() ${oldWidget.hashCode}");
     super.didUpdateWidget(oldWidget);
   }
 

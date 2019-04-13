@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:my_mini_app/been/been.dart';
 import 'package:my_mini_app/provider/publish_post_provider.dart';
+import 'package:my_mini_app/util/network_tuil.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 
 enum RequestMethod { GET, POST, PUT }
@@ -66,11 +67,18 @@ class ApiUtil {
         ToastUtil.showToast(response.statusCode.toString());
       }
     } catch (error) {
-      print(error);
+      print("请求出现错误 $error");
       DioError dioError = (error as DioError);
-      return dioError;
+      switch (dioError.type) {
+        case DioErrorType.DEFAULT:
+          return NetworkUtil.NO_NETWORK;
+        case DioErrorType.CONNECT_TIMEOUT:
+          return NetworkUtil.CONNECT_TIMEOUT;
+        default:
+          return NetworkUtil.UNKOWN_ERROR;
+      }
     }
-    return "error";
+    return NetworkUtil.UNKOWN_ERROR;
   }
 
   //发布
@@ -92,7 +100,6 @@ class ApiUtil {
       "latitude": been.latitude,
       "district": been.district,
     });
-//    print("content type is: ${formData["img"].toString()}  type is: ${dio.options.contentType}");
 
     Response response = await dio.post(dio.options.baseUrl + "/post/releasePost",
         data: formData, options: dio.options);

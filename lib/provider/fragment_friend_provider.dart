@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:my_mini_app/util/api_util.dart';
+import 'package:my_mini_app/util/toast_util.dart';
 import 'package:rxdart/rxdart.dart';
 
 class FragmentFriendProvider {
@@ -9,6 +10,8 @@ class FragmentFriendProvider {
   final _fetcher = new PublishSubject<List<Posts>>();
 
   List<Posts> _data = new List();
+
+  bool _firstLoad = true;
 
   stream() => _fetcher.stream;
 
@@ -23,18 +26,10 @@ class FragmentFriendProvider {
     return super.toString();
   }
 
+  //拉取后面页的数据
   void fetchQueryList() async {
     Observable.fromFuture(getData(1)).map((map) {
-      try {
-        for (var value in map) {
-          Posts post = Posts.fromJson(value);
-//          print("ningyuwen post username: ${post.username}");
-          _data.add(post);
-        }
-        return true;
-      } catch (e) {
-        return false;
-      }
+      return _convertMap(map, false);
     }).listen((success) {
       if (success) {
         _fetcher.sink.add(_data);
@@ -42,17 +37,33 @@ class FragmentFriendProvider {
     });
   }
 
+  bool _convertMap(map, refresh) {
+    print(map);
+    if (map is List) {
+      for (var value in map) {
+        Posts post = Posts.fromJson(value);
+        if (refresh) {
+          _data.insert(0, post);
+        } else {
+          _data.add(post);
+        }
+      }
+      return true;
+    } else {
+      print("出现错误");
+      if (_firstLoad) {
+        _fetcher.sink.addError(map);
+      } else {
+        ToastUtil.showToast(map);
+      }
+      return false;
+    }
+  }
+
+  //拉取第一页数据
   void refreshData() async {
     Observable.fromFuture(getData(1)).map((map) {
-      try {
-        for (var value in map) {
-          Posts post = Posts.fromJson(value);
-          _data.insert(0, post);
-        }
-        return true;
-      } catch (e) {
-        return false;
-      }
+      return _convertMap(map, true);
     }).listen((success) {
       if (success) {
         _fetcher.sink.add(_data);
@@ -80,6 +91,7 @@ class FragmentFriendProvider {
             finished();
           }
           if (snapshot.hasData) {
+            _firstLoad = false;
             if (success != null) return success(snapshot.data);
           } else if (snapshot.hasError) {
             final errorStr = snapshot.error;

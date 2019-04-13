@@ -4,6 +4,7 @@ import 'package:my_mini_app/been/my_user_friend_been.dart';
 import 'package:my_mini_app/home/consume_page.dart';
 import 'package:my_mini_app/provider/my_user_friend_provider.dart';
 import 'package:my_mini_app/util/fast_click.dart';
+import 'package:my_mini_app/widget/no_internet_widget.dart';
 
 class MyUserFriendPage extends StatelessWidget {
   @override
@@ -39,10 +40,15 @@ class _MyUserFriendState extends State<_MyUserFriendPage> {
   Widget build(BuildContext context) {
     return _provider.streamBuilder<List<MyUserFriendsBeen>>(
         success: (List<MyUserFriendsBeen> data) {
+      if (data.length == 0) {
+        return Center(
+          child: Text("暂无关注的人"),
+        );
+      }
       return ListView.separated(
           separatorBuilder: (context, index) => Divider(
-            height: 0.0,
-          ),
+                height: 0.0,
+              ),
           itemCount: data.length,
           physics: const AlwaysScrollableScrollPhysics(),
           itemBuilder: (BuildContext context, int index) {
@@ -60,7 +66,7 @@ class _MyUserFriendState extends State<_MyUserFriendPage> {
                     context,
                     new MaterialPageRoute(
                         builder: (context) =>
-                        new ConsumePage(data[index].userId)));
+                            new ConsumePage(data[index].userId)));
               },
             );
           });
@@ -69,9 +75,9 @@ class _MyUserFriendState extends State<_MyUserFriendPage> {
         child: CircularProgressIndicator(),
       );
     }, error: (error) {
-      return Center(
-        child: Text(error),
-      );
+      return NoInternetWidget(error.toString(), () {
+        _provider.getMyUserFriendsData();
+      });
     });
   }
 

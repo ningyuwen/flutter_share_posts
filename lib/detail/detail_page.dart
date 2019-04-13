@@ -14,6 +14,7 @@ import 'package:my_mini_app/util/fast_click.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:my_mini_app/util/progress_dialog.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
+import 'package:my_mini_app/widget/no_internet_widget.dart';
 
 class DetailPagefulWidget extends StatefulWidget {
   final PostDetailArgument _postDetailArgument;
@@ -92,7 +93,6 @@ class _DetailPageWidget extends StatelessWidget {
                   )),
             ],
           );
-//          return _detailPage(data);
         },
         loading: () {
           return Center(
@@ -100,32 +100,11 @@ class _DetailPageWidget extends StatelessWidget {
           );
         },
         error: (Object error) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                error.toString(),
-                style: Theme.of(context).textTheme.body1,
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: 30.0,
-              ),
-              _RotateButtonIcon(),
-            ],
-          );
+          return NoInternetWidget(error.toString(), () {
+            _detailPageProvider.getDetailData(_postDetailArgument);
+          });
         },
       ),
-//      bottomNavigationBar: SendCommentStatefulWidget(
-//                _postDetailArgument.postId, _detailPageProvider),
-
-//      bottomSheet: BottomSheet(
-//          onClosing: () {},
-//          builder: (BuildContext context) {
-//            return SendCommentStatefulWidget(
-//                _postDetailArgument.postId, _detailPageProvider);
-//          }),
     );
   }
 
@@ -459,67 +438,6 @@ class _DetailPageWidget extends StatelessWidget {
                 },
               ));
         });
-  }
-}
-
-class _RotateButtonIcon extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return new _RotateButtonState();
-  }
-}
-
-class _RotateButtonState extends State<_RotateButtonIcon>
-    with TickerProviderStateMixin {
-  AnimationController _controller;
-  Animation<double> curved; //
-
-  @override
-  void initState() {
-    _controller =
-        new AnimationController(vsync: this, duration: Duration(seconds: 2));
-    curved = new CurvedAnimation(parent: _controller, curve: const Cubic(0.20, 0.4, 0.6, 0.8));
-//    curved = new AlwaysStoppedAnimation(0.5);
-    _controller.repeat();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _controller.stop();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return RotationTransition(
-      turns: curved,
-      child: IconButton(
-        iconSize: 50.0,
-        onPressed: () {
-          //刷新
-//          _detailPageProvider.getDetailData(_postDetailArgument);
-        },
-        icon: Icon(
-          Icons.refresh,
-          color: Theme.of(context).accentColor,
-        ),
-      ),
-    );
-
-//    return Container(
-//      child: IconButton(
-//        iconSize: 50.0,
-//        onPressed: () {
-//          //刷新
-////          _detailPageProvider.getDetailData(_postDetailArgument);
-//        },
-//        icon: Icon(
-//          Icons.refresh,
-//          color: Theme.of(context).accentColor,
-//        ),
-//      ),
-//    );
   }
 }
 

@@ -7,6 +7,7 @@ import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/been/post_detail_been.dart';
 import 'package:my_mini_app/provider/auth_provider.dart';
 import 'package:my_mini_app/util/api_util.dart';
+import 'package:my_mini_app/util/network_tuil.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -99,7 +100,7 @@ class DetailPageProvider {
         if (!hasInternet) {
           //无网络
           print("无网络");
-          _fetcher.sink.addError("当前暂未打开网络，请打开网络重试...");
+          _fetcher.sink.addError(NetworkUtil.NO_NETWORK);
         } else {
           print("有网络");
         }
@@ -130,6 +131,8 @@ class DetailPageProvider {
         print("相同");
         _userFriendFetcher.sink.add(_data.isFriend);
       }
+    } else {
+      _fetcher.sink.addError(map);
     }
   }
 

@@ -4,6 +4,7 @@ import 'package:amap_location/amap_location.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_mini_app/been/mine_post_been.dart';
 import 'package:my_mini_app/util/api_util.dart';
+import 'package:my_mini_app/util/toast_util.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:simple_permissions/simple_permissions.dart';
 
@@ -28,6 +29,8 @@ class PublishPostProvider {
     if (data is Map) {
       Posts post = Posts.fromJson(data);
       success(post);
+    } else {
+//      ToastUtil.showToast(data);
     }
   }
 

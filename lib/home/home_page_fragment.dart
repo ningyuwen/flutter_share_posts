@@ -9,6 +9,7 @@ import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/detail_page.dart';
 import 'package:my_mini_app/home/post_item_view.dart';
 import 'package:my_mini_app/provider/fragment_friend_provider.dart';
+import 'package:my_mini_app/widget/no_internet_widget.dart';
 
 class FragmentFriendAndAround extends StatefulWidget {
   @override
@@ -51,6 +52,7 @@ class FriendState extends State<FragmentFriendAndAround>
   Widget build(BuildContext context) {
     return _blocProvider.streamBuilder<List>(success: (List<Posts> data) {
       print("刷新完成得到数据 data size is: ${data.length}");
+
       return EasyRefresh(
           refreshHeader: PhoenixHeader(
             key: _headerKey,
@@ -62,12 +64,11 @@ class FriendState extends State<FragmentFriendAndAround>
           key: _easyRefreshKey,
           child: ListView.separated(
             separatorBuilder: (context, index) => Divider(
-              height: 0.0,
-            ),
+                  height: 0.0,
+                ),
             itemCount: data.length,
             itemBuilder: (context, index) {
               return InkWell(
-//                highlightColor: Colors.white,
                 child: PostInfoItem(
                   key: new ObjectKey(data[index].id),
                   data: data[index],
@@ -75,14 +76,14 @@ class FriendState extends State<FragmentFriendAndAround>
                 onTap: () {
                   //进入详情页
                   PostDetailArgument postDetailArgument =
-                  new PostDetailArgument(
-                      data[index].id, 113.347868, 23.007985);
+                      new PostDetailArgument(
+                          data[index].id, 113.347868, 23.007985);
                   print("进入详情页");
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                          new DetailPagefulWidget(postDetailArgument)));
+                              new DetailPagefulWidget(postDetailArgument)));
                 },
               );
             },
@@ -96,11 +97,9 @@ class FriendState extends State<FragmentFriendAndAround>
             _loadMore();
           });
     }, error: (msg) {
-      return Container(
-        child: Center(
-          child: Text(msg),
-        ),
-      );
+      return NoInternetWidget(msg, () {
+        _blocProvider.fetchQueryList();
+      });
     }, empty: () {
       return Container(
         child: Center(
@@ -114,7 +113,6 @@ class FriendState extends State<FragmentFriendAndAround>
         ),
       );
     }, finished: () {
-//      print("刷新完成 ${_headerKey.currentState}");
       if (_headerKey.currentState != null) {
         _headerKey.currentState.onRefreshClose();
       }

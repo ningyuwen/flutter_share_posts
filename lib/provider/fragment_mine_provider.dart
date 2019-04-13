@@ -12,14 +12,13 @@ class FragmentMineProvider {
 
   final _fetcher = new PublishSubject<MinePost>();
 
-  MinePost _data = new MinePost();
+  MinePost _data;
 
   stream() => _fetcher.stream;
 
   void dispose() {
     if (!_fetcher.isClosed) {
       _fetcher.close();
-//      PublishMinePagesProvider().dispose();
     }
   }
 
@@ -109,16 +108,21 @@ class FragmentMineProvider {
 
   void _getDataFromRemote(int userId) async {
     Observable.fromFuture(_getData(userId)).map((map) {
-      try {
-        if (_data.cost == map['cost']) {
-          //相同，不需要刷新
-          return false;
+      if (map is Map) {
+        if (_data != null) {
+          if (_data.cost == map['cost']) {
+            //相同，不需要刷新
+            return false;
+          }
         }
         _data = MinePost.fromJson(map);
         _saveDataToLocal(userId, map);
         return true;
-      } catch (e) {
-        print("catch ${e.toString()}");
+      } else {
+        print("catch $map");
+        if (_data == null) {
+          _fetcher.sink.addError(map);
+        }
         return false;
       }
     }).listen((success) {

@@ -5,6 +5,7 @@ import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/detail_page.dart';
 import 'package:my_mini_app/home/consume_page.dart';
+import 'package:my_mini_app/map/map_page.dart';
 import 'package:my_mini_app/provider/auth_provider.dart';
 import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/fast_click.dart';
@@ -74,13 +75,12 @@ class PostItemWidget extends StatelessWidget {
                       icon: Icon(Icons.comment, size: 20.0, color: Colors.grey),
                       onPressed: () {
                         PostDetailArgument postDetailArgument =
-                        new PostDetailArgument(
-                            post.id, 113.347868, 23.007985);
+                            new PostDetailArgument(
+                                post.id, 113.347868, 23.007985);
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                new DetailPagefulWidget(
+                                builder: (context) => new DetailPagefulWidget(
                                     postDetailArgument)));
                       },
                     )),
@@ -160,28 +160,36 @@ class PostItemWidget extends StatelessWidget {
               ),
               //地址
               Container(
-                padding: const EdgeInsets.fromLTRB(16.0, 10.0, 0.0, 8.0),
-                child: Row(
-                  children: <Widget>[
-                    Image.asset(
-                      "image/ic_map.png",
-                      height: 20.0,
-                      width: 20.0,
-                    ),
-                    Flexible(
-                        child: Container(
-                      color: Theme.of(context).highlightColor,
-                      child: Text(
-                        _post.position,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 12.0,
+                  padding: const EdgeInsets.fromLTRB(16.0, 10.0, 0.0, 8.0),
+                  child: GestureDetector(
+                    child: Row(
+                      children: <Widget>[
+                        Image.asset(
+                          "image/ic_map.png",
+                          height: 20.0,
+                          width: 20.0,
                         ),
-                      ),
-                    ))
-                  ],
-                ),
-              ),
+                        Flexible(
+                            child: Container(
+                          color: Theme.of(context).highlightColor,
+                          child: Text(
+                            _post.position,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 12.0,
+                            ),
+                          ),
+                        ))
+                      ],
+                    ),
+                    onTap: () {
+                      //跳转地图页面
+                      Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                              builder: (context) => new MapWidget()));
+                    },
+                  )),
               //点赞、评论、分享
               actionRow(post),
             ],

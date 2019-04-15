@@ -46,10 +46,10 @@ android {
         versionName flutterVersionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-//        multiDexEnabled true
-//        ndk {
-//            abiFilters 'x86', 'armeabi-v7a'
-//        }
+        multiDexEnabled true
+        ndk {
+            abiFilters 'x86', 'armeabi-v7a'
+        }
 
         manifestPlaceholders = [
                 AMAP_KEY : "8efc61a086dd4679294160d459b78d5b", /// 高德地图key

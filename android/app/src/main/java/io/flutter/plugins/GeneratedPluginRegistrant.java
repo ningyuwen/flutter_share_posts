@@ -1,6 +1,7 @@
 package io.flutter.plugins;
 
 import io.flutter.plugin.common.PluginRegistry;
+import me.yohom.amapbase.AMapBasePlugin;
 import com.jzoom.amaplocation.AmapLocationPlugin;
 import io.flutter.plugins.connectivity.ConnectivityPlugin;
 import com.github.marekchen.flutterqq.FlutterQqPlugin;
@@ -21,6 +22,7 @@ public final class GeneratedPluginRegistrant {
     if (alreadyRegisteredWith(registry)) {
       return;
     }
+    AMapBasePlugin.registerWith(registry.registrarFor("me.yohom.amapbase.AMapBasePlugin"));
     AmapLocationPlugin.registerWith(registry.registrarFor("com.jzoom.amaplocation.AmapLocationPlugin"));
     ConnectivityPlugin.registerWith(registry.registrarFor("io.flutter.plugins.connectivity.ConnectivityPlugin"));
     FlutterQqPlugin.registerWith(registry.registrarFor("com.github.marekchen.flutterqq.FlutterQqPlugin"));

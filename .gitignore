@@ -61,8 +61,8 @@ build/
 # ios/
 *.iml
 
-android/
-.gradle/
-.settings/
-.project
-.vscode/
+android/.gradle/
+android/.settings/
+android/.project
+android/.vscode/
+android/key.properties

@@ -4,9 +4,8 @@ import 'package:amap_location/amap_location.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_mini_app/been/mine_post_been.dart';
 import 'package:my_mini_app/util/api_util.dart';
-import 'package:my_mini_app/util/toast_util.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:simple_permissions/simple_permissions.dart';
 
 class PublishPostProvider {
   final _fetcher = new PublishSubject<File>();
@@ -87,18 +86,21 @@ class PublishPostProvider {
   }
 
   void getLocationPermission(Function setPosition) async {
-    bool hasPermission =
-        await SimplePermissions.checkPermission(Permission.AlwaysLocation);
-    if (hasPermission) {
+    PermissionStatus permission = await PermissionHandler()
+        .checkPermissionStatus(PermissionGroup.location);
+    print("serviceStatus is: $permission");
+    if (permission == PermissionStatus.granted) {
+      print("有位置权限");
       showMyPosition(setPosition);
     } else {
-      PermissionStatus status =
-          await SimplePermissions.requestPermission(Permission.AlwaysLocation);
-      if (status == PermissionStatus.authorized) {
-//        ToastUtil.showToast("您打开了位置权限");
+      Map<PermissionGroup, PermissionStatus> permissions =
+          await PermissionHandler()
+              .requestPermissions([PermissionGroup.location]);
+      if (permissions[PermissionGroup.location] == PermissionStatus.granted) {
+        print("有位置权限了");
         showMyPosition(setPosition);
       } else {
-//        ToastUtil.showToast("您关闭了位置权限");
+        print("没有位置权限");
       }
     }
   }

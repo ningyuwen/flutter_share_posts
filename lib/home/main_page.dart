@@ -5,7 +5,7 @@ import 'package:my_mini_app/provider/auth_provider.dart';
 import 'package:my_mini_app/publish/publish_post.dart';
 import 'package:my_mini_app/util/basic_config.dart';
 import 'package:my_mini_app/util/toast_util.dart';
-import 'package:simple_permissions/simple_permissions.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'fragment_friend.dart';
 
@@ -79,16 +79,24 @@ class _MainPageState extends State<MainPageView>
   }
 
   void _getFileWritePermission() async {
-    bool hasPermission = await SimplePermissions.checkPermission(
-        Permission.WriteExternalStorage);
-    if (!hasPermission) {
-      PermissionStatus status = await SimplePermissions.requestPermission(
-          Permission.WriteExternalStorage);
-      if (status == PermissionStatus.authorized) {
-//        ToastUtil.showToast("您打开了位置权限");
-      } else {
-//        ToastUtil.showToast("您关闭了位置权限");
-      }
+//    bool hasPermission = await SimplePermissions.checkPermission(
+//        Permission.WriteExternalStorage);
+//    if (!hasPermission) {
+//      PermissionStatus status = await SimplePermissions.requestPermission(
+//          Permission.WriteExternalStorage);
+//      if (status == PermissionStatus.authorized) {
+////        ToastUtil.showToast("您打开了位置权限");
+//      } else {
+////        ToastUtil.showToast("您关闭了位置权限");
+//      }
+//    }
+
+    PermissionStatus permission = await PermissionHandler()
+        .checkPermissionStatus(PermissionGroup.storage);
+    if (permission != PermissionStatus.granted) {
+      Map<PermissionGroup, PermissionStatus> permissions =
+          await PermissionHandler()
+              .requestPermissions([PermissionGroup.storage]);
     }
   }
 

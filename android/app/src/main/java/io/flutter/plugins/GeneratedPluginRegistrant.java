@@ -9,9 +9,9 @@ import io.github.ponnamkarthik.toast.fluttertoast.FluttertoastPlugin;
 import io.flutter.plugins.imagepicker.ImagePickerPlugin;
 import com.bigbug.mmkvflutter.MmkvFlutterPlugin;
 import io.flutter.plugins.pathprovider.PathProviderPlugin;
+import com.baseflow.permissionhandler.PermissionHandlerPlugin;
 import io.flutter.plugins.share.SharePlugin;
 import io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin;
-import com.ethras.simplepermissions.SimplePermissionsPlugin;
 import com.tekartik.sqflite.SqflitePlugin;
 
 /**
@@ -30,9 +30,9 @@ public final class GeneratedPluginRegistrant {
     ImagePickerPlugin.registerWith(registry.registrarFor("io.flutter.plugins.imagepicker.ImagePickerPlugin"));
     MmkvFlutterPlugin.registerWith(registry.registrarFor("com.bigbug.mmkvflutter.MmkvFlutterPlugin"));
     PathProviderPlugin.registerWith(registry.registrarFor("io.flutter.plugins.pathprovider.PathProviderPlugin"));
+    PermissionHandlerPlugin.registerWith(registry.registrarFor("com.baseflow.permissionhandler.PermissionHandlerPlugin"));
     SharePlugin.registerWith(registry.registrarFor("io.flutter.plugins.share.SharePlugin"));
     SharedPreferencesPlugin.registerWith(registry.registrarFor("io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin"));
-    SimplePermissionsPlugin.registerWith(registry.registrarFor("com.ethras.simplepermissions.SimplePermissionsPlugin"));
     SqflitePlugin.registerWith(registry.registrarFor("com.tekartik.sqflite.SqflitePlugin"));
   }
 

@@ -11,9 +11,9 @@
 #import <image_picker/ImagePickerPlugin.h>
 #import <mmkv_flutter/MmkvFlutterPlugin.h>
 #import <path_provider/PathProviderPlugin.h>
+#import <permission_handler/PermissionHandlerPlugin.h>
 #import <share/SharePlugin.h>
 #import <shared_preferences/SharedPreferencesPlugin.h>
-#import <simple_permissions/SimplePermissionsPlugin.h>
 #import <sqflite/SqflitePlugin.h>
 
 @implementation GeneratedPluginRegistrant
@@ -27,9 +27,9 @@
   [FLTImagePickerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTImagePickerPlugin"]];
   [MmkvFlutterPlugin registerWithRegistrar:[registry registrarForPlugin:@"MmkvFlutterPlugin"]];
   [FLTPathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTPathProviderPlugin"]];
+  [PermissionHandlerPlugin registerWithRegistrar:[registry registrarForPlugin:@"PermissionHandlerPlugin"]];
   [FLTSharePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTSharePlugin"]];
   [FLTSharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTSharedPreferencesPlugin"]];
-  [SimplePermissionsPlugin registerWithRegistrar:[registry registrarForPlugin:@"SimplePermissionsPlugin"]];
   [SqflitePlugin registerWithRegistrar:[registry registrarForPlugin:@"SqflitePlugin"]];
 }
 

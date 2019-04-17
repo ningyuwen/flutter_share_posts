@@ -3,7 +3,7 @@
 //
 
 #import "GeneratedPluginRegistrant.h"
-#import <amap_base/AMapBasePlugin.h>
+#import <amap_base_search/AMapBaseSearchPlugin.h>
 #import <amap_location/AmapLocationPlugin.h>
 #import <connectivity/ConnectivityPlugin.h>
 #import <flutter_qq/FlutterQqPlugin.h>
@@ -19,7 +19,7 @@
 @implementation GeneratedPluginRegistrant
 
 + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
-  [AMapBasePlugin registerWithRegistrar:[registry registrarForPlugin:@"AMapBasePlugin"]];
+  [AMapBaseSearchPlugin registerWithRegistrar:[registry registrarForPlugin:@"AMapBaseSearchPlugin"]];
   [AmapLocationPlugin registerWithRegistrar:[registry registrarForPlugin:@"AmapLocationPlugin"]];
   [FLTConnectivityPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTConnectivityPlugin"]];
   [FlutterQqPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterQqPlugin"]];

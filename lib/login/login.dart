@@ -49,7 +49,7 @@ class _LoginState extends State<LoginView> {
         loginBeen.isLogin = true;
         AuthProvider().addLoginBeen(loginBeen);
         _saveDataToLocal(loginBeen);
-        print('hello this is data: ${loginBeen.username}');
+        print('hello this is data: ${loginBeen.headUrl}');
         Navigator.pop(context);
       } else if (qqResult.code == 1) {
         ToastUtil.showToast("登录失败 ${qqResult.message}");

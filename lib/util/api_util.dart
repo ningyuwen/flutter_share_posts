@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:my_mini_app/been/been.dart';
 import 'package:my_mini_app/provider/publish_post_provider.dart';
@@ -20,8 +22,8 @@ class ApiUtil {
     _dio = new Dio();
     _dio.options.baseUrl = SERVER_URL;
     _dio.options.method = "get";
-    _dio.options.connectTimeout = 60000;
-
+    _dio.options.connectTimeout = 6000;
+    _dio.cookieJar = new PersistCookieJar(dir:"/data/user/0/com.example.fluttershareposts/app_flutter/cookies");
   }
 
   static ApiUtil getInstance() {
@@ -86,13 +88,13 @@ class ApiUtil {
     Dio dio = new Dio();
     dio.options.baseUrl = SERVER_URL;
     dio.options.method = "post";
-    dio.options.contentType =
-        ContentType.parse("multipart/form-data");
+    dio.options.contentType = ContentType.parse("multipart/form-data");
 
     FormData formData = new FormData.from({
       "store": been.store,
       "cost": been.cost,
-      "img": new UploadFileInfo(been.img, "upload", contentType: ContentType.parse("multipart/form-data")),
+      "img": new UploadFileInfo(been.img, "upload",
+          contentType: ContentType.parse("multipart/form-data")),
       "content": been.content,
       "imgLabel": been.imgLabel,
       "position": been.position,
@@ -101,8 +103,10 @@ class ApiUtil {
       "district": been.district,
     });
 
-    Response response = await dio.post(dio.options.baseUrl + "/post/releasePost",
-        data: formData, options: dio.options);
+    Response response = await dio.post(
+        dio.options.baseUrl + "/post/releasePost",
+        data: formData,
+        options: dio.options);
 //    print(response);
     Map map = jsonDecode(response.data.toString());
     var basicBeen = new Been.fromJson(map);

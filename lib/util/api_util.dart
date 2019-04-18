@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
+
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:my_mini_app/been/been.dart';
@@ -15,7 +15,7 @@ class ApiUtil {
   static Dio _dio; //dio
 
 //  final String SERVER_URL = "http://172.26.52.30:8080"; //windows
-  final String SERVER_URL = "http://47.112.12.104:8080/adu";  //线上服务器
+  final String SERVER_URL = "http://47.112.12.104:8080/adu"; //线上服务器
 //  final String SERVER_URL = "http://192.168.0.101:8080";  //mac
 
   ApiUtil() {
@@ -23,7 +23,8 @@ class ApiUtil {
     _dio.options.baseUrl = SERVER_URL;
     _dio.options.method = "get";
     _dio.options.connectTimeout = 6000;
-    _dio.cookieJar = new PersistCookieJar(dir:"/data/user/0/com.example.fluttershareposts/app_flutter/cookies");
+    _dio.cookieJar = new PersistCookieJar(
+        dir: "/data/user/0/com.example.fluttershareposts/app_flutter/cookies");
   }
 
   static ApiUtil getInstance() {

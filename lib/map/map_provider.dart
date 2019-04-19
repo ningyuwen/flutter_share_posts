@@ -40,7 +40,7 @@ class MapProvider {
         "靠近" +
         location.POIName;
     print(position);
-    setPosition(position);
+    setPosition(location);
   }
 
   void getLocationPermission(Function setPosition) async {

@@ -1,5 +1,5 @@
 
-import 'package:amap_base_search/amap_base_search.dart';
+//import 'package:amap_base_search/amap_base_search.dart';
 import 'package:amap_location/amap_location.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
@@ -64,7 +64,7 @@ class MapProvider {
   }
 
   void searchPosition(String position, Function success) async {
-    GeocodeResult geocodeResult = await AMapSearch().searchGeocode(position, "番禺区");
-    success(geocodeResult);
+//    GeocodeResult geocodeResult = await AMapSearch().searchGeocode(position, "番禺区");
+//    success(geocodeResult);
   }
 }

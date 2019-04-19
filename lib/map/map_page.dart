@@ -1,34 +1,43 @@
 import 'package:flutter/material.dart';
-//import 'package:amap_base/amap_base.dart';
-import 'package:amap_base_search/amap_base_search.dart';
-//import 'package:amap_base_search/src/map/amap_view.dart';
 import 'package:my_mini_app/map/map_provider.dart';
+//import 'package:amap_base_navi/amap_base_navi.dart';
+//import 'package:amap_base_map/amap_base_map.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+
 
 class MapWidget extends StatelessWidget {
 
-//  AMapController _controller;
-//  MyLocationStyle _myLocationStyle = MyLocationStyle();
-
   final String _position;
-  
-  MapWidget(this._position);
+  final double _latitude;
+  final double _longitude;
+
+  MapWidget(this._position, this._latitude, this._longitude);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return WebviewScaffold(
+      url: "http://172.25.214.67:8888/",
+      appBar: new AppBar(
+        title: new Text("地图"),
         centerTitle: true,
-        title: Text("地图"),
       ),
-      body: _MapWidget(_position)
     );
+
+    return Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text("地图"),
+        ),
+        body: _MapWidget(_position, _latitude, _longitude));
   }
 }
 
 class _MapWidget extends StatefulWidget {
-
   final String _position;
-  _MapWidget(this._position);
+  final double _latitude;
+  final double _longitude;
+
+  _MapWidget(this._position, this._latitude, this._longitude);
 
   @override
   State<StatefulWidget> createState() {
@@ -37,7 +46,6 @@ class _MapWidget extends StatefulWidget {
 }
 
 class _MapState extends State<_MapWidget> {
-
   String _position;
 
   _MapState(String position) {
@@ -48,10 +56,9 @@ class _MapState extends State<_MapWidget> {
 
   @override
   void initState() {
-    _provider.searchPosition(_position, (GeocodeResult result) {
-      print("得到位置了： ${result.geocodeAddressList[0].formatAddress}");
+    _provider.getPosition((String position) {
       setState(() {
-        _position = result.geocodeAddressList[0].latLng.latitude.toString();
+        _position = position;
       });
     });
     super.initState();
@@ -60,7 +67,9 @@ class _MapState extends State<_MapWidget> {
   @override
   Widget build(BuildContext context) {
     print("地址是: $_position");
-    return Text(_position);
-  }
+//    return
 
+    return Text(
+        "$_position and longitude: ${widget._latitude} and ${widget._longitude}");
+  }
 }

@@ -187,7 +187,10 @@ class PostItemWidget extends StatelessWidget {
                       Navigator.push(
                           context,
                           new MaterialPageRoute(
-                              builder: (context) => new MapWidget(_post.position)));
+                              builder: (context) => new MapWidget(
+                                  _post.position,
+                                  _post.latitude,
+                                  _post.longitude)));
                     },
                   )),
               //点赞、评论、分享

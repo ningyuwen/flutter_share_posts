@@ -16,10 +16,12 @@ class MapWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WebviewScaffold(
-      url: "http://172.25.214.67:8888/",
+      url: "http://47.112.12.104:8080/map/?long=$_longitude&lat=$_latitude",
+//      url: "http://47.112.12.104:8080/map/?long=113.327013&lat=23.119987",
+      scrollBar: true,
       appBar: new AppBar(
-        title: new Text("地图"),
-        centerTitle: true,
+        title: new Text(_position),
+//        centerTitle: true,
       ),
     );
 

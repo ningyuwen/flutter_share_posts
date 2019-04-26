@@ -51,7 +51,7 @@ class _MapState extends State<_MapWidget> {
       setState(() {
         _location = location;
         flutterWebViewPlugin.reloadUrl(
-            "http://192.168.0.105:8088/map/?long=${widget._longitude}&lat=${widget._latitude}&ml=${_location.longitude}&mt=${_location.latitude}");
+            "http://47.112.12.104:8080/map/?long=${widget._longitude}&lat=${widget._latitude}&ml=${_location.longitude}&mt=${_location.latitude}");
       });
     });
     super.initState();
@@ -69,7 +69,7 @@ class _MapState extends State<_MapWidget> {
 
 //      url: "http://47.112.12.104:8080/map/?long=113.373945&lat=22.946402&ml=113.351211&mt=22.988359",
       withZoom: true,
-      withLocalStorage: true,
+//      withLocalStorage: true,
       useWideViewPort: true,
       bottomNavigationBar: BottomAppBar(
         color: Theme.of(context).backgroundColor,

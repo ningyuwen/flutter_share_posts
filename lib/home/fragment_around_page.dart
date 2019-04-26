@@ -8,19 +8,19 @@ import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/detail_page.dart';
 import 'package:my_mini_app/home/post_item_view.dart';
-import 'package:my_mini_app/provider/fragment_friend_provider.dart';
+import 'package:my_mini_app/provider/fragment_around_provider.dart';
 import 'package:my_mini_app/widget/no_internet_widget.dart';
 
-class FragmentFriendAndAround extends StatefulWidget {
+class FragmentAroundPage extends StatefulWidget {
   @override
   FriendState createState() {
     return FriendState();
   }
 }
 
-class FriendState extends State<FragmentFriendAndAround>
+class FriendState extends State<FragmentAroundPage>
     with AutomaticKeepAliveClientMixin {
-  FragmentFriendProvider _blocProvider = FragmentFriendProvider.newInstance();
+  FragmentAroundProvider _blocProvider = FragmentAroundProvider.newInstance();
 
   ScrollController _scrollController = new ScrollController();
 

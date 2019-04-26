@@ -1,6 +1,4 @@
-# flutter_share_posts
-
-A new Flutter project.
+# flutter_share_posts (Q晒单)
 
 这是我的毕业设计，客户端使用Flutter实现。
 
@@ -11,10 +9,16 @@ A new Flutter project.
 4. QQ登陆；
 5. 根据分类查看数据，例如：评分数、评论数、地区、标签等；
 6. 搜索店铺、点评信息；
+7. 夜间模式开关；
+8. 地图：使用vue-amap框架完成，客户端使用WebView访问。
 
 ## 数据来源
 1. 用户发布；
 2. 爬取的美团网上的点评数据；
+3. 美团爬取的店铺信息没有经纬度数据，使用高德地图API完成地理编码；
+
+## UI展示
+
 
 ## Getting Started
 

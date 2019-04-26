@@ -284,28 +284,7 @@ class _DetailPageWidget extends StatelessWidget {
           ),
           //关注
           Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                RaisedButton(
-//                  color: const Color.fromARGB(255, 247, 247, 247),
-                  child: _UserFriendWidget(
-                      _detailPageProvider, _postDetail.isFriend),
-                  onPressed: () {
-                    //关注
-                    if (FastClick.isFastClick()) {
-                      return;
-                    }
-                    _detailPageProvider.postUserFriend(_postDetail.isFriend);
-                  },
-                  elevation: 1.0,
-                  highlightColor: const Color.fromARGB(255, 250, 250, 250),
-                  shape: const RoundedRectangleBorder(
-                      side: BorderSide.none,
-                      borderRadius: BorderRadius.all(Radius.circular(4))),
-                ),
-              ],
-            ),
+            child: _isMineSelf()
           )
         ],
       ),
@@ -441,6 +420,34 @@ class _DetailPageWidget extends StatelessWidget {
                 },
               ));
         });
+  }
+
+  Widget _isMineSelf() {
+    if (_postDetail.userId == AuthProvider().userInfo.userId) {
+      return SizedBox();
+    } else {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          RaisedButton(
+            child: _UserFriendWidget(
+                _detailPageProvider, _postDetail.isFriend),
+            onPressed: () {
+              //关注
+              if (FastClick.isFastClick()) {
+                return;
+              }
+              _detailPageProvider.postUserFriend(_postDetail.isFriend);
+            },
+            elevation: 1.0,
+            highlightColor: const Color.fromARGB(255, 250, 250, 250),
+            shape: const RoundedRectangleBorder(
+                side: BorderSide.none,
+                borderRadius: BorderRadius.all(Radius.circular(4))),
+          ),
+        ],
+      );
+    }
   }
 }
 

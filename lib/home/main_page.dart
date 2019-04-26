@@ -7,7 +7,7 @@ import 'package:my_mini_app/util/basic_config.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'fragment_friend.dart';
+import 'fragment_main_router.dart';
 
 class MainPage extends StatelessWidget {
   @override

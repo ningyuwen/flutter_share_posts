@@ -4,7 +4,7 @@ import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 import 'package:rxdart/rxdart.dart';
 
-class FragmentFriendProvider {
+class FragmentAroundProvider {
   final String _EMPTY = "_empty_";
 
   final _fetcher = new PublishSubject<List<Posts>>();
@@ -14,8 +14,6 @@ class FragmentFriendProvider {
   bool _firstLoad = true;
 
   stream() => _fetcher.stream;
-
-  int _pageId = 2;
 
   void dispose() {
     if (!_fetcher.isClosed) {
@@ -29,8 +27,8 @@ class FragmentFriendProvider {
   }
 
   //拉取后面页的数据
-  void fetchQueryList(int pageId) async {
-    Observable.fromFuture(getData(pageId)).map((map) {
+  void fetchQueryList() async {
+    Observable.fromFuture(getData(1)).map((map) {
       return _convertMap(map, false);
     }).listen((success) {
       if (success) {
@@ -42,24 +40,13 @@ class FragmentFriendProvider {
   bool _convertMap(map, refresh) {
     print(map);
     if (map is List) {
-      if (_data != null && _data.length > 0) {
-        print("data 0 id is: ${_data[0].id}");
-      }
-      List<Posts> posts = new List();
       for (var value in map) {
         Posts post = Posts.fromJson(value);
-        posts.add(post);
-      }
-      if (refresh) {
-        print("post id is: ${posts[0].id}");
-        if (posts[0].id == _data[0].id) {
-          print("下拉刷新的数据一样");
-          ToastUtil.showToast("暂无更多数据");
-          return false;
+        if (refresh) {
+          _data.insert(0, post);
+        } else {
+          _data.add(post);
         }
-        _data.insertAll(0, posts);
-      } else {
-        _data.addAll(posts);
       }
       return true;
     } else {
@@ -85,8 +72,7 @@ class FragmentFriendProvider {
   }
 
   void loadMore() async {
-    fetchQueryList(_pageId);
-    _pageId++;
+    fetchQueryList();
   }
 
   Widget streamBuilder<T>({
@@ -123,7 +109,7 @@ class FragmentFriendProvider {
   //从后台获取数据
   Future<dynamic> getData(int pageId) async {
     dynamic map = await ApiUtil.getInstance().netFetch(
-        "/post/getFriendPosts",
+        "/post/getPostsAround",
         RequestMethod.GET,
         {"longitude": 113.347868, "latitude": 23.007985, "pageId": pageId},
         null);
@@ -131,5 +117,5 @@ class FragmentFriendProvider {
     return map;
   }
 
-  static FragmentFriendProvider newInstance() => new FragmentFriendProvider();
+  static FragmentAroundProvider newInstance() => new FragmentAroundProvider();
 }

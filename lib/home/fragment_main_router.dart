@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_mini_app/home/home_page_fragment.dart';
+import 'package:my_mini_app/home/fragment_friend_page.dart';
+import 'package:my_mini_app/home/fragment_around_page.dart';
 import 'package:my_mini_app/home/new_mine_fragment.dart';
 
 //好友fragment
@@ -24,7 +25,7 @@ class FragmentFriend extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FragmentFriendAndAround();
+    return FragmentFriendPage();
   }
 }
 
@@ -50,7 +51,7 @@ class FragmentAround extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FragmentFriendAndAround();
+    return FragmentAroundPage();
   }
 }
 

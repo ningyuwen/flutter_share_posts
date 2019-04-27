@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_mini_app/been/detail_comment.dart';
+import 'package:my_mini_app/been/map_page_been.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/been/post_detail_been.dart';
 import 'package:my_mini_app/home/consume_page.dart';
+import 'package:my_mini_app/map/map_page.dart';
 import 'package:my_mini_app/provider/auth_provider.dart';
 import 'package:my_mini_app/provider/base_state.dart';
 import 'package:my_mini_app/provider/detail_page_provider.dart';
@@ -304,21 +306,30 @@ class _DetailPageWidget extends StatelessWidget {
   Widget showPosition() {
     return Padding(
       padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Image.asset("image/ic_map.png", height: 20.0),
-          Flexible(
-              child: Container(
-            color: Theme.of(context).highlightColor,
-            child: Text(
-              _postDetail.location,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 12.0),
-            ),
-          ))
-        ],
-      ),
+      child: GestureDetector(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Image.asset("image/ic_map.png", height: 20.0),
+            Flexible(
+                child: Container(
+                  color: Theme.of(context).highlightColor,
+                  child: Text(
+                    _postDetail.location,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 12.0),
+                  ),
+                ))
+          ],
+        ),
+        onTap: () {
+          MapPageBeen been = new MapPageBeen(_postDetail.location, _postDetail.longitude, _postDetail.latitude, _postDetail.store);
+          Navigator.push(
+              context,
+              new MaterialPageRoute(
+                  builder: (context) => new MapWidget(been)));
+        },
+      )
     );
   }
 

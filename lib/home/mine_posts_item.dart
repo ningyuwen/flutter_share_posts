@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:my_mini_app/been/map_page_been.dart';
 import 'package:my_mini_app/been/mine_post_been.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/detail_page.dart';
+import 'package:my_mini_app/map/map_page.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:share/share.dart';
 
@@ -241,20 +243,29 @@ class MinePostItemView extends StatelessWidget {
         //地址
         Padding(
           padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 6.0),
-          child: Row(
-            children: <Widget>[
-              Image.asset("image/ic_map.png", height: 20.0),
-              Flexible(
-                  child: Container(
-                color: Theme.of(context).highlightColor,
-                child: Text(
-                  _post.position,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 12.0),
-                ),
-              ))
-            ],
-          ),
+          child: GestureDetector(
+            child: Row(
+              children: <Widget>[
+                Image.asset("image/ic_map.png", height: 20.0),
+                Flexible(
+                    child: Container(
+                      color: Theme.of(context).highlightColor,
+                      child: Text(
+                        _post.position,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 12.0),
+                      ),
+                    ))
+              ],
+            ),
+            onTap: () {
+              MapPageBeen been = new MapPageBeen(_post.position, _post.longitude, _post.latitude, _post.store);
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (context) => new MapWidget(been)));
+            },
+          )
         ),
       ],
     );

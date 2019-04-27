@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:my_mini_app/util/api_util.dart';
+import 'package:my_mini_app/util/basic_config.dart';
+import 'package:my_mini_app/util/snack_bar_util.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -60,6 +62,9 @@ class FragmentFriendProvider {
         _data.insertAll(0, posts);
       } else {
         _data.addAll(posts);
+        if (posts.length == 0) {
+          ToastUtil.showToast("暂无更多数据");
+        }
       }
       return true;
     } else {

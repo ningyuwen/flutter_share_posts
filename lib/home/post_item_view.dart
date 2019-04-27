@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:my_mini_app/been/map_page_been.dart';
 import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/detail_page.dart';
@@ -173,7 +174,7 @@ class PostItemWidget extends StatelessWidget {
                             child: Container(
                           color: Theme.of(context).highlightColor,
                           child: Text(
-                            _post.position,
+                            _post.position == "" ? "" : _post.position,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: 12.0,
@@ -184,13 +185,11 @@ class PostItemWidget extends StatelessWidget {
                     ),
                     onTap: () {
                       //跳转地图页面
+                      MapPageBeen been = new MapPageBeen(_post.position, _post.longitude, _post.latitude, _post.store);
                       Navigator.push(
                           context,
                           new MaterialPageRoute(
-                              builder: (context) => new MapWidget(
-                                  _post.position,
-                                  _post.latitude,
-                                  _post.longitude)));
+                              builder: (context) => new MapWidget(been)));
                     },
                   )),
               //点赞、评论、分享

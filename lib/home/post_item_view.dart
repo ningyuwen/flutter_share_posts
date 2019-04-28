@@ -146,7 +146,7 @@ class PostItemWidget extends StatelessWidget {
               showContent(),
               //图片
               Container(
-                height: 150.0,
+                height: 160.0,
                 padding: const EdgeInsets.only(left: 16.0),
                 width: MediaQuery.of(context).size.width,
                 child: new Stack(
@@ -205,7 +205,7 @@ class PostItemWidget extends StatelessWidget {
     //只展示一张图片
     return ClipRRect(
       clipBehavior: Clip.hardEdge,
-      borderRadius: new BorderRadius.circular(8.0),
+      borderRadius: new BorderRadius.circular(4.0),
       child: _rendRow(context, 0),
     );
   }
@@ -219,11 +219,12 @@ class PostItemWidget extends StatelessWidget {
                 builder: (context) =>
                     new PhotoViewUtil(key, _post.imgUrls[index])));
       },
+      //重大发现，美团上的图片可以根据后缀，@600w_600h_1l 来获取对应大小的图片
       child: CachedNetworkImage(
-          imageUrl: _post.imgUrls[index],
+          imageUrl: _post.imgUrls[index] + "@600w_480h",
           fit: BoxFit.cover,
           width: MediaQuery.of(context).size.width,
-          height: 150.0),
+          height: 160.0),
     );
   }
 

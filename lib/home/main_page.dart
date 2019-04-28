@@ -189,7 +189,8 @@ class _MainPageState extends State<MainPageView>
                 onPressed: () {
                   //跳转发布页面
 //              _jumpToPublishPage();
-                  _jumpToSearchPage();
+//                  _jumpToSearchPage();
+                  showSearch(context: context, delegate: SearchBarDelegate());
                 },
               ),
               IconButton(

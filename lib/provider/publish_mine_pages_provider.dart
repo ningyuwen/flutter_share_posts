@@ -1,4 +1,4 @@
-import 'package:my_mini_app/been/mine_post_been.dart';
+import 'package:my_mini_app/been/consume_post_been.dart';
 import 'package:rxdart/rxdart.dart';
 
 class PublishMinePagesProvider {

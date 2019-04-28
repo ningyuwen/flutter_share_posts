@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:my_mini_app/been/mine_post_been.dart';
+import 'package:my_mini_app/been/consume_post_been.dart';
 import 'package:my_mini_app/home/mine_posts_item.dart';
 import 'package:my_mini_app/provider/fragment_mine_provider.dart';
 import 'package:my_mini_app/util/const_util.dart';
@@ -64,7 +64,7 @@ class _MineState extends State<_FragmentMinePage>
 
   @override
   Widget build(BuildContext context) {
-    return _blocProvider.streamBuilder<MinePost>(success: (MinePost data) {
+    return _blocProvider.streamBuilder<ConsumePost>(success: (ConsumePost data) {
       print("data data data length is: ${data.posts.length}");
       return _mineWidget(data);
     }, error: (msg) {
@@ -86,7 +86,7 @@ class _MineState extends State<_FragmentMinePage>
     });
   }
 
-  Widget _mineWidget(MinePost data) {
+  Widget _mineWidget(ConsumePost data) {
     return ListView.separated(
       separatorBuilder: (context, index) => Divider(
         height: 0.0,
@@ -118,7 +118,7 @@ class _MineState extends State<_FragmentMinePage>
     );
   }
 
-  Widget _userInfo(MinePost data) {
+  Widget _userInfo(ConsumePost data) {
 //    print("url is: ${data.headUrl}");
     return SizedBox(
       height: 150.0,
@@ -153,7 +153,7 @@ class _MineState extends State<_FragmentMinePage>
     );
   }
 
-  int _setItemCount(MinePost data) {
+  int _setItemCount(ConsumePost data) {
     if (data.posts.length == 0) {
       return data.posts.length + 2;
     } else {

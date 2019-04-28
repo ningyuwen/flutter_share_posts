@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:amap_location/amap_location.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:my_mini_app/been/mine_post_been.dart';
+import 'package:my_mini_app/been/consume_post_been.dart';
 import 'package:my_mini_app/util/api_util.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
 import 'package:mmkv_flutter/mmkv_flutter.dart';
-import 'package:my_mini_app/been/mine_post_been.dart';
+import 'package:my_mini_app/been/consume_post_been.dart';
 import 'package:my_mini_app/provider/publish_mine_pages_provider.dart';
 import 'package:my_mini_app/util/api_util.dart';
 import 'package:rxdart/rxdart.dart';
@@ -10,9 +10,9 @@ import 'package:rxdart/rxdart.dart';
 class FragmentMineProvider {
   final String _EMPTY = "_empty_";
 
-  final _fetcher = new PublishSubject<MinePost>();
+  final _fetcher = new PublishSubject<ConsumePost>();
 
-  MinePost _data;
+  ConsumePost _data;
 
   stream() => _fetcher.stream;
 
@@ -32,7 +32,7 @@ class FragmentMineProvider {
       if (data.isEmpty) {
         return false;
       }
-      _data = MinePost.fromJson(jsonDecode(data));
+      _data = ConsumePost.fromJson(jsonDecode(data));
       return true;
     }).listen((success) {
       print("是否有缓存 is: $success");
@@ -115,7 +115,7 @@ class FragmentMineProvider {
             return false;
           }
         }
-        _data = MinePost.fromJson(map);
+        _data = ConsumePost.fromJson(map);
         _saveDataToLocal(userId, map);
         return true;
       } else {

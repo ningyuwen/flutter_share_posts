@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:my_mini_app/been/map_page_been.dart';
-import 'package:my_mini_app/been/mine_post_been.dart';
+import 'package:my_mini_app/been/consume_post_been.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/detail_page.dart';
 import 'package:my_mini_app/map/map_page.dart';

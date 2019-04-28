@@ -1,15 +1,15 @@
 import 'dart:convert';
 
-class MinePost {
+class ConsumePost {
   int userId;
   String username;
   String headUrl;
   double cost;
   List<Posts> posts;
 
-  MinePost({this.userId, this.username, this.headUrl, this.cost, this.posts});
+  ConsumePost({this.userId, this.username, this.headUrl, this.cost, this.posts});
 
-  MinePost.fromJson(Map<String, dynamic> json) {
+  ConsumePost.fromJson(Map<String, dynamic> json) {
     userId = json['userId'];
     username = json['username'];
     headUrl = json['headUrl'];

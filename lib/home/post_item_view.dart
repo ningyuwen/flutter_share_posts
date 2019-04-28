@@ -195,7 +195,7 @@ class PostItemWidget extends StatelessWidget {
                     },
                   )),
               //点赞、评论、分享
-              actionRow(post),
+              _post.isVote != null ? actionRow(post) : Container(),
             ],
           ),
         ),

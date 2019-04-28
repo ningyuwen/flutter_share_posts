@@ -1,9 +1,12 @@
 import 'package:amap_location/amap_location.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_mini_app/been/mine_post_been.dart';
 import 'package:my_mini_app/provider/auth_provider.dart';
 import 'package:my_mini_app/publish/publish_post.dart';
+import 'package:my_mini_app/search/search_page.dart';
 import 'package:my_mini_app/util/basic_config.dart';
+import 'package:my_mini_app/util/const_util.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -102,58 +105,149 @@ class _MainPageState extends State<MainPageView>
 
   @override
   Widget build(BuildContext context) {
+//    List buildTextViews(int count) {
+//      List<Widget> strings = List();
+//      for (int i = 0; i < count; i++) {
+//        strings.add(new Padding(padding: new EdgeInsets.all(16.0),
+//            child: new Text("Item number " + i.toString(),
+//                style: new TextStyle(fontSize: 20.0))));
+//      }
+//      return strings;
+//    }
+//
+//    return Scaffold(
+//        bottomNavigationBar: BottomNavigationBar(
+//            currentIndex: _currentIndex,
+//            onTap: (int index) {
+//              setState(() {
+//                _currentIndex = index;
+//              });
+//            },
+//            backgroundColor: Theme.of(context).appBarTheme.color,
+//            type: BottomNavigationBarType.fixed,
+//            items: [
+//              BottomNavigationBarItem(
+//                  icon: Icon(Icons.home,
+//                      color: _currentIndex == 0 ? Colors.blue : Colors.grey),
+//                  title:
+//                  new Text("附近", style: Theme.of(context).textTheme.button)),
+//              BottomNavigationBarItem(
+//                  icon: Icon(Icons.tag_faces,
+//                      color: _currentIndex == 1 ? Colors.blue : Colors.grey),
+//                  title:
+//                  new Text("关注", style: Theme.of(context).textTheme.button)),
+//              BottomNavigationBarItem(
+//                  icon: Icon(
+//                    Icons.assignment_ind,
+//                    color: _currentIndex == 2 ? Colors.blue : Colors.grey,
+//                  ),
+//                  title:
+//                  new Text("我的", style: Theme.of(context).textTheme.button)),
+//            ]),
+//        body: new CustomScrollView(slivers: <Widget>[
+//          SliverAppBar(
+//            title: Text(
+//              "Q晒单",
+//            ),
+//            centerTitle: true,
+//            automaticallyImplyLeading: false,
+//            actions: <Widget>[
+//              IconButton(
+//                icon: Icon(
+//                  Icons.add,
+//                  color: Theme.of(context).primaryColor,
+//                ),
+//                tooltip: '发布',
+//                onPressed: () {
+//                  //跳转发布页面
+//                  _jumpToPublishPage();
+//                },
+//              )
+//            ],
+//          ),
+////          _showBodyWidget(),
+//          new SliverList(
+//              delegate: new SliverChildListDelegate(buildTextViews(50)))
+//        ])
+//    );
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Q晒单",
-//          style: TextStyle(color: Theme.of(context).primaryColor),
-        ),
-//        backgroundColor: DynamicTheme.of(context).data.primaryColor,
-//        backgroundColor: Theme.of(context).backgroundColor,
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.add,
-              color: Theme.of(context).primaryColor,
+      appBar: PreferredSize(
+          child: AppBar(
+            title: Text(
+              "Q晒单",
             ),
-            tooltip: '发布',
-            onPressed: () {
-              //跳转发布页面
-              _jumpToPublishPage();
-            },
-          )
-        ],
-      ),
+//        centerTitle: true,
+            automaticallyImplyLeading: false,
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(
+                  Icons.search,
+                  color: Theme.of(context).primaryColor,
+                ),
+                tooltip: '搜索',
+                onPressed: () {
+                  //跳转发布页面
+//              _jumpToPublishPage();
+                  _jumpToSearchPage();
+                },
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.add,
+                  color: Theme.of(context).primaryColor,
+                ),
+                tooltip: '发布',
+                onPressed: () {
+                  //跳转发布页面
+                  _jumpToPublishPage();
+                },
+              )
+            ],
+          ),
+          preferredSize: Size.fromHeight(APPBAR_HEIGHT)),
       body: _showBodyWidget(),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: CupertinoTabBar(
           currentIndex: _currentIndex,
           onTap: (int index) {
             setState(() {
               _currentIndex = index;
             });
           },
+          activeColor: Colors.green,
+          inactiveColor: Colors.black,
           backgroundColor: Theme.of(context).appBarTheme.color,
-          type: BottomNavigationBarType.fixed,
           items: [
             BottomNavigationBarItem(
-                icon: Icon(Icons.home,
-                    color: _currentIndex == 0 ? Colors.blue : Colors.grey),
-                title:
-                    new Text("附近", style: Theme.of(context).textTheme.button)),
+                icon: Icon(
+                  Icons.home,
+                  color: _currentIndex == 0 ? Colors.blue : Colors.grey,
+                  size: 24.0,
+                ),
+                title: new Text("附近",
+                    style: TextStyle(
+                        color: Theme.of(context).textTheme.button.color,
+                        fontSize: 12.0))),
             BottomNavigationBarItem(
-                icon: Icon(Icons.tag_faces,
-                    color: _currentIndex == 1 ? Colors.blue : Colors.grey),
-                title:
-                    new Text("关注", style: Theme.of(context).textTheme.button)),
+                icon: Icon(
+                  Icons.tag_faces,
+                  color: _currentIndex == 1 ? Colors.blue : Colors.grey,
+                  size: 24.0,
+                ),
+                title: new Text("关注",
+                    style: TextStyle(
+                        color: Theme.of(context).textTheme.button.color,
+                        fontSize: 12.0))),
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.assignment_ind,
                   color: _currentIndex == 2 ? Colors.blue : Colors.grey,
+                  size: 24.0,
                 ),
-                title:
-                    new Text("我的", style: Theme.of(context).textTheme.button)),
+                title: new Text("我的",
+                    style: TextStyle(
+                        color: Theme.of(context).textTheme.button.color,
+                        fontSize: 12.0))),
           ]),
     );
   }
@@ -204,4 +298,9 @@ class _MainPageState extends State<MainPageView>
 
   @override
   bool get wantKeepAlive => true;
+
+  void _jumpToSearchPage() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => new SearchPage()));
+  }
 }

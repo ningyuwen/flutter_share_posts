@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_easyrefresh/material_footer.dart';
@@ -107,7 +108,7 @@ class FriendState extends State<FragmentFriendPage>
     }, loading: () {
       return Container(
         child: Center(
-          child: CircularProgressIndicator(),
+          child: const CupertinoActivityIndicator(),
         ),
       );
     }, finished: () {

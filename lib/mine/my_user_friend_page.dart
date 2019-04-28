@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_mini_app/been/my_user_friend_been.dart';
 import 'package:my_mini_app/home/consume_page.dart';
 import 'package:my_mini_app/provider/my_user_friend_provider.dart';
+import 'package:my_mini_app/util/const_util.dart';
 import 'package:my_mini_app/util/fast_click.dart';
 import 'package:my_mini_app/widget/no_internet_widget.dart';
 
@@ -13,10 +15,12 @@ class MyUserFriendPage extends StatelessWidget {
   }
 
   Widget _appBar() {
-    return AppBar(
-      centerTitle: true,
-      title: Text("我关注的人"),
-    );
+    return PreferredSize(
+        child: AppBar(
+          title: Text("我关注的人"),
+          centerTitle: true,
+        ),
+        preferredSize: Size.fromHeight(APPBAR_HEIGHT));
   }
 }
 
@@ -72,7 +76,7 @@ class _MyUserFriendState extends State<_MyUserFriendPage> {
           });
     }, loading: () {
       return Center(
-        child: CircularProgressIndicator(),
+        child: const CupertinoActivityIndicator(),
       );
     }, error: (error) {
       return NoInternetWidget(error.toString(), () {
@@ -166,9 +170,7 @@ class _MyUserFriendState extends State<_MyUserFriendPage> {
           return Container(
             width: 24.0,
             height: 24.0,
-            child: CircularProgressIndicator(
-              strokeWidth: 1.0,
-            ),
+            child: CupertinoActivityIndicator(),
           );
         }
       },

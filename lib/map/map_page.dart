@@ -4,6 +4,7 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:my_mini_app/been/map_page_been.dart';
 import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:my_mini_app/map/map_provider.dart';
+import 'package:my_mini_app/util/const_util.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MapWidget extends StatelessWidget {
@@ -17,10 +18,10 @@ class MapWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
+        appBar: PreferredSize(child: AppBar(
           title: Text("地图"),
-        ),
+          centerTitle: true,
+        ), preferredSize: Size.fromHeight(APPBAR_HEIGHT)),
         body: _MapWidget(_post));
   }
 }

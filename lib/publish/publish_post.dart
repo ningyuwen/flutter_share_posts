@@ -1,11 +1,13 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mmkv_flutter/mmkv_flutter.dart';
 import 'package:my_mini_app/been/mine_post_been.dart';
 import 'package:my_mini_app/provider/publish_post_provider.dart';
+import 'package:my_mini_app/util/const_util.dart';
 import 'package:my_mini_app/util/network_tuil.dart';
 import 'package:my_mini_app/util/progress_dialog.dart';
 import 'package:my_mini_app/util/toast_util.dart';
@@ -246,26 +248,28 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
   }
 
   Widget _appBar() {
-    return AppBar(
-      centerTitle: true,
-      title: Text("发布"),
-      actions: <Widget>[
-        ButtonTheme(
-          minWidth: 60.0,
-          child: IconButton(
-            onPressed: () {
+    return PreferredSize(
+        child: AppBar(
+          centerTitle: true,
+          title: Text("发布"),
+          actions: <Widget>[
+            ButtonTheme(
+              minWidth: 60.0,
+              child: IconButton(
+                onPressed: () {
 //                发布，检查参数是否齐全
-              if (_checkArgumentsIsRight()) {
-                //检查网络
-                _checkNetworkAndPublish();
-              }
-            },
-            tooltip: "发布",
-            icon: Icon(Icons.publish),
-          ),
+                  if (_checkArgumentsIsRight()) {
+                    //检查网络
+                    _checkNetworkAndPublish();
+                  }
+                },
+                tooltip: "发布",
+                icon: Icon(Icons.publish),
+              ),
+            ),
+          ],
         ),
-      ],
-    );
+        preferredSize: Size.fromHeight(APPBAR_HEIGHT));
   }
 
   bool _checkArgumentsIsRight() {
@@ -404,7 +408,7 @@ class _UserHeadState extends State<_UserHeadWidget> {
                 fit: BoxFit.cover,
                 imageUrl: snapshot.data);
           } else {
-            return CircularProgressIndicator(strokeWidth: 1.0);
+            return CupertinoActivityIndicator();
           }
         });
   }

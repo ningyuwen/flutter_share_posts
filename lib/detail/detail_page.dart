@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,6 +13,7 @@ import 'package:my_mini_app/provider/auth_provider.dart';
 import 'package:my_mini_app/provider/base_state.dart';
 import 'package:my_mini_app/provider/detail_page_provider.dart';
 import 'package:my_mini_app/provider/text_field_provider.dart';
+import 'package:my_mini_app/util/const_util.dart';
 import 'package:my_mini_app/util/fast_click.dart';
 import 'package:my_mini_app/util/network_tuil.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
@@ -75,10 +77,10 @@ class _DetailPageWidget extends StatelessWidget {
       isAdded = true;
     }
     return Scaffold(
-      appBar: AppBar(
+      appBar: PreferredSize(child: AppBar(
         title: Text("详情"),
         centerTitle: true,
-      ),
+      ), preferredSize: Size.fromHeight(APPBAR_HEIGHT)),
       body: _detailPageProvider.streamBuilder(
         success: (PostDetail data) {
           return Stack(
@@ -101,7 +103,7 @@ class _DetailPageWidget extends StatelessWidget {
         },
         loading: () {
           return Center(
-            child: CircularProgressIndicator(),
+            child: const CupertinoActivityIndicator(),
           );
         },
         error: (Object error) {
@@ -514,9 +516,7 @@ class _UserFriendState extends State<_UserFriendWidget> {
           return Container(
             width: 24.0,
             height: 24.0,
-            child: CircularProgressIndicator(
-              strokeWidth: 1.0,
-            ),
+            child: const CupertinoActivityIndicator(),
           );
         }
       },

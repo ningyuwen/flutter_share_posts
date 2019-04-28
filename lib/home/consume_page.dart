@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:my_mini_app/been/mine_post_been.dart';
 import 'package:my_mini_app/home/mine_posts_item.dart';
 import 'package:my_mini_app/provider/fragment_mine_provider.dart';
+import 'package:my_mini_app/util/const_util.dart';
 import 'package:my_mini_app/widget/no_internet_widget.dart';
 
 class ConsumePage extends StatelessWidget {
@@ -21,10 +23,10 @@ class ConsumePage extends StatelessWidget {
   }
 
   Widget _appBar() {
-    return AppBar(
-      centerTitle: true,
+    return PreferredSize(child: AppBar(
       title: Text("消费账单"),
-    );
+      centerTitle: true,
+    ), preferredSize: Size.fromHeight(APPBAR_HEIGHT));
   }
 }
 
@@ -78,7 +80,7 @@ class _MineState extends State<_FragmentMinePage>
     }, loading: () {
       return Container(
         child: Center(
-          child: CircularProgressIndicator(),
+          child: const CupertinoActivityIndicator(),
         ),
       );
     });

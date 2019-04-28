@@ -32,7 +32,7 @@ class PostItemWidget extends StatelessWidget {
 
   Widget bodyData() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
+      padding: const EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 3.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,7 +61,7 @@ class PostItemWidget extends StatelessWidget {
   }
 
   Widget actionRow(Posts post) => Padding(
-        padding: const EdgeInsets.only(left: 8.0, bottom: 8.0, right: 20.0),
+        padding: const EdgeInsets.only(left: 8.0, bottom: 0.0, right: 20.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -146,22 +146,23 @@ class PostItemWidget extends StatelessWidget {
               showContent(),
               //图片
               Container(
-                height: 200.0,
+                height: 150.0,
                 padding: const EdgeInsets.only(left: 16.0),
                 width: MediaQuery.of(context).size.width,
                 child: new Stack(
                   children: <Widget>[
-                    Align(
-                      child: showPhotos(),
-                      alignment: FractionalOffset.topLeft,
-                    ),
+//                    Align(
+//                      child: showPhotos(),
+//                      alignment: FractionalOffset.topLeft,
+//                    ),
+                    showPhotos(),
                     showIndicator()
                   ],
                 ),
               ),
               //地址
               Container(
-                  padding: const EdgeInsets.fromLTRB(16.0, 10.0, 0.0, 8.0),
+                  padding: const EdgeInsets.fromLTRB(16.0, 5.0, 0.0, 0.0),
                   child: GestureDetector(
                     child: Row(
                       children: <Widget>[
@@ -185,7 +186,8 @@ class PostItemWidget extends StatelessWidget {
                     ),
                     onTap: () {
                       //跳转地图页面
-                      MapPageBeen been = new MapPageBeen(_post.position, _post.longitude, _post.latitude, _post.store);
+                      MapPageBeen been = new MapPageBeen(_post.position,
+                          _post.longitude, _post.latitude, _post.store);
                       Navigator.push(
                           context,
                           new MaterialPageRoute(
@@ -221,25 +223,25 @@ class PostItemWidget extends StatelessWidget {
           imageUrl: _post.imgUrls[index],
           fit: BoxFit.cover,
           width: MediaQuery.of(context).size.width,
-          height: 200.0),
+          height: 150.0),
     );
   }
 
   Widget showContent() {
     if ("" == _post.content) {
       return Container(
-        padding: const EdgeInsets.fromLTRB(16.0, 1.0, 8.0, 8.0),
+        padding: const EdgeInsets.fromLTRB(16.0, 1.0, 8.0, 3.0),
       );
     }
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16.0, 8.0, 8.0, 8.0),
+      padding: const EdgeInsets.fromLTRB(16.0, 3.0, 8.0, 3.0),
       child: Text(
         _post.content,
         style: TextStyle(
           fontWeight: FontWeight.normal,
           fontSize: 15.0,
         ),
-        maxLines: 4,
+        maxLines: 3,
         overflow: TextOverflow.ellipsis,
       ),
     );
@@ -253,7 +255,7 @@ class PostItemWidget extends StatelessWidget {
     return Align(
         alignment: FractionalOffset.topRight,
         child: Container(
-          margin: EdgeInsets.fromLTRB(0.0, 10.0, 10.0, 0.0),
+          margin: EdgeInsets.fromLTRB(0.0, 5.0, 5.0, 0.0),
           height: 18.0,
           width: 30.0,
           decoration: BoxDecoration(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_mini_app/provider/auth_provider.dart';
+import 'package:my_mini_app/util/const_util.dart';
 
 class SettingPage extends StatelessWidget {
   @override
@@ -8,10 +9,10 @@ class SettingPage extends StatelessWidget {
   }
 
   Widget _appBar() {
-    return AppBar(
-      centerTitle: true,
+    return PreferredSize(child: AppBar(
       title: Text("设置"),
-    );
+      centerTitle: true,
+    ), preferredSize: Size.fromHeight(APPBAR_HEIGHT));
   }
 
   Widget _bodyWidget(BuildContext context) {

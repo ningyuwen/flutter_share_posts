@@ -103,7 +103,10 @@ class SearchBarDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return _SearchSuggestWidget();
+    return _SearchSuggestWidget((String key) {
+      query = key;
+      showResults(context);
+    });
   }
 
   @override
@@ -116,6 +119,10 @@ class SearchBarDelegate extends SearchDelegate<String> {
 }
 
 class _SearchSuggestWidget extends StatefulWidget {
+
+  final callback;
+
+  _SearchSuggestWidget(this.callback);
 
   @override
   State<StatefulWidget> createState() {
@@ -192,7 +199,8 @@ class _SearchSuggestState extends State<_SearchSuggestWidget> {
           borderRadius: new BorderRadius.circular(3.0),
         ),
         onTap: () {
-          ToastUtil.showToast(text);
+//          ToastUtil.showToast(text);
+          widget.callback(text);
         },
       ));
     }

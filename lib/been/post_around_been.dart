@@ -1,4 +1,3 @@
-import 'package:decimal/decimal.dart';
 import 'dart:convert';
 
 class Posts {
@@ -20,6 +19,7 @@ class Posts {
   int comments;
   String district;
   bool isVote;
+  String meituanId;
 
   Posts(
       {this.username,
@@ -39,14 +39,22 @@ class Posts {
       this.votes,
       this.comments,
       this.district,
-      this.isVote});
+      this.isVote,
+      this.meituanId});
 
   static Posts fromJson(Map<String, dynamic> json) {
     List<String> imageUrls = new List();
     List list = jsonDecode(json['imgUrl'].toString());
+    String meituanId = json['storeId_meituan'];
     for (var img in list) {
-      imageUrls.add(img["url"]);
+//      print("url is: ${img["url"]}");
+      if (meituanId != null) {
+        imageUrls.add(img["url"] + "@600w_480h"); //美团获取的图片，480h是根据高度来获取对应大小的图片
+      } else {
+        imageUrls.add(img["url"]);  //我们自己服务器的图片
+      }
     }
+//    print("meituan id is: ${json['storeId_meituan']}");
     return Posts(
         username: json['username'],
         head_url: json['head_url'],
@@ -65,7 +73,8 @@ class Posts {
         votes: json['votes'],
         comments: json['comments'],
         district: json['district'],
-        isVote: json['isVote']);
+        isVote: json['isVote'],
+        meituanId: json['storeId_meituan']);
   }
 
   Map<String, dynamic> toJson() => {
@@ -87,5 +96,6 @@ class Posts {
         'comments': comments,
         'district': district,
         'isVote': isVote,
+        'storeId_meituan': meituanId,
       };
 }

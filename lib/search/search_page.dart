@@ -110,17 +110,14 @@ class _SearchSuggestState extends State<_SearchSuggestWidget>
     with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(10.0),
-      child: CustomScrollView(
-        slivers: <Widget>[
-          SliverList(
-              delegate: SliverChildListDelegate([
-            _suggestWidget(),
-          ])),
-          _historyWidget(),
-        ],
-      ),
+    return CustomScrollView(
+      slivers: <Widget>[
+        SliverList(
+            delegate: SliverChildListDelegate([
+          _suggestWidget(),
+        ])),
+        _historyWidget(),
+      ],
     );
   }
 
@@ -149,16 +146,17 @@ class _SearchSuggestState extends State<_SearchSuggestWidget>
       widgets.add(GestureDetector(
         child: new ClipRRect(
           child: Container(
-            padding: EdgeInsets.all(3.0),
+            padding: EdgeInsets.all(4.0),
             child: Text(
               text,
               style: TextStyle(
                 color: Colors.white,
+                fontSize: 15.0
               ),
             ),
             color: Colors.blue,
           ),
-          borderRadius: new BorderRadius.circular(3.0),
+          borderRadius: new BorderRadius.circular(20.0),
         ),
         onTap: () {
           widget.callback(text);
@@ -171,17 +169,20 @@ class _SearchSuggestState extends State<_SearchSuggestWidget>
   Widget _suggestWidget() {
     return widget._provider.streamBuilder<List<String>>(
         success: (List<String> data) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            "为您推荐以下分类:",
-            style: Theme.of(context).textTheme.title,
-          ),
-          Divider(),
-          Wrap(spacing: 8.0, runSpacing: 8.0, children: _buildWidget(data)),
-          Divider(),
-        ],
+      return Padding(
+        padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              "为您推荐以下分类:",
+              style: Theme.of(context).textTheme.title,
+            ),
+            Divider(),
+            Wrap(spacing: 8.0, runSpacing: 8.0, children: _buildWidget(data)),
+            Divider(),
+          ],
+        ),
       );
     }, loading: () {
       return Container(
@@ -199,47 +200,50 @@ class _SearchSuggestState extends State<_SearchSuggestWidget>
     if (data.isEmpty) {
       return widgets;
     }
-    widgets.add(new Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Text(
-          "搜索历史:",
-          style: Theme.of(context).textTheme.title,
-        ),
-        GestureDetector(
-          onTap: () {
-            showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                      content: new Text("您确定删除搜索记录吗？"),
-                      actions: <Widget>[
-                        new FlatButton(
-                          child: new Text("取消"),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        new FlatButton(
-                          child: new Text("确定"),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            widget._provider.deleteHistory();
-                          },
-                        )
-                      ]);
-                });
-          },
-          child: Text(
-            "删除记录",
-            style: Theme.of(context).textTheme.body1,
+    widgets.add(Padding(
+      padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+      child: new Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            "搜索历史:",
+            style: Theme.of(context).textTheme.title,
           ),
-        )
-      ],
+          GestureDetector(
+            onTap: () {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                        content: new Text("您确定删除搜索记录吗？"),
+                        actions: <Widget>[
+                          new FlatButton(
+                            child: new Text("取消"),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          new FlatButton(
+                            child: new Text("确定"),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              widget._provider.deleteHistory();
+                            },
+                          )
+                        ]);
+                  });
+            },
+            child: Text(
+              "删除记录",
+              style: Theme.of(context).textTheme.body1,
+            ),
+          )
+        ],
+      ),
     ));
-    widgets.add(Divider());
+    widgets.add(Padding(padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0), child: Divider(),),);
     for (String text in data) {
-      widgets.add(InkWell(
+      widgets.add(Padding(padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0), child: InkWell(
           onTap: () {
             widget.callback(text);
           },
@@ -252,7 +256,7 @@ class _SearchSuggestState extends State<_SearchSuggestWidget>
                 Text(text),
               ],
             ),
-          )));
+          )),));
     }
     return widgets;
   }

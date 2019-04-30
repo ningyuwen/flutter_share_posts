@@ -221,7 +221,7 @@ class PostItemWidget extends StatelessWidget {
       },
       //重大发现，美团上的图片可以根据后缀，@600w_600h_1l 来获取对应大小的图片
       child: CachedNetworkImage(
-          imageUrl: _post.imgUrls[index] + "@600w_480h",
+          imageUrl: _post.imgUrls[index],
           fit: BoxFit.cover,
           width: MediaQuery.of(context).size.width,
           height: 160.0),

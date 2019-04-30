@@ -15,14 +15,14 @@ class ApiUtil {
   static Dio _dio; //dio
 
 //  final String SERVER_URL = "http://172.26.52.30:8080"; //windows
-//  final String SERVER_URL = "http://47.112.12.104:8080/adu"; //线上服务器
-  final String SERVER_URL = "http://192.168.1.103:8080";  //mac
+  final String SERVER_URL = "http://47.112.12.104:8080/adu"; //线上服务器
+//  final String SERVER_URL = "http://192.168.1.103:8080";  //mac
 
   ApiUtil() {
     _dio = new Dio();
     _dio.options.baseUrl = SERVER_URL;
     _dio.options.method = "get";
-    _dio.options.connectTimeout = 6000;
+    _dio.options.connectTimeout = 5000;
     _dio.cookieJar = new PersistCookieJar(
         dir: "/data/user/0/com.example.fluttershareposts/app_flutter/cookies");
   }

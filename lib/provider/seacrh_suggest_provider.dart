@@ -10,13 +10,21 @@ class SearchSuggestProvider {
 
   final _fetcher = new PublishSubject<List<String>>();
 
+  final _fectcherHistory = new PublishSubject<List<String>>();
+
   List<String> _data = new List();
 
+  List<String> _dataHistory = new List();
+
   stream() => _fetcher.stream;
+
+  streamHistory() => _fectcherHistory.stream;
 
   void dispose() {
     if (!_fetcher.isClosed) {
       _fetcher.close();
+      _saveHistory();
+      _fectcherHistory.close();
     }
   }
 
@@ -36,6 +44,9 @@ class SearchSuggestProvider {
         builder: (context, AsyncSnapshot<T> snapshot) {
           if (finished != null) {
             finished();
+          }
+          if (_data.isNotEmpty) {
+            return success(_data);
           }
           if (snapshot.hasData) {
             if (success != null) return success(snapshot.data);
@@ -102,5 +113,77 @@ class SearchSuggestProvider {
   void saveDataToLocal(List map) async {
     MmkvFlutter mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
     await mmkv.setString("/search/getHotTags", jsonEncode(map));
+  }
+
+  Widget streamBuilderHistory<T>({
+    T initialData,
+    Function success,
+    Function error,
+    Function empty,
+    Function loading,
+    Function finished,
+  }) {
+    return StreamBuilder(
+        stream: streamHistory(),
+        initialData: initialData,
+        builder: (context, AsyncSnapshot<T> snapshot) {
+          if (finished != null) {
+            finished();
+          }
+          if (_dataHistory.isNotEmpty) {
+            return success(_dataHistory);
+          }
+          if (snapshot.hasData) {
+            if (success != null) return success(snapshot.data);
+          } else if (snapshot.hasError) {
+            final errorStr = snapshot.error;
+            print("error is: $errorStr");
+            if (errorStr == _EMPTY) {
+              if (empty != null) return empty();
+            } else {
+              if (error != null) return error(errorStr);
+            }
+          } else {
+            if (loading != null) return loading();
+          }
+        });
+  }
+
+  void fetchHistory() async {
+    MmkvFlutter mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
+    String history = await mmkv.getString("/search/history");
+    print(history);
+    if (history.isNotEmpty) {
+      for (var str in jsonDecode(history)) {
+        _dataHistory.add(str);
+      }
+    }
+    print("_dataHistory.length is: ${_dataHistory.length}");
+    await Future.delayed(new Duration(milliseconds: 500), () {
+      _fectcherHistory.sink.add(_dataHistory);
+    });
+  }
+
+  void _saveHistory() async {
+    String history = jsonEncode(_dataHistory);
+    print(history);
+    MmkvFlutter mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
+    await mmkv.setString("/search/history", history);
+  }
+
+  void deleteHistory() async {
+    MmkvFlutter mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
+    await mmkv.setString("/search/history", "");
+    _dataHistory = new List();
+    _fectcherHistory.sink.add(_dataHistory);
+  }
+
+  void addQueryToHistory(String query) {
+    int index = _dataHistory.indexOf(query);
+    if (index != -1) {
+      //存在，先删除
+      _dataHistory.removeAt(index);
+    }
+    _dataHistory.insert(0, query);
   }
 }

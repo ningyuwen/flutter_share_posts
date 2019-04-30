@@ -39,6 +39,10 @@ class SearchQueryProvider {
           if (finished != null) {
             finished();
           }
+          print("是否有数据：${snapshot.hasData}");
+          if (_data.isNotEmpty) {
+            return success(_data);
+          }
           if (snapshot.hasData) {
             if (success != null) return success(snapshot.data);
           } else if (snapshot.hasError) {
@@ -55,19 +59,25 @@ class SearchQueryProvider {
   }
 
   void fetchQueryTag(String keyword) {
-    Observable.fromFuture(_queryData(keyword)).map((List<Posts> data) {
-      if (data.isEmpty) {
-        return false;
-      }
-      _data = data;
-      return true;
-    }).listen((success) {
-      if (success) {
+    if (keyword.toString().isEmpty) {
+      if (_data.isNotEmpty) {
         _fetcher.sink.add(_data);
-      } else {
-        _fetcher.sink.addError("未找到您想要的内容，请切换关键词再次尝试");
       }
-    });
+    } else {
+      Observable.fromFuture(_queryData(keyword)).map((List<Posts> data) {
+        if (data.isEmpty) {
+          return false;
+        }
+        _data = data;
+        return true;
+      }).listen((success) {
+        if (success) {
+          _fetcher.sink.add(_data);
+        } else {
+          _fetcher.sink.addError("未找到您想要的内容，请切换关键词再次尝试");
+        }
+      });
+    }
   }
 
   Future<List<Posts>> _queryData(String keyword) async {

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
@@ -5,49 +6,22 @@ import 'package:my_mini_app/detail/detail_page.dart';
 import 'package:my_mini_app/home/fragment_around_page.dart';
 import 'package:my_mini_app/provider/seacrh_query_provider.dart';
 import 'package:my_mini_app/provider/seacrh_suggest_provider.dart';
-import 'package:my_mini_app/util/const_util.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:my_mini_app/util/toast_util.dart';
-import 'package:my_mini_app/widget/no_internet_widget.dart';
+import 'package:my_mini_app/search/search.dart';
 
-class SearchPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-          child: AppBar(
-            title: Text("搜索"),
-            centerTitle: true,
-          ),
-          preferredSize: Size.fromHeight(APPBAR_HEIGHT)),
-      body: new _SearchPage(),
-    );
-  }
-}
-
-class _SearchPage extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return new _SearchState();
-  }
-}
-
-class _SearchState extends State<_SearchPage> {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text("ningyuwen"),
-    );
-  }
-}
-
-class SearchBarDelegate extends SearchDelegate<String> {
-
+class SearchBarDelegate extends SearchDelegateMine<String> {
   SearchSuggestProvider _suggestProvider = SearchSuggestProvider.newInstance();
   SearchQueryProvider _queryProvider = SearchQueryProvider.newInstance();
+  _SearchQueryWidget _queryWidget;
+  _SearchSuggestWidget _suggestWidget;
 
-  SearchBarDelegate() {
-    print("ss");
+  SearchBarDelegate(BuildContext context) {
+    _queryWidget = _SearchQueryWidget(_queryProvider, query);
+    _suggestWidget = _SearchSuggestWidget(_suggestProvider, (String key) {
+      query = key;
+      showResults(context);
+    });
+    _suggestProvider.fetchSuggestTag();
+    _suggestProvider.fetchHistory();
   }
 
   @override
@@ -87,26 +61,21 @@ class SearchBarDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    return _SearchQueryWidget(_queryProvider, query);
+    return _queryWidget;
   }
 
   @override
   void showResults(BuildContext context) {
-//    ToastUtil.showToast("点击搜索 $query");
     if (query != "") {
-//      ToastUtil.showToast("showResults");
       _queryProvider.fetchQueryTag(query);
+      _suggestProvider.addQueryToHistory(query);
       super.showResults(context);
     }
-//    super.showResults(context);
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return _SearchSuggestWidget((String key) {
-      query = key;
-      showResults(context);
-    });
+    return _suggestWidget;
   }
 
   @override
@@ -116,13 +85,20 @@ class SearchBarDelegate extends SearchDelegate<String> {
       super.showSuggestions(context);
     }
   }
+
+  @override
+  void close(BuildContext context, String result) {
+    _queryProvider.dispose();
+    _suggestProvider.dispose();
+    super.close(context, result);
+  }
 }
 
 class _SearchSuggestWidget extends StatefulWidget {
-
   final callback;
+  final SearchSuggestProvider _provider;
 
-  _SearchSuggestWidget(this.callback);
+  _SearchSuggestWidget(this._provider, this.callback);
 
   @override
   State<StatefulWidget> createState() {
@@ -130,55 +106,41 @@ class _SearchSuggestWidget extends StatefulWidget {
   }
 }
 
-class _SearchSuggestState extends State<_SearchSuggestWidget> {
-
-  SearchSuggestProvider _provider = SearchSuggestProvider.newInstance();
-
-  @override
-  void initState() {
-    //请求数据
-    _provider.fetchSuggestTag();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _provider.dispose();
-    super.dispose();
-  }
-
+class _SearchSuggestState extends State<_SearchSuggestWidget>
+    with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
-    return _provider.streamBuilder<List<String>>(
-      success: (List<String> data) {
-        return Padding(
-          padding: EdgeInsets.all(10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text("为您推荐以下分类:", style: Theme.of(context).textTheme.title,),
-              Divider(),
-              Wrap(
-                  spacing: 8.0,
-                  runSpacing: 8.0,
-                  children: _buildWidget(data)
-              ),
-              Divider(),
-            ],
-          )
-        );
-      },
-      loading: () {
-        return Container(
+    return Padding(
+      padding: EdgeInsets.all(10.0),
+      child: CustomScrollView(
+        slivers: <Widget>[
+          SliverList(
+              delegate: SliverChildListDelegate([
+            _suggestWidget(),
+          ])),
+          _historyWidget(),
+        ],
+      ),
+    );
+  }
+
+  Widget _historyWidget() {
+    return widget._provider.streamBuilderHistory<List<String>>(
+        success: (List<String> data) {
+      print("有数据了");
+      return SliverList(delegate: SliverChildListDelegate(_listWidget(data)));
+    }, loading: () {
+      return SliverList(
+          delegate: SliverChildListDelegate([
+        Container(
           width: MediaQuery.of(context).size.width,
           height: 100.0,
           child: CupertinoActivityIndicator(),
-        );
-      },
-      error: (error) {
-        return Text(error);
-      }
-    );
+        )
+      ]));
+    }, error: (error) {
+      return Text(error);
+    });
   }
 
   List<Widget> _buildWidget(List<String> data) {
@@ -199,7 +161,6 @@ class _SearchSuggestState extends State<_SearchSuggestWidget> {
           borderRadius: new BorderRadius.circular(3.0),
         ),
         onTap: () {
-//          ToastUtil.showToast(text);
           widget.callback(text);
         },
       ));
@@ -207,10 +168,100 @@ class _SearchSuggestState extends State<_SearchSuggestWidget> {
     return widgets;
   }
 
+  Widget _suggestWidget() {
+    return widget._provider.streamBuilder<List<String>>(
+        success: (List<String> data) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            "为您推荐以下分类:",
+            style: Theme.of(context).textTheme.title,
+          ),
+          Divider(),
+          Wrap(spacing: 8.0, runSpacing: 8.0, children: _buildWidget(data)),
+          Divider(),
+        ],
+      );
+    }, loading: () {
+      return Container(
+        width: MediaQuery.of(context).size.width,
+        height: 100.0,
+        child: CupertinoActivityIndicator(),
+      );
+    }, error: (error) {
+      return Text(error);
+    });
+  }
+
+  List<Widget> _listWidget(List<String> data) {
+    List<Widget> widgets = new List();
+    if (data.isEmpty) {
+      return widgets;
+    }
+    widgets.add(new Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text(
+          "搜索历史:",
+          style: Theme.of(context).textTheme.title,
+        ),
+        GestureDetector(
+          onTap: () {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                      content: new Text("您确定删除搜索记录吗？"),
+                      actions: <Widget>[
+                        new FlatButton(
+                          child: new Text("取消"),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        new FlatButton(
+                          child: new Text("确定"),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            widget._provider.deleteHistory();
+                          },
+                        )
+                      ]);
+                });
+          },
+          child: Text(
+            "删除记录",
+            style: Theme.of(context).textTheme.body1,
+          ),
+        )
+      ],
+    ));
+    widgets.add(Divider());
+    for (String text in data) {
+      widgets.add(InkWell(
+          onTap: () {
+            widget.callback(text);
+          },
+          child: Container(
+            height: 36.0,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(text),
+              ],
+            ),
+          )));
+    }
+    return widgets;
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class _SearchQueryWidget extends StatefulWidget {
-
   final keyword;
   final SearchQueryProvider _queryProvider;
 
@@ -223,66 +274,48 @@ class _SearchQueryWidget extends StatefulWidget {
   }
 }
 
-class _SearchQueryState extends State<_SearchQueryWidget> {
-
-//  SearchQueryProvider _provider = SearchQueryProvider.newInstance();
-
-  @override
-  void initState() {
-    widget._queryProvider.fetchQueryTag(widget.keyword);
-//    widget._queryProvider.sinkAdd();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-//    widget._queryProvider.dispose();
-    super.dispose();
-  }
-
+class _SearchQueryState extends State<_SearchQueryWidget>
+    with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     return widget._queryProvider.streamBuilder<List<Posts>>(
-      success: (List<Posts> data) {
-        return ListView.separated(
-          separatorBuilder: (context, index) => Divider(
-            height: 0.0,
-          ),
-          itemCount: data.length,
-          itemBuilder: (context, index) {
-            return InkWell(
-              child: PostInfoItem(
-                key: new ObjectKey(data[index].id),
-                data: data[index],
-              ),
-              onTap: () {
-                //进入详情页
-                PostDetailArgument postDetailArgument =
-                new PostDetailArgument(
-                    data[index].id, 113.347868, 23.007985);
-                print("进入详情页");
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                        new DetailPagefulWidget(postDetailArgument)));
-              },
-            );
-          },
-        );
-      },
-      loading: () {
-        return Center(
-          child: CupertinoActivityIndicator(),
-        );
-      },
-      error: (error) {
-        return Center(
-          child: Text(error),
-        );
-      }
-    );
+        success: (List<Posts> data) {
+      return ListView.separated(
+        separatorBuilder: (context, index) => Divider(
+              height: 0.0,
+            ),
+        itemCount: data.length,
+        itemBuilder: (context, index) {
+          return InkWell(
+            child: PostInfoItem(
+              key: new ObjectKey(data[index].id),
+              data: data[index],
+            ),
+            onTap: () {
+              //进入详情页
+              PostDetailArgument postDetailArgument =
+                  new PostDetailArgument(data[index].id, 113.347868, 23.007985);
+              print("进入详情页");
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          new DetailPagefulWidget(postDetailArgument)));
+            },
+          );
+        },
+      );
+    }, loading: () {
+      return Center(
+        child: CupertinoActivityIndicator(),
+      );
+    }, error: (error) {
+      return Center(
+        child: Text(error),
+      );
+    });
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
-
-

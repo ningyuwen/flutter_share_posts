@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:my_mini_app/been/consume_post_been.dart';
 import 'package:my_mini_app/provider/auth_provider.dart';
 import 'package:my_mini_app/publish/publish_post.dart';
+import 'package:my_mini_app/search/search.dart';
 import 'package:my_mini_app/search/search_page.dart';
 import 'package:my_mini_app/util/basic_config.dart';
 import 'package:my_mini_app/util/const_util.dart';
@@ -188,9 +189,8 @@ class _MainPageState extends State<MainPageView>
                 tooltip: '搜索',
                 onPressed: () {
                   //跳转发布页面
-//              _jumpToPublishPage();
-//                  _jumpToSearchPage();
-                  showSearch(context: context, delegate: SearchBarDelegate());
+                  showSearchMine(
+                      context: context, delegate: SearchBarDelegate(context));
                 },
               ),
               IconButton(
@@ -299,9 +299,4 @@ class _MainPageState extends State<MainPageView>
 
   @override
   bool get wantKeepAlive => true;
-
-  void _jumpToSearchPage() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => new SearchPage()));
-  }
 }

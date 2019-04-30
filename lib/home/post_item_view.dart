@@ -10,6 +10,7 @@ import 'package:my_mini_app/map/map_page.dart';
 import 'package:my_mini_app/provider/auth_provider.dart';
 import 'package:my_mini_app/util/api_util.dart';
 import 'package:my_mini_app/util/fast_click.dart';
+import 'package:my_mini_app/util/photo_gallery_util.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
 import 'package:rxdart/rxdart.dart';
@@ -217,7 +218,13 @@ class PostItemWidget extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    new PhotoViewUtil(key, _post.imgUrls[index])));
+                new PhotoGalleryUtil(_post.imgUrls)));
+
+//        Navigator.push(
+//            context,
+//            MaterialPageRoute(
+//                builder: (context) =>
+//                    new PhotoViewUtil(key, _post.imgUrls[index])));
       },
       //重大发现，美团上的图片可以根据后缀，@600w_600h_1l 来获取对应大小的图片
       child: CachedNetworkImage(

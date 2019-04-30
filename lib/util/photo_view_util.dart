@@ -21,9 +21,9 @@ class PhotoViewState extends State<PhotoViewUtil> {
       onTap: () {
         Navigator.pop(context);
       },
-//      onVerticalDragEnd: (DragEndDetails details) {
-////        Navigator.pop(context);
-//      },
+      onVerticalDragEnd: (DragEndDetails details) {
+        Navigator.pop(context);
+      },
       child: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,

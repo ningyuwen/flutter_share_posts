@@ -8,7 +8,6 @@ import 'package:my_mini_app/search/search.dart';
 import 'package:my_mini_app/search/search_page.dart';
 import 'package:my_mini_app/util/basic_config.dart';
 import 'package:my_mini_app/util/const_util.dart';
-import 'package:my_mini_app/util/toast_util.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'fragment_main_router.dart';
@@ -83,18 +82,6 @@ class _MainPageState extends State<MainPageView>
   }
 
   void _getFileWritePermission() async {
-//    bool hasPermission = await SimplePermissions.checkPermission(
-//        Permission.WriteExternalStorage);
-//    if (!hasPermission) {
-//      PermissionStatus status = await SimplePermissions.requestPermission(
-//          Permission.WriteExternalStorage);
-//      if (status == PermissionStatus.authorized) {
-////        ToastUtil.showToast("您打开了位置权限");
-//      } else {
-////        ToastUtil.showToast("您关闭了位置权限");
-//      }
-//    }
-
     PermissionStatus permission = await PermissionHandler()
         .checkPermissionStatus(PermissionGroup.storage);
     if (permission != PermissionStatus.granted) {
@@ -106,79 +93,12 @@ class _MainPageState extends State<MainPageView>
 
   @override
   Widget build(BuildContext context) {
-//    List buildTextViews(int count) {
-//      List<Widget> strings = List();
-//      for (int i = 0; i < count; i++) {
-//        strings.add(new Padding(padding: new EdgeInsets.all(16.0),
-//            child: new Text("Item number " + i.toString(),
-//                style: new TextStyle(fontSize: 20.0))));
-//      }
-//      return strings;
-//    }
-//
-//    return Scaffold(
-//        bottomNavigationBar: BottomNavigationBar(
-//            currentIndex: _currentIndex,
-//            onTap: (int index) {
-//              setState(() {
-//                _currentIndex = index;
-//              });
-//            },
-//            backgroundColor: Theme.of(context).appBarTheme.color,
-//            type: BottomNavigationBarType.fixed,
-//            items: [
-//              BottomNavigationBarItem(
-//                  icon: Icon(Icons.home,
-//                      color: _currentIndex == 0 ? Colors.blue : Colors.grey),
-//                  title:
-//                  new Text("附近", style: Theme.of(context).textTheme.button)),
-//              BottomNavigationBarItem(
-//                  icon: Icon(Icons.tag_faces,
-//                      color: _currentIndex == 1 ? Colors.blue : Colors.grey),
-//                  title:
-//                  new Text("关注", style: Theme.of(context).textTheme.button)),
-//              BottomNavigationBarItem(
-//                  icon: Icon(
-//                    Icons.assignment_ind,
-//                    color: _currentIndex == 2 ? Colors.blue : Colors.grey,
-//                  ),
-//                  title:
-//                  new Text("我的", style: Theme.of(context).textTheme.button)),
-//            ]),
-//        body: new CustomScrollView(slivers: <Widget>[
-//          SliverAppBar(
-//            title: Text(
-//              "Q晒单",
-//            ),
-//            centerTitle: true,
-//            automaticallyImplyLeading: false,
-//            actions: <Widget>[
-//              IconButton(
-//                icon: Icon(
-//                  Icons.add,
-//                  color: Theme.of(context).primaryColor,
-//                ),
-//                tooltip: '发布',
-//                onPressed: () {
-//                  //跳转发布页面
-//                  _jumpToPublishPage();
-//                },
-//              )
-//            ],
-//          ),
-////          _showBodyWidget(),
-//          new SliverList(
-//              delegate: new SliverChildListDelegate(buildTextViews(50)))
-//        ])
-//    );
-
     return Scaffold(
       appBar: PreferredSize(
           child: AppBar(
             title: Text(
               "Q晒单",
             ),
-//        centerTitle: true,
             automaticallyImplyLeading: false,
             actions: <Widget>[
               IconButton(
@@ -282,19 +202,6 @@ class _MainPageState extends State<MainPageView>
       index: _currentIndex,
       children: _screens,
     );
-  }
-
-  Widget _page(int index) {
-    ToastUtil.showToast(context.widget.toString());
-    switch (index) {
-      case 0:
-        return _fragmentAround;
-      case 1:
-        return _fragmentFriend;
-      case 2:
-        return _fragmentMine;
-    }
-    return _fragmentAround;
   }
 
   @override

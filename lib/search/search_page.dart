@@ -81,7 +81,6 @@ class SearchBarDelegate extends SearchDelegateMine<String> {
   @override
   void showSuggestions(BuildContext context) {
     if (query == "") {
-//      ToastUtil.showToast("showSuggestions");
       super.showSuggestions(context);
     }
   }

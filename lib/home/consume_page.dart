@@ -65,7 +65,6 @@ class _MineState extends State<_FragmentMinePage>
   @override
   Widget build(BuildContext context) {
     return _blocProvider.streamBuilder<ConsumePost>(success: (ConsumePost data) {
-      print("data data data length is: ${data.posts.length}");
       return _mineWidget(data);
     }, error: (msg) {
       return NoInternetWidget(msg, () {

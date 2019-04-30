@@ -32,7 +32,6 @@ class DetailPageProvider {
     if (!_fetcher.isClosed) {
       _fetcher.close();
       _userFriendFetcher.close();
-      _saveDataToLocal();
     }
   }
 
@@ -154,6 +153,7 @@ class DetailPageProvider {
         comment.headUrl = AuthProvider().userInfo.headUrl;
         comment.username = AuthProvider().userInfo.username;
         _data.mCommentList.insert(0, comment);
+        _data.comments++;
         return true;
       } else {
         ToastUtil.showToast(map);
@@ -235,9 +235,7 @@ class DetailPageProvider {
     return false;
   }
 
-  void _saveDataToLocal() async {
-//    MmkvFlutter mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
-//    mmkv.setString(
-//        "/post/getPostDetails+${_data.id}", jsonEncode(_data.toJson()));
+  int getResultCommentsCount() {
+    return _data.mCommentList.length;
   }
 }

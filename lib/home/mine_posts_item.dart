@@ -6,6 +6,7 @@ import 'package:my_mini_app/been/consume_post_been.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/detail_page.dart';
 import 'package:my_mini_app/map/map_page.dart';
+import 'package:my_mini_app/util/photo_gallery_util.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:share/share.dart';
 
@@ -112,7 +113,7 @@ class MinePostItemView extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    new PhotoViewUtil(key, _post.imgUrls[index])));
+                new PhotoGalleryUtil(_post.imgUrls)));
       },
       child: CachedNetworkImage(
 //        color: Theme.of(context).primaryColor,

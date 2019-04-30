@@ -10,6 +10,7 @@ import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/detail_page.dart';
 import 'package:my_mini_app/home/post_item_view.dart';
 import 'package:my_mini_app/provider/fragment_around_provider.dart';
+import 'package:my_mini_app/util/toast_util.dart';
 import 'package:my_mini_app/widget/no_internet_widget.dart';
 
 class FragmentAroundPage extends StatefulWidget {
@@ -76,15 +77,7 @@ class FriendState extends State<FragmentAroundPage>
                 ),
                 onTap: () {
                   //进入详情页
-                  PostDetailArgument postDetailArgument =
-                      new PostDetailArgument(
-                          data[index].id, 113.347868, 23.007985);
-                  print("进入详情页");
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              new DetailPagefulWidget(postDetailArgument)));
+                  _jumpToDetailPage(data[index]);
                 },
               );
             },
@@ -117,6 +110,21 @@ class FriendState extends State<FragmentAroundPage>
       if (_headerKey.currentState != null) {
         _headerKey.currentState.onRefreshClose();
       }
+    });
+  }
+
+  void _jumpToDetailPage(Posts post) async {
+    PostDetailArgument postDetailArgument =
+    new PostDetailArgument(
+        post.id, 113.347868, 23.007985);
+    print("进入详情页");
+    int comments = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+            new DetailPagefulWidget(postDetailArgument)));
+    setState(() {
+      post.comments = comments;
     });
   }
 

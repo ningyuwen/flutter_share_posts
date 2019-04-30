@@ -53,7 +53,19 @@ class _DetailPageState extends State<DetailPagefulWidget> {
 
   @override
   Widget build(BuildContext context) {
+    return WillPopScope(
+      child: _DetailPageWidget(widget._postDetailArgument, _detailPageProvider),
+      onWillPop: () {
+        return pop();
+      },
+    );
     return _DetailPageWidget(widget._postDetailArgument, _detailPageProvider);
+  }
+
+  Future<bool> pop() async {
+    //_detailPageProvider.getResultCommentsCount()
+    Navigator.pop(context, _detailPageProvider.getResultCommentsCount());
+    return Future.value(false);
   }
 }
 

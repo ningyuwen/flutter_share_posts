@@ -23,6 +23,10 @@ class PhotoViewState extends State<PhotoGalleryUtil> {
   List<PhotoViewGalleryPageOptions> _buildPageOptions() {
     List<PhotoViewGalleryPageOptions> list = new List();
     for (var url in widget.imgUrls) {
+      if (url.contains("@600w_480h")) {
+        url = url.replaceAll("@600w_480h", "");
+        print("变化后的url: $url");
+      }
       list.add(new PhotoViewGalleryPageOptions(
         imageProvider: CachedNetworkImageProvider(url),
         heroTag: url,
@@ -31,19 +35,24 @@ class PhotoViewState extends State<PhotoGalleryUtil> {
     return list;
   }
 
+  List<PhotoViewGalleryPageOptions> _list;
+
+  @override
+  void initState() {
+    _list = _buildPageOptions();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.pop(context);
       },
-      onVerticalDragEnd: (DragEndDetails details) {
-        Navigator.pop(context);
-      },
       child: Stack(
         children: <Widget>[
           PhotoViewGallery(
-            pageOptions: _buildPageOptions(),
+            pageOptions: _list,
             pageController: widget.pageController,
             loadingChild: const CupertinoActivityIndicator(),
             onPageChanged: onPageChanged,

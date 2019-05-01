@@ -15,14 +15,23 @@ class ApiUtil {
   static Dio _dio; //dio
 
 //  final String SERVER_URL = "http://172.26.52.30:8080"; //windows
-  final String SERVER_URL = "http://47.112.12.104:8080/adu"; //线上服务器
-//  static const String SERVER_URL = "http://192.168.31.6:8080";  //mac
+//  final String SERVER_URL = "http://47.112.12.104:8080/adu"; //线上服务器
+  static const String SERVER_URL = "https://192.168.31.6"; //mac
+
+  bool callback(X509Certificate cert, String host, int port){
+    return true;
+  }
 
   ApiUtil() {
     _dio = new Dio();
     _dio.options.baseUrl = SERVER_URL;
     _dio.options.method = "get";
     _dio.options.connectTimeout = 5000;
+    _dio.onHttpClientCreate = (HttpClient client) {
+      // you can also create a new HttpClient to dio
+      client.badCertificateCallback = callback;
+      return client;
+    };
     _dio.cookieJar = new PersistCookieJar(
         dir: "/data/user/0/com.example.fluttershareposts/app_flutter/cookies");
   }
@@ -36,7 +45,8 @@ class ApiUtil {
 
   Future<File> _getLocalFile() async {
     // get the path to the document directory.
-    String dir = "/data/user/0/com.example.fluttershareposts/app_flutter/cookies/192.168.31.68080";
+    String dir =
+        "/data/user/0/com.example.fluttershareposts/app_flutter/cookies/192.168.31.68080";
     return new File(dir);
   }
 
@@ -77,7 +87,7 @@ class ApiUtil {
       Response response = await _dio.request(_dio.options.baseUrl + path,
           data: params, options: _dio.options);
       if (response.statusCode == 200) {
-//         print(response.data.toString());
+        print(response.data.toString());
         Map map = jsonDecode(response.data.toString());
         var been = new Been.fromJson(map);
         if (been.code == 0) {
@@ -92,7 +102,7 @@ class ApiUtil {
         ToastUtil.showToast(response.statusCode.toString());
       }
     } catch (error) {
-//      print("请求出现错误 $error");
+      print("请求出现错误 $error");
       DioError dioError = (error as DioError);
       switch (dioError.type) {
         case DioErrorType.DEFAULT:

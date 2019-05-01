@@ -16,7 +16,7 @@ class ApiUtil {
 
 //  final String SERVER_URL = "http://172.26.52.30:8080"; //windows
   final String SERVER_URL = "http://47.112.12.104:8080/adu"; //线上服务器
-//  final String SERVER_URL = "http://192.168.1.103:8080";  //mac
+//  static const String SERVER_URL = "http://192.168.31.6:8080";  //mac
 
   ApiUtil() {
     _dio = new Dio();
@@ -32,6 +32,24 @@ class ApiUtil {
       _apiUtil = new ApiUtil();
     }
     return _apiUtil;
+  }
+
+  Future<File> _getLocalFile() async {
+    // get the path to the document directory.
+    String dir = "/data/user/0/com.example.fluttershareposts/app_flutter/cookies/192.168.31.68080";
+    return new File(dir);
+  }
+
+  Future<String> _readCounter() async {
+    try {
+      File file = await _getLocalFile();
+      // read the variable as a string from the file.
+      String contents = await file.readAsString();
+      return contents;
+//      return int.parse(contents);
+    } on FileSystemException {
+      return "hhhhhh";
+    }
   }
 
   //网络请求
@@ -51,6 +69,10 @@ class ApiUtil {
     _dio.options.contentType =
         ContentType.parse("application/x-www-form-urlencoded");
 //    print("netFetch data is: ${params.toString()}");
+
+//    String string = await _readCounter();
+//    print("cookie is: $string");
+
     try {
       Response response = await _dio.request(_dio.options.baseUrl + path,
           data: params, options: _dio.options);
@@ -70,7 +92,7 @@ class ApiUtil {
         ToastUtil.showToast(response.statusCode.toString());
       }
     } catch (error) {
-      print("请求出现错误 $error");
+//      print("请求出现错误 $error");
       DioError dioError = (error as DioError);
       switch (dioError.type) {
         case DioErrorType.DEFAULT:

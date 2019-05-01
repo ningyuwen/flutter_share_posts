@@ -45,7 +45,7 @@ class FragmentFriendProvider {
     print(map);
     if (map is List) {
       if (_data != null && _data.length > 0) {
-        print("data 0 id is: ${_data[0].id}");
+//        print("data 0 id is: ${_data[0].id}");
       }
       List<Posts> posts = new List();
       for (var value in map) {
@@ -53,9 +53,9 @@ class FragmentFriendProvider {
         posts.add(post);
       }
       if (refresh) {
-        print("post id is: ${posts[0].id}");
+//        print("post id is: ${posts[0].id}");
         if (posts[0].id == _data[0].id) {
-          print("下拉刷新的数据一样");
+//          print("下拉刷新的数据一样");
           ToastUtil.showToast("暂无更多数据");
           return false;
         }
@@ -68,7 +68,7 @@ class FragmentFriendProvider {
       }
       return true;
     } else {
-      print("出现错误");
+//      print("出现错误");
       if (_firstLoad) {
         _fetcher.sink.addError(map);
       } else {

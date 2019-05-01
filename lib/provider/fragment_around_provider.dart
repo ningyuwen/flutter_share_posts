@@ -50,7 +50,7 @@ class FragmentAroundProvider {
       }
       return true;
     } else {
-      print("出现错误");
+//      print("出现错误");
       if (_firstLoad) {
         _fetcher.sink.addError(map);
       } else {

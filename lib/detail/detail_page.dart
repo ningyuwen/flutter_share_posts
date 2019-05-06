@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mmkv_flutter/mmkv_flutter.dart';
 import 'package:my_mini_app/been/detail_comment.dart';
 import 'package:my_mini_app/been/map_page_been.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
@@ -89,10 +90,12 @@ class _DetailPageWidget extends StatelessWidget {
       isAdded = true;
     }
     return Scaffold(
-      appBar: PreferredSize(child: AppBar(
-        title: Text("详情"),
-        centerTitle: true,
-      ), preferredSize: Size.fromHeight(APPBAR_HEIGHT)),
+      appBar: PreferredSize(
+          child: AppBar(
+            title: Text("详情"),
+            centerTitle: true,
+          ),
+          preferredSize: Size.fromHeight(APPBAR_HEIGHT)),
       body: _detailPageProvider.streamBuilder(
         success: (PostDetail data) {
           return Stack(
@@ -299,9 +302,7 @@ class _DetailPageWidget extends StatelessWidget {
             ],
           ),
           //关注
-          Expanded(
-            child: _isMineSelf()
-          )
+          Expanded(child: _isMineSelf())
         ],
       ),
     );
@@ -319,32 +320,27 @@ class _DetailPageWidget extends StatelessWidget {
 
   Widget showPosition() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-      child: GestureDetector(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Image.asset("image/ic_map.png", height: 20.0),
-            Flexible(
-                child: Container(
-                  color: Theme.of(context).highlightColor,
-                  child: Text(
-                    _postDetail.location,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 12.0),
-                  ),
-                ))
-          ],
-        ),
-        onTap: () {
-          MapPageBeen been = new MapPageBeen(_postDetail.location, _postDetail.longitude, _postDetail.latitude, _postDetail.store);
-          Navigator.push(
-              context,
-              new MaterialPageRoute(
-                  builder: (context) => new MapWidget(been)));
-        },
-      )
-    );
+        padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+        child: GestureDetector(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Image.asset("image/ic_map.png", height: 20.0),
+              Flexible(
+                  child: Container(
+                color: Theme.of(context).highlightColor,
+                child: Text(
+                  _postDetail.location,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 12.0),
+                ),
+              ))
+            ],
+          ),
+          onTap: () {
+            _jumpToMapPage();
+          },
+        ));
   }
 
   Widget showCommentsItem(CommentsItem item) {
@@ -455,8 +451,7 @@ class _DetailPageWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           RaisedButton(
-            child: _UserFriendWidget(
-                _detailPageProvider, _postDetail.isFriend),
+            child: _UserFriendWidget(_detailPageProvider, _postDetail.isFriend),
             onPressed: () {
               //关注
               if (FastClick.isFastClick()) {
@@ -473,6 +468,21 @@ class _DetailPageWidget extends StatelessWidget {
         ],
       );
     }
+  }
+
+  void _jumpToMapPage() async {
+    MmkvFlutter mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
+    double myLongitude = await mmkv.getDouble("myNowPositionLongitude");
+    double myLatitude = await mmkv.getDouble("myNowPositionLatitude");
+    MapPageBeen been = new MapPageBeen(
+        _postDetail.location,
+        _postDetail.longitude,
+        _postDetail.latitude,
+        _postDetail.store,
+        myLongitude,
+        myLatitude);
+    Navigator.push(context,
+        new MaterialPageRoute(builder: (context) => new MapWidget(been)));
   }
 }
 
@@ -657,15 +667,13 @@ class _SendCommentState extends State<_SendCommentStatefulWidget>
       if (hasNetwork) {
         //显示dialog
         ProgressDialog.showProgressDialog(context);
-        widget.detailPageProvider.postComment(widget.postId,
-            _sendMsgTextField.text.toString(), () {
-              Navigator.pop(context);
-              _sendMsgTextField.text = "";
-            });
-        FocusScope.of(context)
-            .requestFocus(new FocusNode());
-        SystemChannels.textInput
-            .invokeMethod('TextInput.hide');
+        widget.detailPageProvider
+            .postComment(widget.postId, _sendMsgTextField.text.toString(), () {
+          Navigator.pop(context);
+          _sendMsgTextField.text = "";
+        });
+        FocusScope.of(context).requestFocus(new FocusNode());
+        SystemChannels.textInput.invokeMethod('TextInput.hide');
       } else {
         ToastUtil.showToast(NetworkUtil.NO_NETWORK);
       }

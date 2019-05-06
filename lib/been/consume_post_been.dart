@@ -50,6 +50,7 @@ class Posts {
   int votes;
   int comments;
   String district;
+  String meituanId;
 
   Posts(
       {this.id,
@@ -65,13 +66,19 @@ class Posts {
       this.cost,
       this.votes,
       this.comments,
-      this.district});
+      this.district,
+      this.meituanId});
 
   Posts.fromJson(Map<String, dynamic> json) {
     List<String> imageUrls = new List();
     List list = jsonDecode(json['imgUrl'].toString());
+    String meituanId = json['storeId_meituan'];
     for (var img in list) {
-      imageUrls.add(img["url"]);
+      if (meituanId != null) {
+        imageUrls.add(img["url"] + "@800w_640h"); //美团获取的图片，480h是根据高度来获取对应大小的图片
+      } else {
+        imageUrls.add(img["url"]);  //我们自己服务器的图片
+      }
     }
     id = json['id'];
     userId = json['userId'];
@@ -87,6 +94,7 @@ class Posts {
     votes = json['votes'];
     comments = json['comments'];
     district = json['district'];
+    meituanId = json['storeId_meituan'];
   }
 
   Map<String, dynamic> toJson() {

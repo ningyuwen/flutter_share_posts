@@ -15,15 +15,12 @@
   },
   "source_files": "Classes/**/*",
   "public_header_files": "Classes/**/*.h",
+  "platforms": {
+    "ios": "8.0"
+  },
   "dependencies": {
     "Flutter": [
 
     ]
-  },
-  "platforms": {
-    "osx": null,
-    "ios": null,
-    "tvos": null,
-    "watchos": null
   }
 }

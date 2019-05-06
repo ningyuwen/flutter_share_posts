@@ -47,14 +47,12 @@ class Posts {
     List list = jsonDecode(json['imgUrl'].toString());
     String meituanId = json['storeId_meituan'];
     for (var img in list) {
-//      print("url is: ${img["url"]}");
       if (meituanId != null) {
         imageUrls.add(img["url"] + "@600w_480h"); //美团获取的图片，480h是根据高度来获取对应大小的图片
       } else {
         imageUrls.add(img["url"]);  //我们自己服务器的图片
       }
     }
-//    print("meituan id is: ${json['storeId_meituan']}");
     return Posts(
         username: json['username'],
         head_url: json['head_url'],

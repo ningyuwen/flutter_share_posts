@@ -1,13 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:my_mini_app/been/map_page_been.dart';
+import 'package:mmkv_flutter/mmkv_flutter.dart';
 import 'package:my_mini_app/been/consume_post_been.dart';
+import 'package:my_mini_app/been/map_page_been.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/detail_page.dart';
 import 'package:my_mini_app/map/map_page.dart';
 import 'package:my_mini_app/util/photo_gallery_util.dart';
-import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:share/share.dart';
 
 class MinePostItemView extends StatelessWidget {
@@ -32,9 +32,8 @@ class MinePostItemView extends StatelessWidget {
 
   Widget bodyData() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
-      child: mainColumn(_post)
-    );
+        padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
+        child: mainColumn(_post));
   }
 
   Widget actionRow(Posts post) => Padding(
@@ -112,8 +111,7 @@ class MinePostItemView extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                new PhotoGalleryUtil(_post.imgUrls)));
+                builder: (context) => new PhotoGalleryUtil(_post.imgUrls)));
       },
       child: CachedNetworkImage(
 //        color: Theme.of(context).primaryColor,
@@ -223,7 +221,7 @@ class MinePostItemView extends StatelessWidget {
         Container(
             child: ClipRRect(
                 clipBehavior: Clip.hardEdge,
-                borderRadius: new BorderRadius.circular(8.0),
+                borderRadius: new BorderRadius.circular(4.0),
                 child: Stack(
                   children: <Widget>[
                     showPhotos(), //图片
@@ -243,31 +241,26 @@ class MinePostItemView extends StatelessWidget {
                 ))),
         //地址
         Padding(
-          padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 6.0),
-          child: GestureDetector(
-            child: Row(
-              children: <Widget>[
-                Image.asset("image/ic_map.png", height: 20.0),
-                Flexible(
-                    child: Container(
-                      color: Theme.of(context).highlightColor,
-                      child: Text(
-                        _post.position,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 12.0),
-                      ),
-                    ))
-              ],
-            ),
-            onTap: () {
-              MapPageBeen been = new MapPageBeen(_post.position, _post.longitude, _post.latitude, _post.store);
-              Navigator.push(
-                  context,
-                  new MaterialPageRoute(
-                      builder: (context) => new MapWidget(been)));
-            },
-          )
-        ),
+            padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 6.0),
+            child: GestureDetector(
+              child: Row(
+                children: <Widget>[
+                  Image.asset("image/ic_map.png", height: 20.0),
+                  Flexible(
+                      child: Container(
+                    color: Theme.of(context).highlightColor,
+                    child: Text(
+                      _post.position,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 12.0),
+                    ),
+                  ))
+                ],
+              ),
+              onTap: () {
+                _jumpToMapPage();
+              },
+            )),
       ],
     );
   }
@@ -279,5 +272,15 @@ class MinePostItemView extends StatelessWidget {
         context,
         MaterialPageRoute(
             builder: (context) => new DetailPagefulWidget(postDetailArgument)));
+  }
+
+  void _jumpToMapPage() async {
+    MmkvFlutter mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
+    double myLongitude = await mmkv.getDouble("myNowPositionLongitude");
+    double myLatitude = await mmkv.getDouble("myNowPositionLatitude");
+    MapPageBeen been = new MapPageBeen(_post.position, _post.longitude,
+        _post.latitude, _post.store, myLongitude, myLatitude);
+    Navigator.push(context,
+        new MaterialPageRoute(builder: (context) => new MapWidget(been)));
   }
 }

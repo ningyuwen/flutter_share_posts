@@ -15,8 +15,8 @@ class ApiUtil {
   static Dio _dio; //dio
 
 //  final String SERVER_URL = "http://172.26.52.30:8080"; //windows
-//  final String SERVER_URL = "http://47.112.12.104:8080/adu"; //线上服务器
-  static const String SERVER_URL = "https://192.168.31.6"; //mac
+  final String SERVER_URL = "https://47.112.12.104:8443/adu"; //线上服务器
+//  static const String SERVER_URL = "https://192.168.31.6"; //mac
 
   bool callback(X509Certificate cert, String host, int port){
     return true;
@@ -122,6 +122,13 @@ class ApiUtil {
     dio.options.baseUrl = SERVER_URL;
     dio.options.method = "post";
     dio.options.contentType = ContentType.parse("multipart/form-data");
+    dio.onHttpClientCreate = (HttpClient client) {
+      // you can also create a new HttpClient to dio
+      client.badCertificateCallback = callback;
+      return client;
+    };
+    dio.cookieJar = new PersistCookieJar(
+        dir: "/data/user/0/com.example.fluttershareposts/app_flutter/cookies");
 
     FormData formData = new FormData.from({
       "store": been.store,

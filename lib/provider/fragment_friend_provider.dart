@@ -44,18 +44,13 @@ class FragmentFriendProvider {
   bool _convertMap(map, refresh) {
     print(map);
     if (map is List) {
-      if (_data != null && _data.length > 0) {
-//        print("data 0 id is: ${_data[0].id}");
-      }
       List<Posts> posts = new List();
       for (var value in map) {
         Posts post = Posts.fromJson(value);
         posts.add(post);
       }
       if (refresh) {
-//        print("post id is: ${posts[0].id}");
         if (posts[0].id == _data[0].id) {
-//          print("下拉刷新的数据一样");
           ToastUtil.showToast("暂无更多数据");
           return false;
         }
@@ -68,7 +63,6 @@ class FragmentFriendProvider {
       }
       return true;
     } else {
-//      print("出现错误");
       if (_firstLoad) {
         _fetcher.sink.addError(map);
       } else {

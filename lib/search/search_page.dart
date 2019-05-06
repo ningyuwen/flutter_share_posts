@@ -174,7 +174,7 @@ class _SearchSuggestState extends State<_SearchSuggestWidget>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              "为您推荐以下分类:",
+              "热门分类:",
               style: Theme.of(context).textTheme.title,
             ),
             Divider(),

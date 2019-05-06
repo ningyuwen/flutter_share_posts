@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:amap_location/amap_location.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mmkv_flutter/mmkv_flutter.dart';
 import 'package:my_mini_app/been/consume_post_been.dart';
 import 'package:my_mini_app/util/api_util.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -82,6 +83,7 @@ class PublishPostProvider {
     publishBeen.latitude = location.latitude;
     publishBeen.position = position;
     publishBeen.district = location.district;
+    _saveMyLocation(location);
     setPosition(position);
   }
 
@@ -103,6 +105,13 @@ class PublishPostProvider {
         print("没有位置权限");
       }
     }
+  }
+
+  void _saveMyLocation(AMapLocation location) async {
+    MmkvFlutter mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
+    await mmkv.setDouble("myNowPositionLongitude", location.longitude);
+    await mmkv.setDouble("myNowPositionLatitude", location.latitude);
+    await mmkv.setBool("loadMapPagePresent", true); //以前是否打开过map page
   }
 }
 

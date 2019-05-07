@@ -31,6 +31,12 @@
         android:name="io.flutter.app.FlutterApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="Q晒单">
+
+        <!--修复QQ登录崩溃问题-->
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false"/>
+
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density"

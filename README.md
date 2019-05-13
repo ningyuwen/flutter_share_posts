@@ -19,19 +19,23 @@
 
 ## UI展示
 
-<center class="half">
-    <img src="https://ws1.sinaimg.cn/large/005tCJS5gy1g2xel3tz5zj30u01hc7wh.jpg" width="200">
-    <img src="https://ws1.sinaimg.cn/large/005tCJS5gy1g2xelgotpej30u01hcmzw.jpg" width="200">
-    <img src="https://ws1.sinaimg.cn/large/005tCJS5gy1g2xfb7248nj30u01hctcn.jpg" width="200">
-    <img src="https://ws1.sinaimg.cn/large/005tCJS5gy1g2xfb9tuhoj30u01hce81.jpg" width="200" />
-</center>
+<figure class="third">
+    <img src="https://ws1.sinaimg.cn/large/005tCJS5gy1g2xel3tz5zj30u01hc7wh.jpg" width="200" />
+    <img src="https://ws1.sinaimg.cn/large/005tCJS5gy1g2xelgotpej30u01hcmzw.jpg" width="200" />
+    <img src="https://ws1.sinaimg.cn/large/005tCJS5gy1g2xfb7248nj30u01hctcn.jpg" width="200" />
+</figure>
 
-<center class="half">
-    <img src="https://ws1.sinaimg.cn/large/005tCJS5gy1g2xfbgfqiij30u01hch38.jpg" width="200">
-    <img src="https://ws1.sinaimg.cn/large/005tCJS5gy1g2xims05wmj30u01hcwfi.jpg" width="200">
+<figure class="third2">
+    <img src="https://ws1.sinaimg.cn/large/005tCJS5gy1g2xfb9tuhoj30u01hce81.jpg" width="200" />
+    <img src="https://ws1.sinaimg.cn/large/005tCJS5gy1g2xfbgfqiij30u01hch38.jpg" width="200" />
+    <img src="https://ws1.sinaimg.cn/large/005tCJS5gy1g2xfbjl4usj30u01hc1kx.jpg" width="200" />
+</figure>
+
+<figure class="third3">
     <img src="https://ws1.sinaimg.cn/large/005tCJS5gy1g2xfckrxe1j30u01hc108.jpg" width="200" />
-    <img src="https://ws1.sinaimg.cn/large/005tCJS5gy1g2xfbjl4usj30u01hc1kx.jpg" width="200">
-</center>
+    <img src="https://ws1.sinaimg.cn/large/005tCJS5gy1g2xims05wmj30u01hcwfi.jpg" width="200" />
+    <img src="https://ws1.sinaimg.cn/large/005tCJS5gy1g2xfdpmv18j30u01hcdii.jpg" width="200" />
+</figure>
 
 <!-- <img src="https://ws1.sinaimg.cn/large/005tCJS5gy1g2xel3tz5zj30u01hc7wh.jpg" width="200">
 

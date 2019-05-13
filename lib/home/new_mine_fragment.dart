@@ -306,7 +306,6 @@ class _NewMineState extends State<NewMineFragment> {
         Theme.of(context).brightness == Brightness.light
             ? Brightness.dark
             : Brightness.light);
-//    DynamicTheme.of(context).setBrightness(Brightness.dark);
   }
 
   void changeColor() {

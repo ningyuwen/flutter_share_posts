@@ -55,8 +55,8 @@ class _MapState extends State<MapWidget> {
         _controller.future.then((WebViewController webViewController) {
           webViewController.loadUrl(_url);
         });
-        _saveMyLocation();
       }
+      _saveMyLocation();
     });
     super.initState();
   }

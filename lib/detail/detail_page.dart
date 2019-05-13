@@ -60,11 +60,9 @@ class _DetailPageState extends State<DetailPagefulWidget> {
         return pop();
       },
     );
-    return _DetailPageWidget(widget._postDetailArgument, _detailPageProvider);
   }
 
   Future<bool> pop() async {
-    //_detailPageProvider.getResultCommentsCount()
     Navigator.pop(context, _detailPageProvider.getResultCommentsCount());
     return Future.value(false);
   }
@@ -237,18 +235,6 @@ class _DetailPageWidget extends StatelessWidget {
               imageUrl: item._imgUrl,
               fit: BoxFit.cover,
               width: MediaQuery.of(context).size.width,
-//                height: 300.0,
-              //屏幕宽度
-//                errorWidget: Container(
-//                  color: Colors.black45,
-//                  height: 200.0,
-//                  child: Center(
-//                    child: Text(
-//                      "无法查看图片，请稍后重试...",
-//                      style: TextStyle(color: Colors.white),
-//                    ),
-//                  ),
-//                )
             ),
           ),
         ));
@@ -261,11 +247,6 @@ class _DetailPageWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           GestureDetector(
-//            child: CircleAvatar(
-//                radius: 22.0,
-//                backgroundImage: NetworkImage(
-//                  _postDetail.headUrl,
-//                )),
             child: ClipOval(
               clipBehavior: Clip.hardEdge,
               child: CachedNetworkImage(

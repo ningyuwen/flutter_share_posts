@@ -16,7 +16,7 @@ class ApiUtil {
 
 //  final String SERVER_URL = "http://172.26.52.30:8080"; //windows
   final String SERVER_URL = "https://47.112.12.104:8443/adu"; //线上服务器
-//  static const String SERVER_URL = "http://192.168.1.102:8080/adu"; //mac
+//  static const String SERVER_URL = "http://192.168.1.101:8080/adu"; //mac
 
   bool callback(X509Certificate cert, String host, int port){
     return true;

@@ -121,7 +121,7 @@ class _MainPageState extends State<MainPageView>
                 tooltip: '发布',
                 onPressed: () {
                   //跳转发布页面
-                  _jumpToPublishPage();
+//                  _jumpToPublishPage(); //测试时不允许使用发布接口
                 },
               )
             ],

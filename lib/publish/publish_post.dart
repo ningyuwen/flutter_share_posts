@@ -43,18 +43,12 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
   final TextEditingController _contentController =
       TextEditingController(text: "");
 
-  final ScrollController _scrollController = new ScrollController();
-
   //声明一个调用对象，需要把kotlin中注册的ChannelName传入构造函数
 //  static const _platform = const MethodChannel('aduning/tencent_location');
 
   @override
   void initState() {
     _publishProvider = PublishPostProvider.newInstance();
-    _scrollController.addListener(() {
-      SystemChannels.textInput.invokeMethod('TextInput.hide');
-      _unFocusTextField();
-    });
     _publishProvider.getPosition((String position) {
       _positionController.text = position;
       _positionController.selection = TextSelection(
@@ -67,7 +61,6 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
   @override
   void dispose() {
     _publishProvider.dispose();
-    _scrollController.dispose();
     super.dispose();
   }
 
@@ -88,7 +81,7 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
             textInputAction: TextInputAction.next,
             style: TextStyle(color: Theme.of(context).hintColor),
             decoration: const InputDecoration(
-              hintText: '请输入店铺名称',
+              labelText: '店铺名称'
             ),
             focusNode: _storeFocus,
             onFieldSubmitted: (term) {
@@ -102,27 +95,18 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
             textInputAction: TextInputAction.next,
             style: TextStyle(color: Theme.of(context).hintColor),
             decoration: const InputDecoration(
-              hintText: '请输入消费金额',
+              labelText: '消费金额',
+                prefixText: '\¥',
+                suffixText: 'RMB',
+                suffixStyle: TextStyle(color: Colors.green)
             ),
             focusNode: _costFocus,
             onFieldSubmitted: (term) {
-              _fieldFocusChange(context, _costFocus, _positionFocus);
+              _fieldFocusChange(context, _costFocus, _contentFocus);
             },
           ),
-          TextFormField(
-            controller: _positionController,
-            maxLines: 1,
-            style:
-                TextStyle(fontSize: 12.0, color: Theme.of(context).hintColor),
-            keyboardType: TextInputType.multiline,
-            textInputAction: TextInputAction.next,
-            decoration: const InputDecoration(
-                //此处获取地理位置
-                hintText: "正在定位中..."),
-            focusNode: _positionFocus,
-            onFieldSubmitted: (term) {
-              _fieldFocusChange(context, _positionFocus, _contentFocus);
-            },
+          SizedBox(
+            height: 20.0,
           ),
           TextFormField(
             controller: _contentController,
@@ -135,11 +119,27 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
                 fontWeight: FontWeight.normal,
                 color: Theme.of(context).hintColor),
             decoration: const InputDecoration(
-              hintText: '什么样的消费体验？',
+                border: OutlineInputBorder(),
+                labelText: '消费体验'
             ),
             focusNode: _contentFocus,
             onFieldSubmitted: (term) {
-              _contentFocus.unfocus();
+              _fieldFocusChange(context, _contentFocus, _positionFocus);
+            },
+          ),
+          TextFormField(
+            controller: _positionController,
+            maxLines: 1,
+            style:
+            TextStyle(fontSize: 12.0, color: Theme.of(context).hintColor),
+            keyboardType: TextInputType.multiline,
+            textInputAction: TextInputAction.next,
+            decoration: const InputDecoration(
+              //此处获取地理位置
+                hintText: "正在定位中..."),
+            focusNode: _positionFocus,
+            onFieldSubmitted: (term) {
+              _positionFocus.unfocus();
             },
           ),
           Padding(
@@ -225,7 +225,6 @@ class PublishPostState extends State<PublishPostStatefulWidget> {
 
   Widget _scrollView() {
     return SingleChildScrollView(
-      controller: _scrollController,
       primary: false,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),

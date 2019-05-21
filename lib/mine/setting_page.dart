@@ -49,8 +49,8 @@ class SettingPage extends StatelessWidget {
                                 child: new Text("确定"),
                                 onPressed: () {
                                   Navigator.of(context).pop();
-//                                  _logout();
-//                                  Navigator.of(context).pop();
+                                  _logout();
+                                  Navigator.of(context).pop();
                                 },
                               )
                             ]);

@@ -53,12 +53,12 @@ class AuthProvider {
     bool isLogin = await mmkv.getBool("isLogin");
 
     //测试代码，用于云测
-    userId = 2;
-    openId = "7AA06447831CD702186733C59695CF69";
-    userName = "ADu.";
-    headUrl = "http://thirdqq.qlogo.cn/qqapp/1106940064/7AA06447831CD702186733C59695CF69/100";
-    sex = true;
-    isLogin = true;
+//    userId = 2;
+//    openId = "7AA06447831CD702186733C59695CF69";
+//    userName = "ADu.";
+//    headUrl = "http://thirdqq.qlogo.cn/qqapp/1106940064/7AA06447831CD702186733C59695CF69/100";
+//    sex = true;
+//    isLogin = true;
 
     //test
 //    isLogin = true;

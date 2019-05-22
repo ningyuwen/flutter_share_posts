@@ -8,6 +8,7 @@ import 'package:my_mini_app/search/search.dart';
 import 'package:my_mini_app/search/search_page.dart';
 import 'package:my_mini_app/util/basic_config.dart';
 import 'package:my_mini_app/util/const_util.dart';
+import 'package:my_mini_app/util/toast_util.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'fragment_main_router.dart';
@@ -96,8 +97,17 @@ class _MainPageState extends State<MainPageView>
     return Scaffold(
       appBar: PreferredSize(
           child: AppBar(
-            title: Text(
-              "Q晒单",
+            title: GestureDetector(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Q晒单",
+                ),
+              ),
+              onDoubleTap: () {
+                ToastUtil.showToast("返回顶部");
+              },
             ),
             automaticallyImplyLeading: false,
             actions: <Widget>[

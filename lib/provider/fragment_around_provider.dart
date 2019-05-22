@@ -27,17 +27,22 @@ class FragmentAroundProvider {
   }
 
   //拉取后面页的数据
-  void fetchQueryList() async {
-    Observable.fromFuture(getData(1)).map((map) {
-      return _convertMap(map, false);
-    }).listen((success) {
-      if (success) {
+  Future<ReturnData> fetchQueryList() async {
+    dynamic map = await getData(1);
+    ReturnData returnData = _convertMap(map, false);
+    if (returnData.success) {
+      if (_data.length <= 10) {
         _fetcher.sink.add(_data);
       }
-    });
+    }
+    return returnData;
   }
 
-  bool _convertMap(map, refresh) {
+  int lengthOfData() {
+    return _data.length;
+  }
+
+  ReturnData _convertMap(map, refresh) {
     print(map);
     if (map is List) {
       for (var value in map) {
@@ -48,31 +53,27 @@ class FragmentAroundProvider {
           _data.add(post);
         }
       }
-      return true;
+      return ReturnData(true, map.length);
     } else {
-//      print("出现错误");
       if (_firstLoad) {
         _fetcher.sink.addError(map);
       } else {
         ToastUtil.showToast(map);
       }
-      return false;
+      return ReturnData(false, 0);
     }
   }
 
   //拉取第一页数据
-  void refreshData() async {
-    Observable.fromFuture(getData(1)).map((map) {
-      return _convertMap(map, true);
-    }).listen((success) {
-      if (success) {
-        _fetcher.sink.add(_data);
-      }
-    });
+  Future<ReturnData> refreshData() async {
+    dynamic map = await getData(1);
+    ReturnData returnData = _convertMap(map, true);
+    return returnData;
   }
 
-  void loadMore() async {
-    fetchQueryList();
+  Future<ReturnData> loadMore() async {
+    ReturnData returnData = await fetchQueryList();
+    return returnData;
   }
 
   Widget streamBuilder<T>({
@@ -118,4 +119,20 @@ class FragmentAroundProvider {
   }
 
   static FragmentAroundProvider newInstance() => new FragmentAroundProvider();
+
+  void deleteDataAtItem(int index) {
+    _data.removeAt(index);
+  }
+
+  void addDataAtItem(int index, Posts post) {
+    _data.insert(index, post);
+  }
+}
+
+class ReturnData {
+
+  bool success;
+  int dataSize;
+
+  ReturnData(this.success, this.dataSize);
 }

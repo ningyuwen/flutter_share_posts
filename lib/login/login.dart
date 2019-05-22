@@ -14,7 +14,6 @@ class LoginPage extends StatelessWidget {
 }
 
 class LoginView extends StatefulWidget {
-  final String appId = "tencent1106940064";
   final String name = "登录页面";
 
   @override

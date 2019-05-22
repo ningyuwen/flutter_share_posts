@@ -2,15 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyrefresh/easy_refresh.dart';
-import 'package:flutter_easyrefresh/material_footer.dart';
-import 'package:flutter_easyrefresh/phoenix_header.dart';
 import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/detail_page.dart';
 import 'package:my_mini_app/home/post_item_view.dart';
 import 'package:my_mini_app/provider/fragment_around_provider.dart';
-import 'package:my_mini_app/util/toast_util.dart';
+import 'package:my_mini_app/util/snack_bar_util.dart';
 import 'package:my_mini_app/widget/no_internet_widget.dart';
 
 class FragmentAroundPage extends StatefulWidget {
@@ -26,19 +23,33 @@ class FriendState extends State<FragmentAroundPage>
 
   ScrollController _scrollController = new ScrollController();
 
-  GlobalKey<EasyRefreshState> _easyRefreshKey =
-      new GlobalKey<EasyRefreshState>();
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
 
-  GlobalKey<RefreshHeaderState> _headerKey =
-      new GlobalKey<RefreshHeaderState>();
-
-  GlobalKey<RefreshFooterState> _footerKey =
-      new GlobalKey<RefreshFooterState>();
+  //控制页面重绘
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
     print("FragmentFriendAndAround initState()");
-    _blocProvider.fetchQueryList();
+    _blocProvider.loadMore();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        _blocProvider.loadMore().then((ReturnData returnData) {
+          if (returnData.success) {
+            print("size is: ${_blocProvider.lengthOfData()}");
+            for (int offset =
+                    _blocProvider.lengthOfData() - returnData.dataSize;
+                offset < _blocProvider.lengthOfData();
+                offset++) {
+              _listKey.currentState
+                  .insertItem(offset, duration: Duration(milliseconds: 300));
+            }
+          }
+        });
+      }
+    });
     super.initState();
   }
 
@@ -50,97 +61,161 @@ class FriendState extends State<FragmentAroundPage>
     super.dispose();
   }
 
+  static final Animatable<Offset> _drawerDetailsTween = Tween<Offset>(
+    begin: Offset(1.0, 0.0),
+    end: Offset.zero,
+  ).chain(CurveTween(
+    curve: Curves.fastLinearToSlowEaseIn,
+  ));
+
+  Future<Null> _handleRefresh() async {
+    ReturnData returnData = await _blocProvider.refreshData();
+    print("刷新了，但是我不知道success是啥：${returnData.dataSize}");
+    if (returnData.success) {
+      for (int offset = 0; offset < returnData.dataSize; offset++) {
+        _listKey.currentState
+            .insertItem(offset, duration: Duration(milliseconds: 300));
+      }
+      SnackBarUtil.show(context, "为您带来${returnData.dataSize}条点评信息");
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return _blocProvider.streamBuilder<List>(success: (List<Posts> data) {
-//      print("刷新完成得到数据 data size is: ${data.length}");
-
-      return EasyRefresh(
-          refreshHeader: PhoenixHeader(
-            key: _headerKey,
-          ),
-          firstRefresh: false,
-          refreshFooter: MaterialFooter(
-            key: _footerKey,
-          ),
-          key: _easyRefreshKey,
-          child: ListView.separated(
-            separatorBuilder: (context, index) => Divider(
-                  height: 0.0,
-                ),
-            itemCount: data.length,
-            itemBuilder: (context, index) {
-              return InkWell(
-                child: PostInfoItem(
-                  key: new ObjectKey(data[index].id),
-                  data: data[index],
-                ),
-                onTap: () {
-                  //进入详情页
-                  _jumpToDetailPage(data[index]);
-                },
-              );
-            },
-            controller: _scrollController,
-          ),
-          autoLoad: true,
-          onRefresh: () async {
-            _refresh();
-          },
-          loadMore: () async {
-            _loadMore();
+    return _blocProvider.streamBuilder<List>(
+        success: (List<Posts> data) {
+          print("data length isHHHH: ${data.length}");
+          return RefreshIndicator(
+              child: AnimatedList(
+                  key: _listKey,
+                  controller: _scrollController,
+                  initialItemCount: data.length + 1,
+                  itemBuilder:
+                      (BuildContext context, int index, Animation animation) {
+                    if (index == data.length) {
+                      return Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: new Center(
+                          child: new Opacity(
+                            opacity: 1.0,
+                            child: new CupertinoActivityIndicator(),
+                          ),
+                        ),
+                      );
+                    }
+                    return SlideTransition(
+                        position: animation.drive(_drawerDetailsTween),
+                        child: Column(
+                          children: <Widget>[
+                            InkWell(
+                              child: PostInfoItem(
+                                key: new ObjectKey(data[index].id),
+                                data: data[index],
+                              ),
+                              onLongPress: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return SimpleDialog(
+                                        contentPadding: EdgeInsets.all(0.0),
+                                        children: <Widget>[
+                                          InkWell(
+                                            child: Container(
+                                                height: 50.0,
+                                                alignment: Alignment.center,
+                                                child: Text(
+                                                  "不看这条点评",
+                                                  style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .accentColor),
+                                                )),
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                              print(
+                                                  "下标是：$index and name is: ${data[index].username}");
+                                              Posts post = data[index];
+                                              _deleteItem(index, post);
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    });
+                              },
+                              onTap: () {
+                                _jumpToDetailPage(data[index]);
+                              },
+                            ),
+                            Divider(height: 0.0,)
+                          ],
+                        ));
+                  }),
+              onRefresh: _handleRefresh);
+        },
+        error: (msg) {
+          return NoInternetWidget(msg, () {
+            _blocProvider.loadMore();
           });
-    }, error: (msg) {
-      return NoInternetWidget(msg, () {
-        _blocProvider.fetchQueryList();
-      });
-    }, empty: () {
-      return Container(
-        child: Center(
-          child: Text("暂无数据"),
-        ),
-      );
-    }, loading: () {
-      return Container(
-        child: Center(
-          child: CupertinoActivityIndicator(),
-        ),
-      );
-    }, finished: () {
-      if (_headerKey.currentState != null) {
-        _headerKey.currentState.onRefreshClose();
-      }
-    });
+        },
+        empty: () {
+          return Container(
+            child: Center(
+              child: Text("暂无数据"),
+            ),
+          );
+        },
+        loading: () {
+          return Container(
+            child: Center(
+              child: CupertinoActivityIndicator(),
+            ),
+          );
+        },
+        finished: () {});
   }
 
   void _jumpToDetailPage(Posts post) async {
     PostDetailArgument postDetailArgument =
-    new PostDetailArgument(
-        post.id, 113.347868, 23.007985);
+        new PostDetailArgument(post.id, 113.347868, 23.007985);
     print("进入详情页");
     int comments = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-            new DetailPagefulWidget(postDetailArgument)));
+            builder: (context) => new DetailPagefulWidget(postDetailArgument)));
     setState(() {
       post.comments = comments;
     });
   }
 
-  //下拉刷新，推荐点赞、评论最多，或者热门商家里的点评数据
-  Future<Null> _refresh() async {
-    _blocProvider.refreshData();
+  //删除条目的动画
+  void _deleteItem(int index, Posts post) {
+    _blocProvider.deleteDataAtItem(index);
+    _listKey.currentState.removeItem(index,
+        (BuildContext context, Animation<double> animation) {
+      return SlideTransition(
+        position: animation.drive(_drawerDetailsTween),
+        child: InkWell(
+            child: PostInfoItem(
+          key: new ObjectKey(post.id),
+          data: post,
+        )),
+      );
+    }, duration: Duration(milliseconds: 500));
+    SnackBarUtil.show(context, "已删除此点评",
+        action: SnackBarAction(
+            label: "撤销",
+            onPressed: () {
+              _addItem(index, post);
+            }),
+        milliseconds: 2500);
   }
 
-  //上拉加载更多，按照时间顺序排序的点评数据
-  Future<Null> _loadMore() async {
-    _blocProvider.loadMore();
+  //添加条目的动画
+  void _addItem(int index, Posts post) {
+    _blocProvider.addDataAtItem(index, post);
+    _listKey.currentState
+        .insertItem(index, duration: Duration(milliseconds: 400));
   }
-
-  //控制页面重绘
-  @override
-  bool get wantKeepAlive => true;
 }
 
 class PostInfoItem extends StatelessWidget {

@@ -140,9 +140,7 @@ class _PostItemState extends State<PostItemWidget> {
                         text: "${post.releaseTime}",
                         style: TextStyle(
                             fontSize: 12.0,
-                            color: Theme.of(context).textTheme.subtitle.color)
-//                        style: TextStyle(color: Colors.grey, fontSize: 12.0)
-                        )
+                            color: Theme.of(context).textTheme.subtitle.color))
                   ]),
                 ),
               ),
@@ -222,10 +220,14 @@ class _PostItemState extends State<PostItemWidget> {
       },
       //重大发现，美团上的图片可以根据后缀，@600w_600h_1l 来获取对应大小的图片
       child: CachedNetworkImage(
-          imageUrl: widget._post.imgUrls[index],
-          fit: BoxFit.cover,
-          width: MediaQuery.of(context).size.width,
-          height: 160.0),
+        imageUrl: widget._post.imgUrls[index],
+        fit: BoxFit.cover,
+        width: MediaQuery.of(context).size.width,
+        height: 160.0,
+        errorWidget: (BuildContext context, String string, Exception e) {
+          return Text("图片暂无法显示，请稍后重试...");
+        },
+      ),
     );
   }
 

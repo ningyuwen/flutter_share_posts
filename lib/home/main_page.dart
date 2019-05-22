@@ -3,12 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_mini_app/been/consume_post_been.dart';
 import 'package:my_mini_app/provider/auth_provider.dart';
+import 'package:my_mini_app/provider/return_top_provider.dart';
 import 'package:my_mini_app/publish/publish_post.dart';
 import 'package:my_mini_app/search/search.dart';
 import 'package:my_mini_app/search/search_page.dart';
 import 'package:my_mini_app/util/basic_config.dart';
 import 'package:my_mini_app/util/const_util.dart';
-import 'package:my_mini_app/util/toast_util.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'fragment_main_router.dart';
@@ -97,18 +97,21 @@ class _MainPageState extends State<MainPageView>
     return Scaffold(
       appBar: PreferredSize(
           child: AppBar(
-            title: GestureDetector(
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Q晒单",
+            title: Container(
+              width: MediaQuery.of(context).size.width,
+              child: GestureDetector(
+                child: Padding(
+                  padding: EdgeInsets.only(left: 12.0),
+                  child: Text(
+                    "Q晒单",
+                  ),
                 ),
+                onDoubleTap: () {
+                  ReturnTopProvider().addEvent(_currentIndex);
+                },
               ),
-              onDoubleTap: () {
-                ToastUtil.showToast("返回顶部");
-              },
             ),
+            titleSpacing: 0.0,
             automaticallyImplyLeading: false,
             actions: <Widget>[
               IconButton(
@@ -187,6 +190,7 @@ class _MainPageState extends State<MainPageView>
   void dispose() {
     AMapLocationClient.shutdown();
     AuthProvider().dispose();
+    ReturnTopProvider().dispose();
     super.dispose();
   }
 

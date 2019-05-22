@@ -8,6 +8,9 @@ import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/detail_page.dart';
 import 'package:my_mini_app/home/post_item_view.dart';
 import 'package:my_mini_app/provider/fragment_friend_provider.dart';
+import 'package:my_mini_app/provider/return_top_provider.dart';
+import 'package:my_mini_app/util/snack_bar_util.dart';
+import 'package:my_mini_app/util/toast_util.dart';
 import 'package:my_mini_app/widget/no_internet_widget.dart';
 
 class FragmentFriendPage extends StatefulWidget {
@@ -36,6 +39,14 @@ class FriendState extends State<FragmentFriendPage>
   void initState() {
     print("FragmentFriendAndAround initState()");
     _blocProvider.fetchQueryList(1);
+    ReturnTopProvider().stream().listen((int indexPage) {
+      if (indexPage == 1) {
+        _scrollController.animateTo(0,
+            duration: Duration(milliseconds: 1000),
+            curve: Curves.fastOutSlowIn);
+        SnackBarUtil.show(context, "已返回顶部");
+      }
+    });
     super.initState();
   }
 

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:my_mini_app/been/login_been.dart';
 import 'package:my_mini_app/home/consume_page.dart';
 import 'package:my_mini_app/login/login.dart';
+import 'package:my_mini_app/mine/my_collection_page.dart';
 import 'package:my_mini_app/mine/my_user_friend_page.dart';
 import 'package:my_mini_app/mine/setting_page.dart';
 import 'package:my_mini_app/provider/auth_provider.dart';
@@ -109,6 +110,10 @@ class _NewMineState extends State<NewMineFragment> {
                 height: 0.0,
               ),
               _minePublishWidget(),
+              Divider(
+                height: 0.0,
+              ),
+              _mineCollectionWidget(),
               Divider(
                 height: 0.0,
               ),
@@ -317,5 +322,37 @@ class _NewMineState extends State<NewMineFragment> {
 
   String _getSkinName() {
     return Theme.of(context).brightness == Brightness.dark ? "日间模式" : "夜间模式";
+  }
+
+  Widget _mineCollectionWidget() {
+    return InkWell(
+      onTap: () {
+        Navigator.push(context,
+            new MaterialPageRoute(builder: (context) => new MyCollectionPage()));
+      },
+      child: Container(
+          height: 54.0,
+          width: MediaQuery.of(context).size.width,
+          child: Row(
+            children: <Widget>[
+              const SizedBox(
+                width: 20.0,
+              ),
+              Icon(
+                Icons.collections,
+                color: Colors.red,
+              ),
+              const SizedBox(
+                width: 10.0,
+              ),
+              Expanded(
+                child: const Text(
+                  "我收藏的",
+                  style: TextStyle(fontSize: 18.0),
+                ),
+              )
+            ],
+          )),
+    );
   }
 }

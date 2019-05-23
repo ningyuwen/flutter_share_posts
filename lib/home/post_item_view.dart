@@ -22,9 +22,11 @@ class PostItemWidget extends StatefulWidget {
   Posts _post;
   BuildContext context;
   var currentPageValue = 0.0; //当前页面编号
+  String page;
 
-  PostItemWidget(Key key, Posts post) {
+  PostItemWidget(Key key, Posts post, {String page = ""}) {
     this._post = post;
+    this.page = page;
   }
 
   @override
@@ -93,7 +95,9 @@ class _PostItemState extends State<PostItemWidget> {
               ],
             ),
             //点赞按钮
-            _LikeWidget(widget._post),
+            widget.page == "collectionPage"
+                ? Container()
+                : _LikeWidget(widget._post),
             //分享按钮
             SizedBox(
                 height: 26.0,

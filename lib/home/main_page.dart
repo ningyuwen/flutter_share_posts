@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_mini_app/been/consume_post_been.dart';
 import 'package:my_mini_app/provider/auth_provider.dart';
+import 'package:my_mini_app/provider/db_provider.dart';
 import 'package:my_mini_app/provider/return_top_provider.dart';
 import 'package:my_mini_app/publish/publish_post.dart';
 import 'package:my_mini_app/search/search.dart';
@@ -141,6 +142,9 @@ class _MainPageState extends State<MainPageView>
           ),
           preferredSize: Size.fromHeight(APPBAR_HEIGHT)),
       body: _showBodyWidget(),
+//      body: Builder(builder: (BuildContext context) {
+//        return _showBodyWidget();
+//      }),
       bottomNavigationBar: CupertinoTabBar(
           currentIndex: _currentIndex,
           onTap: (int index) {
@@ -191,6 +195,7 @@ class _MainPageState extends State<MainPageView>
     AMapLocationClient.shutdown();
     AuthProvider().dispose();
     ReturnTopProvider().dispose();
+    DBProvider.db.close();
     super.dispose();
   }
 

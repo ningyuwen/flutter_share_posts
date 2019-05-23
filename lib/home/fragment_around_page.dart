@@ -6,6 +6,8 @@ import 'package:my_mini_app/been/post_around_been.dart';
 import 'package:my_mini_app/been/post_detail_argument.dart';
 import 'package:my_mini_app/detail/detail_page.dart';
 import 'package:my_mini_app/home/post_item_view.dart';
+import 'package:my_mini_app/mine/my_collection_page.dart';
+import 'package:my_mini_app/provider/db_provider.dart';
 import 'package:my_mini_app/provider/fragment_around_provider.dart';
 import 'package:my_mini_app/provider/return_top_provider.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';
@@ -134,6 +136,32 @@ class FriendState extends State<FragmentAroundPage>
                                                 height: 50.0,
                                                 alignment: Alignment.center,
                                                 child: Text(
+                                                  "添加收藏",
+                                                  style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .accentColor),
+                                                )),
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                              Posts post = data[index];
+                                              Map<String, dynamic> map =
+                                                  post.toJson();
+                                              //保存
+                                              DBProvider.db
+                                                  .insertCollection(map)
+                                                  .then((int res) {
+                                                _showSnackBar(res);
+                                              });
+                                            },
+                                          ),
+                                          Divider(
+                                            height: 0.0,
+                                          ),
+                                          InkWell(
+                                            child: Container(
+                                                height: 50.0,
+                                                alignment: Alignment.center,
+                                                child: Text(
                                                   "不看这条点评",
                                                   style: TextStyle(
                                                       color: Theme.of(context)
@@ -226,6 +254,33 @@ class FriendState extends State<FragmentAroundPage>
     _blocProvider.addDataAtItem(index, post);
     _listKey.currentState
         .insertItem(index, duration: Duration(milliseconds: 400));
+  }
+
+  void _showSnackBar(int res) {
+    if (res == 0) {
+      SnackBarUtil.show(context, "已收藏，无需重复收藏",
+          action: SnackBarAction(
+              label: "查看",
+              onPressed: () {
+                //跳转我收藏的页面
+                _jumpToCollectionPage();
+              }),
+          milliseconds: 2500);
+    } else {
+      SnackBarUtil.show(context, "添加收藏成功",
+          action: SnackBarAction(
+              label: "查看",
+              onPressed: () {
+                //跳转我收藏的页面
+                _jumpToCollectionPage();
+              }),
+          milliseconds: 2500);
+    }
+  }
+
+  void _jumpToCollectionPage() {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => new MyCollectionPage()));
   }
 }
 

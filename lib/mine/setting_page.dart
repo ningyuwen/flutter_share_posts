@@ -4,7 +4,7 @@ import 'package:my_mini_app/util/const_util.dart';
 import 'package:my_mini_app/webview/webview_page.dart';
 
 class SettingPage extends StatelessWidget {
-  static const String PAGE_NAME_OPEN_SOURCE = "开源代码";
+  static const String PAGE_NAME_OPEN_SOURCE = "关于作者";
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class SettingPage extends StatelessWidget {
       }
     }, separatorBuilder: (context, index) => Divider(
       height: 0.0,
-    ), itemCount: 3);
+    ), itemCount: 4);
   }
 
   void _logout() async {
@@ -41,15 +41,21 @@ class SettingPage extends StatelessWidget {
     return InkWell(
       child: Container(
         height: 50.0,
-        padding: EdgeInsets.only(left: 10.0),
+        padding: EdgeInsets.only(left: 18.0, right: 10.0),
         alignment: Alignment.centerLeft,
-        child: Text(PAGE_NAME_OPEN_SOURCE),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(PAGE_NAME_OPEN_SOURCE),
+            Icon(Icons.chevron_right, color: Colors.black54,)
+          ],
+        ),
       ),
       onTap: () {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => new WebViewPage(PAGE_NAME_OPEN_SOURCE, "https://github.com/ningyuwen/flutter_share_posts")));
+                builder: (context) => new WebViewPage(PAGE_NAME_OPEN_SOURCE, "https://github.com/ningyuwen")));
       },
     );
   }
@@ -58,9 +64,15 @@ class SettingPage extends StatelessWidget {
     return InkWell(
       child: Container(
         height: 50.0,
-        padding: EdgeInsets.only(left: 10.0),
+        padding: EdgeInsets.only(left: 18.0, right: 10.0),
         alignment: Alignment.centerLeft,
-        child: Text("检查更新"),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text("检查更新"),
+            Icon(Icons.chevron_right, color: Colors.black54,)
+          ],
+        ),
       ),
       onTap: () {
 
@@ -72,9 +84,15 @@ class SettingPage extends StatelessWidget {
     return InkWell(
       child: Container(
         height: 50.0,
-        padding: EdgeInsets.only(left: 10.0),
+        padding: EdgeInsets.only(left: 18.0, right: 10.0),
         alignment: Alignment.centerLeft,
-        child: Text("退出登录"),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text("退出登录"),
+            Icon(Icons.chevron_right, color: Colors.black54,)
+          ],
+        ),
       ),
       onTap: () {
         showDialog(

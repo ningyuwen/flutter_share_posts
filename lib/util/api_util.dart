@@ -15,8 +15,9 @@ class ApiUtil {
   static Dio _dio; //dio
 
   static const String SERVER_URL = "http://47.112.12.104:8082"; //线上服务器SpringBoot
-//  final String SERVER_URL = "https://47.112.12.104:8443/adu"; //线上服务器
 //  static const String SERVER_URL = "http://192.168.1.100:8082"; //mac
+
+  //  final String SERVER_URL = "https://47.112.12.104:8443/adu"; //线上服务器SpringMVC
 
   bool callback(X509Certificate cert, String host, int port){
     return true;
@@ -87,7 +88,7 @@ class ApiUtil {
       Response response = await _dio.request(_dio.options.baseUrl + path,
           data: params, options: _dio.options);
       if (response.statusCode == 200) {
-        print(response.data.toString());
+//        print(response.data.toString());
         Map map = jsonDecode(response.data.toString());
         var been = new Been.fromJson(map);
         if (been.code == 0) {

@@ -63,14 +63,11 @@ class _NewMineState extends State<NewMineFragment> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  Text("登录后可查看个人信息", style: Theme.of(context).textTheme.title,),
                   SizedBox(
                     height: 20.0,
                   ),
-                  Image.asset(
-                    "image/user_head.png",
-                    width: 60.0,
-                    height: 60.0,
-                  ),
+                  Icon(Icons.supervised_user_circle, size: 80.0, color: Colors.blue,),
                   Padding(
                     padding: EdgeInsets.only(bottom: 10.0, top: 10.0),
                     child: OutlineButton(

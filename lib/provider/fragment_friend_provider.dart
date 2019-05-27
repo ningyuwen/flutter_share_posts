@@ -131,4 +131,10 @@ class FragmentFriendProvider {
   }
 
   static FragmentFriendProvider newInstance() => new FragmentFriendProvider();
+
+  void removeData() {
+    _data.removeRange(0, _data.length);
+    _data = null;
+    _data = new List();
+  }
 }

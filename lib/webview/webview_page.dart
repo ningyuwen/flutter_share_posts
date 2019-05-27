@@ -46,7 +46,6 @@ class WebViewPage extends StatelessWidget {
             border: Border(
           top: BorderSide(color: Colors.black38, width: 0.0),
         )),
-        padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
         alignment: Alignment.center,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,

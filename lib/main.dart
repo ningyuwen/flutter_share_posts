@@ -3,6 +3,7 @@ import 'package:amap_location/amap_location.dart';
 import 'package:bloc/bloc.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:my_mini_app/home/main_page.dart';
 import 'package:my_mini_app/provider/auth_provider.dart';
 

@@ -96,97 +96,125 @@ class _MainPageState extends State<MainPageView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-          child: AppBar(
-            title: Container(
-              width: MediaQuery.of(context).size.width,
-              child: GestureDetector(
-                child: Padding(
-                  padding: EdgeInsets.only(left: 12.0),
-                  child: Text(
-                    "Q晒单",
+        appBar: PreferredSize(
+            child: AppBar(
+              title: Container(
+                width: MediaQuery.of(context).size.width,
+                child: GestureDetector(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 12.0),
+                    child: Text(
+                      "Q晒单",
+                    ),
                   ),
+                  onDoubleTap: () {
+                    ReturnTopProvider().addEvent(_currentIndex);
+                  },
                 ),
-                onDoubleTap: () {
-                  ReturnTopProvider().addEvent(_currentIndex);
-                },
               ),
+              titleSpacing: 0.0,
+              automaticallyImplyLeading: false,
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(
+                    Icons.search,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  tooltip: '搜索',
+                  onPressed: () {
+                    //跳转发布页面
+                    showSearchMine(
+                        context: context, delegate: SearchBarDelegate(context));
+                  },
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.add,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  tooltip: '发布',
+                  onPressed: () {
+                    //跳转发布页面
+                    _jumpToPublishPage(); //测试时不允许使用发布接口
+                  },
+                )
+              ],
             ),
-            titleSpacing: 0.0,
-            automaticallyImplyLeading: false,
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(
-                  Icons.search,
-                  color: Theme.of(context).primaryColor,
+            preferredSize: Size.fromHeight(APPBAR_HEIGHT)),
+        body: _showBodyWidget(),
+        bottomNavigationBar: Container(
+            height: APPBAR_HEIGHT,
+            decoration: BoxDecoration(
+                border: Border(
+              top: BorderSide(color: Colors.black38, width: 0.0),
+            )),
+            alignment: Alignment.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                _itemBottomBar(Icons.home, "附近", 0),
+                _itemBottomBar(Icons.tag_faces, "关注", 1),
+                _itemBottomBar(Icons.assignment_ind, "我的", 2),
+              ],
+            )));
+  }
+
+  Widget _itemBottomBar(IconData icon, String text, int index) {
+    return Flexible(
+      flex: 1,
+      child: InkWell(
+        child: LayoutBuilder(builder: (context, constraint) {
+//          return IconButton(
+//            icon: Column(
+//              mainAxisAlignment: MainAxisAlignment.center,
+//              mainAxisSize: MainAxisSize.min,
+//              children: <Widget>[
+//                Icon(
+//                  icon,
+//                  color: _currentIndex == index ? Colors.blue : Colors.grey,
+//                  size: 24.0,
+//                ),
+//                Text(
+//                    text,
+//                    style: TextStyle(
+//                        color: Theme.of(context).textTheme.button.color,
+//                        fontSize: 12.0))
+//              ],
+//            ),
+//            onPressed: () {
+//
+//            },
+//          );
+
+          return Container(
+            height: constraint.biggest.height,
+            width: 350,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(
+                  icon,
+                  color: _currentIndex == index ? Colors.blue : Colors.grey,
+                  size: 24.0,
                 ),
-                tooltip: '搜索',
-                onPressed: () {
-                  //跳转发布页面
-                  showSearchMine(
-                      context: context, delegate: SearchBarDelegate(context));
-                },
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.add,
-                  color: Theme.of(context).primaryColor,
-                ),
-                tooltip: '发布',
-                onPressed: () {
-                  //跳转发布页面
-                  _jumpToPublishPage(); //测试时不允许使用发布接口
-                },
-              )
-            ],
-          ),
-          preferredSize: Size.fromHeight(APPBAR_HEIGHT)),
-      body: _showBodyWidget(),
-//      body: Builder(builder: (BuildContext context) {
-//        return _showBodyWidget();
-//      }),
-      bottomNavigationBar: CupertinoTabBar(
-          currentIndex: _currentIndex,
-          onTap: (int index) {
+                Text(
+                    text,
+                    style: TextStyle(
+                        color: _currentIndex == index ? Colors.blue : Theme.of(context).textTheme.button.color,
+                        fontSize: 12.0))
+              ],
+            ),
+          );
+        }),
+        onTap: () {
+          if (_currentIndex != index) {
             setState(() {
               _currentIndex = index;
             });
-          },
-          activeColor: Colors.green,
-          inactiveColor: Colors.black,
-          backgroundColor: Theme.of(context).appBarTheme.color,
-          items: [
-            BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.home,
-                  color: _currentIndex == 0 ? Colors.blue : Colors.grey,
-                  size: 24.0,
-                ),
-                title: new Text("附近",
-                    style: TextStyle(
-                        color: Theme.of(context).textTheme.button.color,
-                        fontSize: 12.0))),
-            BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.tag_faces,
-                  color: _currentIndex == 1 ? Colors.blue : Colors.grey,
-                  size: 24.0,
-                ),
-                title: new Text("关注",
-                    style: TextStyle(
-                        color: Theme.of(context).textTheme.button.color,
-                        fontSize: 12.0))),
-            BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.assignment_ind,
-                  color: _currentIndex == 2 ? Colors.blue : Colors.grey,
-                  size: 24.0,
-                ),
-                title: new Text("我的",
-                    style: TextStyle(
-                        color: Theme.of(context).textTheme.button.color,
-                        fontSize: 12.0))),
-          ]),
+          }
+        },
+      ),
     );
   }
 

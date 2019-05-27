@@ -6,6 +6,7 @@ import 'package:my_mini_app/been/consume_post_been.dart';
 import 'package:my_mini_app/home/mine_posts_item.dart';
 import 'package:my_mini_app/provider/fragment_mine_provider.dart';
 import 'package:my_mini_app/util/const_util.dart';
+import 'package:my_mini_app/util/snack_bar_util.dart';
 import 'package:my_mini_app/widget/no_internet_widget.dart';
 
 class ConsumePage extends StatelessWidget {
@@ -23,10 +24,12 @@ class ConsumePage extends StatelessWidget {
   }
 
   Widget _appBar() {
-    return PreferredSize(child: AppBar(
-      title: Text("消费账单"),
-      centerTitle: true,
-    ), preferredSize: Size.fromHeight(APPBAR_HEIGHT));
+    return PreferredSize(
+        child: AppBar(
+          title: Text("消费账单"),
+          centerTitle: true,
+        ),
+        preferredSize: Size.fromHeight(APPBAR_HEIGHT));
   }
 }
 
@@ -64,32 +67,36 @@ class _MineState extends State<_FragmentMinePage>
 
   @override
   Widget build(BuildContext context) {
-    return _blocProvider.streamBuilder<ConsumePost>(success: (ConsumePost data) {
-      return _mineWidget(data);
-    }, error: (msg) {
-      return NoInternetWidget(msg, () {
-        _blocProvider.fetchMinePostData(widget._userId);
-      });
-    }, empty: () {
-      return Container(
-        child: Center(
-          child: Text("暂无数据"),
-        ),
-      );
-    }, loading: () {
-      return Container(
-        child: Center(
-          child: const CupertinoActivityIndicator(),
-        ),
-      );
-    });
+    return RefreshIndicator(
+      displacement: 20.0,
+        child: _blocProvider.streamBuilder<ConsumePost>(
+            success: (ConsumePost data) {
+          return _mineWidget(data);
+        }, error: (msg) {
+          return NoInternetWidget(msg, () {
+            _blocProvider.fetchMinePostData(widget._userId);
+          });
+        }, empty: () {
+          return Container(
+            child: Center(
+              child: Text("暂无数据"),
+            ),
+          );
+        }, loading: () {
+          return Container(
+            child: Center(
+              child: const CupertinoActivityIndicator(),
+            ),
+          );
+        }),
+        onRefresh: _handleRefresh);
   }
 
   Widget _mineWidget(ConsumePost data) {
     return ListView.separated(
       separatorBuilder: (context, index) => Divider(
-        height: 0.0,
-      ),
+            height: 0.0,
+          ),
       itemCount: _setItemCount(data),
       physics: const AlwaysScrollableScrollPhysics(),
       itemBuilder: (context, index) {
@@ -158,5 +165,11 @@ class _MineState extends State<_FragmentMinePage>
     } else {
       return data.posts.length + 1;
     }
+  }
+
+  Future<void> _handleRefresh() async {
+    await _blocProvider.getDataFromRemote(widget._userId, refresh: true);
+    SnackBarUtil.show(context, "刷新成功");
+    return null;
   }
 }

@@ -98,7 +98,7 @@ class FriendState extends State<FragmentAroundPage>
         success: (List<Posts> data) {
           print("data length isHHHH: ${data.length}");
           return RefreshIndicator(
-              displacement: 40.0,
+              displacement: 20.0,
               child: AnimatedList(
                   key: _listKey,
                   controller: _scrollController,

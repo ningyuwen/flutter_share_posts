@@ -88,44 +88,46 @@ class _DetailPageWidget extends StatelessWidget {
       isAdded = true;
     }
     return Scaffold(
-      appBar: PreferredSize(
-          child: AppBar(
-            title: Text("详情"),
-            centerTitle: true,
-          ),
-          preferredSize: Size.fromHeight(APPBAR_HEIGHT)),
-      body: _detailPageProvider.streamBuilder(
-        success: (PostDetail data) {
-          return Stack(
-            children: <Widget>[
-              _detailPage(data),
-              Positioned(
-                bottom: 0.0,
-                child: _SendCommentStatefulWidget(
-                    _postDetailArgument.postId, _detailPageProvider),
-              ),
-              Positioned(
-                  bottom: 51.0,
-                  child: Container(
-                    height: 1.0,
-                    width: MediaQuery.of(context).size.width,
-                    color: Theme.of(context).dividerColor,
-                  )),
-            ],
-          );
-        },
-        loading: () {
-          return Center(
-            child: const CupertinoActivityIndicator(),
-          );
-        },
-        error: (Object error) {
-          return NoInternetWidget(error.toString(), () {
-            _detailPageProvider.getDetailData(_postDetailArgument);
-          });
-        },
-      ),
-    );
+        appBar: PreferredSize(
+            child: AppBar(
+              title: Text("详情"),
+              centerTitle: true,
+            ),
+            preferredSize: Size.fromHeight(APPBAR_HEIGHT)),
+        body: RefreshIndicator(
+            displacement: 20.0,
+            child: _detailPageProvider.streamBuilder(
+              success: (PostDetail data) {
+                return Stack(
+                  children: <Widget>[
+                    _detailPage(data),
+                    Positioned(
+                      bottom: 0.0,
+                      child: _SendCommentStatefulWidget(
+                          _postDetailArgument.postId, _detailPageProvider),
+                    ),
+                    Positioned(
+                        bottom: 51.0,
+                        child: Container(
+                          height: 1.0,
+                          width: MediaQuery.of(context).size.width,
+                          color: Theme.of(context).dividerColor,
+                        )),
+                  ],
+                );
+              },
+              loading: () {
+                return Center(
+                  child: const CupertinoActivityIndicator(),
+                );
+              },
+              error: (Object error) {
+                return NoInternetWidget(error.toString(), () {
+                  _detailPageProvider.getDetailData(_postDetailArgument);
+                });
+              },
+            ),
+            onRefresh: _handleRefresh));
   }
 
   Widget _detailPage(PostDetail postDetail) {
@@ -464,6 +466,11 @@ class _DetailPageWidget extends StatelessWidget {
         myLatitude);
     Navigator.push(context,
         new MaterialPageRoute(builder: (context) => new MapWidget(been)));
+  }
+
+  Future<Null> _handleRefresh() async {
+    await _detailPageProvider.refreshData(_postDetailArgument, "");
+    return null;
   }
 }
 

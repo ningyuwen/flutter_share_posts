@@ -57,7 +57,7 @@ class MyUserFriendProvider {
         });
   }
 
-  void getMyUserFriendsData() async {
+  Future<Null> getMyUserFriendsData() async {
     Observable.fromFuture(_getMyUserFriends()).listen((success) {
       if (success) {
         _fetcher.sink.add(_data);
@@ -69,9 +69,14 @@ class MyUserFriendProvider {
     dynamic data = await ApiUtil.getInstance()
         .netFetch("/user/myUserFriends", RequestMethod.GET, {}, null);
     if (data is List) {
+      List<MyUserFriendsBeen> list = new List();
       data.forEach((dynamic map) {
-        _data.add(MyUserFriendsBeen.fromJson(map));
+        list.add(MyUserFriendsBeen.fromJson(map));
       });
+      _data.forEach((MyUserFriendsBeen been) {
+        been.publishSubject.sink.add(true);
+      });
+      _data = list;
       return true;
     } else {
       //错误

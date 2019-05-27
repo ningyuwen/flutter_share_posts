@@ -6,6 +6,7 @@ import 'package:my_mini_app/home/consume_page.dart';
 import 'package:my_mini_app/provider/my_user_friend_provider.dart';
 import 'package:my_mini_app/util/const_util.dart';
 import 'package:my_mini_app/util/fast_click.dart';
+import 'package:my_mini_app/util/snack_bar_util.dart';
 import 'package:my_mini_app/widget/no_internet_widget.dart';
 
 class MyUserFriendPage extends StatelessWidget {
@@ -41,48 +42,64 @@ class _MyUserFriendState extends State<_MyUserFriendPage> {
   }
 
   @override
+  void dispose() {
+    _provider.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return _provider.streamBuilder<List<MyUserFriendsBeen>>(
-        success: (List<MyUserFriendsBeen> data) {
-      if (data.length == 0) {
-        return Center(
-          child: Text("暂无关注的人"),
-        );
-      }
-      return ListView.separated(
-          separatorBuilder: (context, index) => Divider(
-                height: 0.0,
-              ),
-          itemCount: data.length,
-          physics: const AlwaysScrollableScrollPhysics(),
-          itemBuilder: (BuildContext context, int index) {
-            return InkWell(
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    child: _itemOfList(data[index], index),
-                    height: 60.0,
-                  ),
-                ],
-              ),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    new MaterialPageRoute(
-                        builder: (context) =>
-                            new ConsumePage(data[index].userId)));
-              },
+    return RefreshIndicator(
+      displacement: 20.0,
+        child: _provider.streamBuilder<List<MyUserFriendsBeen>>(
+            success: (List<MyUserFriendsBeen> data) {
+          if (data.length == 0) {
+            return Center(
+              child: Text("暂无关注的人"),
             );
+          }
+          print("刷新后的数据总量是：${data.length}");
+          return ListView.separated(
+              separatorBuilder: (context, index) => Divider(
+                    height: 0.0,
+                  ),
+              itemCount: data.length,
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemBuilder: (BuildContext context, int index) {
+                return InkWell(
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        child: _itemOfList(data[index], index),
+                        height: 60.0,
+                      ),
+                    ],
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                            builder: (context) =>
+                                new ConsumePage(data[index].userId)));
+                  },
+                );
+              });
+        }, loading: () {
+          return Center(
+            child: const CupertinoActivityIndicator(),
+          );
+        }, error: (error) {
+          return NoInternetWidget(error.toString(), () {
+            _provider.getMyUserFriendsData();
           });
-    }, loading: () {
-      return Center(
-        child: const CupertinoActivityIndicator(),
-      );
-    }, error: (error) {
-      return NoInternetWidget(error.toString(), () {
-        _provider.getMyUserFriendsData();
-      });
-    });
+        }),
+        onRefresh: _handleRefresh);
+  }
+
+  Future<Null> _handleRefresh() async {
+    await _provider.getMyUserFriendsData();
+    SnackBarUtil.show(context, "刷新成功");
+    return null;
   }
 
   Widget _itemOfList(MyUserFriendsBeen data, index) {
@@ -141,6 +158,7 @@ class _MyUserFriendState extends State<_MyUserFriendPage> {
       initialData: isFriend,
       stream: data.publishSubject.stream,
       builder: (context, AsyncSnapshot<bool> snapshot) {
+        print("${data.userName} cancel : ${snapshot.data}");
         if (snapshot.hasData) {
           if (!snapshot.data) {
             return Row(

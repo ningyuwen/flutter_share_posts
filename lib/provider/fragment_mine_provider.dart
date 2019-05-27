@@ -40,7 +40,7 @@ class FragmentMineProvider {
         _fetcher.sink.add(_data);
         //有缓存，还是需要再拉一次数据，如果数据相同则不刷新页面，不同再刷新
       }
-      _getDataFromRemote(userId);
+      getDataFromRemote(userId);
     });
   }
 
@@ -106,13 +106,15 @@ class FragmentMineProvider {
     await mmkv.setString("/post/getPostsByUserId+$userId", jsonEncode(map));
   }
 
-  void _getDataFromRemote(int userId) async {
+  Future<Null> getDataFromRemote(int userId, {bool refresh = false}) async {
     Observable.fromFuture(_getData(userId)).map((map) {
       if (map is Map) {
-        if (_data != null) {
-          if (_data.cost == map['cost']) {
-            //相同，不需要刷新
-            return false;
+        if (!refresh) {
+          if (_data != null) {
+            if (_data.cost == map['cost']) {
+              //相同，不需要刷新
+              return false;
+            }
           }
         }
         _data = ConsumePost.fromJson(map);

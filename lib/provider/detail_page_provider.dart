@@ -106,6 +106,11 @@ class DetailPageProvider {
       });
     }
 
+    refreshData(postDetailArgument, localData);
+  }
+
+  Future<Null> refreshData(PostDetailArgument postDetailArgument, String localData) async {
+    MmkvFlutter mmkv = await MmkvFlutter.getInstance(); //初始化mmkv
     dynamic map = await ApiUtil.getInstance().netFetch(
         "/post/getPostDetails",
         RequestMethod.GET,

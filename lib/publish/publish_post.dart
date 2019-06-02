@@ -8,7 +8,7 @@ import 'package:mmkv_flutter/mmkv_flutter.dart';
 import 'package:my_mini_app/been/consume_post_been.dart';
 import 'package:my_mini_app/provider/publish_post_provider.dart';
 import 'package:my_mini_app/util/const_util.dart';
-import 'package:my_mini_app/util/network_tuil.dart';
+import 'package:my_mini_app/util/network_util.dart';
 import 'package:my_mini_app/util/progress_dialog.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 import 'package:rxdart/rxdart.dart';

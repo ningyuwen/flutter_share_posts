@@ -4,8 +4,9 @@ import 'dart:io';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:my_mini_app/been/been.dart';
+import 'package:my_mini_app/provider/auth_provider.dart';
 import 'package:my_mini_app/provider/publish_post_provider.dart';
-import 'package:my_mini_app/util/network_tuil.dart';
+import 'package:my_mini_app/util/network_util.dart';
 import 'package:my_mini_app/util/toast_util.dart';
 
 enum RequestMethod { GET, POST, PUT }
@@ -47,7 +48,7 @@ class ApiUtil {
   Future<File> _getLocalFile() async {
     // get the path to the document directory.
     String dir =
-        "/data/user/0/com.example.fluttershareposts/app_flutter/cookies/192.168.31.68080";
+        "/data/user/0/com.example.fluttershareposts/app_flutter/cookies/47.112.12.1048082";
     return new File(dir);
   }
 
@@ -88,16 +89,16 @@ class ApiUtil {
       Response response = await _dio.request(_dio.options.baseUrl + path,
           data: params, options: _dio.options);
       if (response.statusCode == 200) {
-//        print(response.data.toString());
+        print(response.data.toString());
         Map map = jsonDecode(response.data.toString());
         var been = new Been.fromJson(map);
         if (been.code == 0) {
           return been.data;
         } else if (been.code == -1) {
           //登陆失效，重新登录
-//          SharedPreferences preferences = await SharedPreferences.getInstance();
-//          await preferences.setBool("isLogin", false);
           ToastUtil.showToast("操作失败，请稍后重试...");
+        } else if (been.code == -2){
+          AuthProvider().logout();
         }
       } else {
         ToastUtil.showToast(response.statusCode.toString());

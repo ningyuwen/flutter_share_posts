@@ -158,7 +158,7 @@ class _MyUserFriendState extends State<_MyUserFriendPage> {
       initialData: isFriend,
       stream: data.publishSubject.stream,
       builder: (context, AsyncSnapshot<bool> snapshot) {
-        print("${data.userName} cancel : ${snapshot.data}");
+//        print("${data.userName} cancel : ${snapshot.data}");
         if (snapshot.hasData) {
           if (!snapshot.data) {
             return Row(

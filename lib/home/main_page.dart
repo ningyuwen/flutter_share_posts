@@ -107,7 +107,7 @@ class _MainPageState extends State<MainPageView>
                       "Q晒单",
                     ),
                   ),
-                  onDoubleTap: () {
+                  onTap: () {
                     ReturnTopProvider().addEvent(_currentIndex);
                   },
                 ),
@@ -164,28 +164,6 @@ class _MainPageState extends State<MainPageView>
       flex: 1,
       child: InkWell(
         child: LayoutBuilder(builder: (context, constraint) {
-//          return IconButton(
-//            icon: Column(
-//              mainAxisAlignment: MainAxisAlignment.center,
-//              mainAxisSize: MainAxisSize.min,
-//              children: <Widget>[
-//                Icon(
-//                  icon,
-//                  color: _currentIndex == index ? Colors.blue : Colors.grey,
-//                  size: 24.0,
-//                ),
-//                Text(
-//                    text,
-//                    style: TextStyle(
-//                        color: Theme.of(context).textTheme.button.color,
-//                        fontSize: 12.0))
-//              ],
-//            ),
-//            onPressed: () {
-//
-//            },
-//          );
-
           return Container(
             height: constraint.biggest.height,
             width: 350,

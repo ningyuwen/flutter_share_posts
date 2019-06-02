@@ -36,7 +36,8 @@ class PublishPostProvider {
 
   //系统相册
   void getGalleryPhoto() async {
-    File file = await ImagePicker.pickImage(source: ImageSource.gallery);
+    File file = await ImagePicker.pickImage(
+        source: ImageSource.gallery, maxWidth: 1280);
     if (file == null) {
       return;
     }

@@ -16,7 +16,7 @@ import 'package:my_mini_app/provider/detail_page_provider.dart';
 import 'package:my_mini_app/provider/text_field_provider.dart';
 import 'package:my_mini_app/util/const_util.dart';
 import 'package:my_mini_app/util/fast_click.dart';
-import 'package:my_mini_app/util/network_tuil.dart';
+import 'package:my_mini_app/util/network_util.dart';
 import 'package:my_mini_app/util/photo_view_util.dart';
 import 'package:my_mini_app/util/progress_dialog.dart';
 import 'package:my_mini_app/util/snack_bar_util.dart';

@@ -157,10 +157,6 @@ class _PostItemState extends State<PostItemWidget> {
                 width: MediaQuery.of(context).size.width,
                 child: new Stack(
                   children: <Widget>[
-//                    Align(
-//                      child: showPhotos(),
-//                      alignment: FractionalOffset.topLeft,
-//                    ),
                     showPhotos(),
                     showIndicator()
                   ],
@@ -206,10 +202,16 @@ class _PostItemState extends State<PostItemWidget> {
 
   Widget showPhotos() {
     //只展示一张图片
-    return ClipRRect(
-      clipBehavior: Clip.hardEdge,
-      borderRadius: new BorderRadius.circular(4.0),
-      child: _rendRow(context, 0),
+    return Container(
+      decoration: BoxDecoration(
+          border: Border.all(width: 0.1, color: Colors.grey),
+          borderRadius: BorderRadius.all(Radius.circular(4.0))
+      ),
+      child: ClipRRect(
+        clipBehavior: Clip.hardEdge,
+        borderRadius: new BorderRadius.circular(4.0),
+        child: _rendRow(context, 0),
+      ),
     );
   }
 
